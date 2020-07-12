@@ -1,11 +1,13 @@
 ## IMPORTANT: set code_root properly!
 # code_root="/home/dgwu/covid19/NatSEIR_Rcode/"
 #code_root="~/jianguoyun/Nutstore/covid19/NatSEIR_Rcode/"
-code_root="/Users/zhangh24/Desktop/codes_covid19_v2/"
+#code_root="/Users/zhangh24/Desktop/codes_covid19_v2/"
+code_root="/data/zhangh24/SEIR/"
 # code_root="C:/Users/xingj/Documents/WangLabAdmin/COVID-19/NatSEIR_Rcode/"
 
 setwd(paste0(code_root, "scripts_main"))
 #install.packages("BayesianTools")
+
 library(BayesianTools)
 #install.packages("vioplot")
 library(vioplot)
@@ -25,7 +27,7 @@ source(paste0(code_root, "R/correlationPlot_modified.R"))
 source(paste0(code_root, "R/fun_SEIRplot.R"))
 source(paste0(code_root, "R/fun_Findzero.R"))
 ##
-
+library(dplyr)
 init_sets_list=get_init_sets_list(r0 = 0.23)
 
 # good initial conditions

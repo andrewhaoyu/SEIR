@@ -17,7 +17,7 @@ generate_init_condi <- function(r0,
   ## De           : latent period
   ## r0           : initial ascertainment rate
   ## realData     : real data from the CDC
-
+  
   R0 <- 0
   H0 <- 0
   
@@ -71,9 +71,9 @@ generate_init_condi <- function(r0,
               stage_intervals=list(
                 c(start=1, end=10),
                 c(start=11, end=23),
-                c(start=24, end=40),
-                c(start=41, end=68),
-                c(start=69, end=122)
+                c(start=24, end=53),
+                c(start=54, end=84),
+                c(start=85, end=122)
               ),
               var_trans_fun=transform_var_main_5stage,
               par_lower = c(b12 = 0, b3 = 0, b4 = 0, b5 = 0, r12 = 0, delta3 = -10, delta4 = -10, delta5 = -10),
