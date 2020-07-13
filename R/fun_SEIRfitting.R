@@ -84,7 +84,7 @@ SEIRfitting=function(init_sets_list,
     ypred <- ypred[, "Onset_expect"]
     
     # meant to suppress warnings when ypred is negative
-    suppressWarnings(p <- dpois(as.numeric(onset_obs[,1]), ypred,log=T))
+    suppressWarnings(p <- dpois(as.numeric(onset_obs), ypred,log=T))
     
     #if(any(p == 0) || any(is.nan(p))){
     if(any(is.nan(p))){  
@@ -111,7 +111,17 @@ SEIRfitting=function(init_sets_list,
     bayesSEIR <- createBayesianSetup(loglh_func, prior = pars_prior)
   
     if (randomize_startValue) {  
-      startValue=pars_sampler()
+      n.simu = 10000
+      startValue_list = list()
+      log_likelihood = rep(0,n.simu)
+      for(l in 1:n.simu){
+        print(l)
+        startValue=pars_sampler()  
+        startValue_list[[l]] = startValue
+        log_likelihood[l] = loglh_func(startValue)
+      }
+      
+      startValue =startValue_list[[which.max(log_likelihood)]]
       while (is.infinite(loglh_func(startValue))) {
         startValue=pars_sampler()
       }
@@ -168,13 +178,13 @@ SEIRfitting=function(init_sets_list,
   
   summary_string = paste0(summary_string, paste(r_str,collapse = ", "),"\n\n")
   
-  if (calc_clearance) {
-    clearance_date = Findzero(mcmc_pars_estimate, init_sets_list)
-    
-    summary_string = paste0(summary_string, paste(names(clearance_date), collapse = ", "))
-    
-    summary_string = paste0(summary_string, "\n", paste(clearance_date, collapse = ", "), "\n")
-  }
+  # if (calc_clearance) {
+  #   clearance_date = Findzero(mcmc_pars_estimate, init_sets_list)
+  #   
+  #   summary_string = paste0(summary_string, paste(names(clearance_date), collapse = ", "))
+  #   
+  #   summary_string = paste0(summary_string, "\n", paste(clearance_date, collapse = ", "), "\n")
+  # }
   
   write_file(summary_string, paste0("../output/summary_run_",run_id,".txt"))
   
@@ -207,3 +217,12 @@ SEIRfitting=function(init_sets_list,
   # pairs(mcmc_pars_estimate)
   
 }
+
+
+
+
+
+
+
+
+

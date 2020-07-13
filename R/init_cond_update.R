@@ -6,7 +6,8 @@ generate_init_condi <- function(r0,
                                 alpha = 0.55,
                                 Dh = 30,
                                 N = 19453561,
-                                flowN = c(0, 0, 0, 0, 0)
+                                flowN = c(0, 0, 0, 0, 0),
+                                stateInput
 ) {
   
   stopifnot(r0>=0 & r0<=1 & Di>=0 & Dp>=0 & De>=0 & all(Dp>=0) & alpha>=0 & alpha<=1 & Dh>=0 & N>=0 & all(flowN>=0))
@@ -22,11 +23,12 @@ generate_init_condi <- function(r0,
   H0 <- 0
   
   allData <- read.csv("../data/JHU_COVID-19_State.csv")#[-c(1:24), ]
-  realData_all <- allData %>% filter(stateName=="New York") 
-  jan1_idx = min(which(realData_all$positiveIncreas>20))
-  realData <- realData_all %>% filter(positiveIncrease>20)
-  daily_new_case <- realData %>% select(positiveIncrease)
-  daily_new_case_all <- realData_all %>% select(positiveIncrease)
+  realData_all <- allData %>% filter(stateName==stateInput) 
+  #jan1_idx = min(which(realData_all$positiveIncreas>20))
+  jan1_idx = 46
+  realData <- realData_all[c(jan1_idx:nrow(realData_all)),]
+  daily_new_case <- realData$positiveIncrease[1:110]
+  daily_new_case_all <- realData$positiveIncrease
   realData_all <- realData_all %>% select(positiveIncrease)
   realData <- realData %>% select(positiveIncrease)
   ##
@@ -67,13 +69,13 @@ generate_init_condi <- function(r0,
               daily_new_case = daily_new_case, 
               daily_new_case_all = daily_new_case_all, 
               init_states = init_states,
-              days_to_fit=1:nrow(realData),
+              days_to_fit=1:length(daily_new_case),
               stage_intervals=list(
                 c(start=1, end=10),
-                c(start=11, end=23),
-                c(start=24, end=53),
-                c(start=54, end=84),
-                c(start=85, end=122)
+                c(start=11, end=25),
+                c(start=26, end=40),
+                c(start=41, end=55),
+                c(start=56, end=110)
               ),
               var_trans_fun=transform_var_main_5stage,
               par_lower = c(b12 = 0, b3 = 0, b4 = 0, b5 = 0, r12 = 0, delta3 = -10, delta4 = -10, delta5 = -10),
