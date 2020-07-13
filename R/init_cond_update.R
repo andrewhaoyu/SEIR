@@ -23,7 +23,9 @@ generate_init_condi <- function(r0,
   H0 <- 0
   
   allData <- read.csv("../data/JHU_COVID-19_State.csv")#[-c(1:24), ]
-  realData_all <- allData %>% filter(stateName==stateInput) 
+  idx <- which(allData$stateName==stateInput)
+  realData_all =  allData[idx,]
+  #realData_all <- allData %>% filter(stateName==stateInput) 
   #jan1_idx = min(which(realData_all$positiveIncreas>20))
   jan1_idx = 46
   realData <- realData_all[c(jan1_idx:nrow(realData_all)),]
