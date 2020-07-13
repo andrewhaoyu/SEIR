@@ -115,7 +115,7 @@ SEIRfitting=function(init_sets_list,
       startValue_list = list()
       log_likelihood = rep(0,n.simu)
       for(l in 1:n.simu){
-        print(l)
+      #  print(l)
         startValue=pars_sampler()  
         startValue_list[[l]] = startValue
         log_likelihood[l] = loglh_func(startValue)
