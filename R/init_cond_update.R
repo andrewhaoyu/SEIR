@@ -5,7 +5,7 @@ generate_init_condi <- function(r0,
                                 Dq = c(21, 15, 10, 6, 2),
                                 alpha = 0.55,
                                 Dh = 30,
-                                N = 19453561,
+                                N ,
                                 flowN = c(0, 0, 0, 0, 0),
                                 stateInput
 ) {
