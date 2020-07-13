@@ -92,8 +92,7 @@ SEIRsimu <- function(pars, init_settings, num_periods = 5) {
   states_mat[, 1] <- days_to_fit
   colnames(states_mat) <- c("time", "S", "E", "P", "I", "A", "H", "R", "Onset_expect")
   ## evovle the system according to the discretized ODEs
-  stage_start <- c(1, 11, 24, 54, 85)               # corresponding to dates Jan1, Jan10, Jan23, Feb2, Feb17
-  stage_end <- c(10, 23, 53, 84,length(days_to_fit))    # corresponding to dates Jan9, Jan22, Feb1, Feb16, the last day (could vary)
+  stage_end <- c(10, 25, 40, 55,length(days_to_fit))    # corresponding to dates Jan9, Jan22, Feb1, Feb16, the last day (could vary)
   ##
   myold_states <- init_states
   for (i_stage in 1:5) {
