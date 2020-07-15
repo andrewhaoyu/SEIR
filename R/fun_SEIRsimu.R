@@ -17,6 +17,9 @@
 #' @param num_periods             number of periods to simulate
 #################################################################################################
 SEIRsimu <- function(pars, init_settings, num_periods = 5) {
+  stage_intervals <- init_settings$stage_intervals
+  n_stage <- length(stage_intervals)
+  
   tmp_ret=init_settings$var_trans_fun(pars)
   b_vec=tmp_ret[[1]]
   r_vec=tmp_ret[[2]]
@@ -31,6 +34,7 @@ SEIRsimu <- function(pars, init_settings, num_periods = 5) {
   flowN_vec <- init_settings$flowN
   init_states <- init_settings$init_states
   days_to_fit <- init_settings$days_to_fit
+  
   ## ODE function based on stochastic SEIR model
   update_func <- function(stage_pars, states_old) {
     ## stage pars
@@ -92,24 +96,27 @@ SEIRsimu <- function(pars, init_settings, num_periods = 5) {
   states_mat[, 1] <- days_to_fit
   colnames(states_mat) <- c("time", "S", "E", "P", "I", "A", "H", "R", "Onset_expect")
   ## evovle the system according to the discretized ODEs
-  stage_start <- c(1,11,26,41,56)
-  stage_end <- c(10, 25, 40, 55,length(days_to_fit))    # corresponding to dates Jan9, Jan22, Feb1, Feb16, the last day (could vary)
-  ##
+  stage_start <- stage_end <- rep(0,n_stage)
+  for(l in 1:n_stage){
+    stage_start[l] = stage_intervals[[l]][1]
+    stage_end[l] = stage_intervals[[l]][2]
+  }
+  stage_end[l]  = length(days_to_fit)
   myold_states <- init_states
-  for (i_stage in 1:5) {
+  for (i_stage in 1:n_stage) {
     stage_pars_setings <- c(b = b_vec[i_stage], r = r_vec[i_stage], Dq = Dq_vec[i_stage], n = flowN_vec[i_stage])
     for (d in stage_start[i_stage]:stage_end[i_stage]) {
       states_mat[d, -1] <- update_func(stage_pars = stage_pars_setings, states_old = myold_states)
       myold_states <- states_mat[d, -1]
     }
   }
-  if(num_periods == 5) {  ## total 5 periods: Jan 1-9, Jan 10-22, Jan 23-Feb 1, Feb 2-16, Feb 17-
+  if(num_periods == n_stage) {  ## total 5 periods: Jan 1-9, Jan 10-22, Jan 23-Feb 1, Feb 2-16, Feb 17-
     states_mat <- states_mat
   }
   ## num_periods=4: only 4 periods: Jan 1-9, Jan 10-22, Jan 23-Feb 1, Feb 2-
   ## num_periods=3: only 3 periods: Jan 1-9, Jan 10-22, Jan 23-
   ## num_periods=2: only 2 periods: Jan 1-9, Jan 10
-  else if (num_periods %in% c(2, 3, 4)) {  
+  else if (num_periods %in% c(2:(n_stage-1))) {  
     i_stage <- num_periods
     stage_pars_setings <- c(b = b_vec[i_stage], r = r_vec[i_stage], Dq = Dq_vec[i_stage], n = flowN_vec[i_stage])
     for (d in stage_start[i_stage]:length(days_to_fit)) {
@@ -119,7 +126,7 @@ SEIRsimu <- function(pars, init_settings, num_periods = 5) {
   }
   else {
     print("num_periods has to be 2, 3, 4 or 5!")
-    q(save="no")
+    #q(save="no")
     }
   
   return(states_mat)

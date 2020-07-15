@@ -1,42 +1,35 @@
 library(cairoDevice)
 
 default_pars_density <- function(pars) {
-  d_vec <- rep(NA, 8)
+  n.stage = length(par)/2
+  d_vec <- rep(NA, length(par))
   ##b12, b3, b4, b5
-  for(i in c(1:4)) {
-    d_vec[i] <- dunif(pars[i], 0, 2, log = T)
-  }
-  ## r12
-  r12 <- pars[5]
-  d_vec[5] <- dbeta(r12, beta_shape1, beta_shape2, log = T)
-  ## r3
-  delta_3 <- pars[6]
-  d_vec[6] <- dnorm(delta_3, delta_mean, delta_sd, log = T)
-  ## r4
-  delta_4 <- pars[7]
-  d_vec[7] <- dnorm(delta_4, delta_mean, delta_sd, log = T)
-  ## r5
-  delta_5 <- pars[8]
-  d_vec[8] <- dnorm(delta_5, delta_mean, delta_sd, log = T)
-  ##
+  #bvec
+  # for(i in c(1:n.stage)) {
+  #   d_vec[i] <- dunif(pars[i], 0, 2, log = T)
+  # }
+  d_vec[1:n.stage] =  log(1/2)
+  
+  #rvec1
+  d_vec[n.stage+1] = dbeta(pars[n.stage+1],beta_shape1, beta_shape2, log = T)
+  #rvec
+  d_vec[(n.stage+2):(2*n.stage)] = 
+    dnorm(pars[(n.stage+2):(2*n.stage)],delta_mean, delta_sd, log = T)
+  #rvec
+  # for(l in (n.stage+1):(2*n.stage)){
+  #   r_temp = pars[l]
+  #   d_vec[l] = dbeta(r_temp, beta_shape1, beta_shape2, log = T)
+  # }
   return(sum(d_vec))
 }
 
-default_pars_sampler <- function(n = 1) {
-  s_vec <- matrix(NA, n, 8)
+default_pars_sampler <- function(n.stage=n.stage) {
+  s_vec <- matrix(NA, 1, 2*n.stage)
+  
   ## b12, b3, b4, b5
-  for(i in c(1:4)) {
-    s_vec[, i] <- runif(n, 0, 2) 
-  }
-  ## r12 
-  r12 <- rbeta(n, beta_shape1, beta_shape2)
-  s_vec[, 5] <- r12
-  ## r3
-  s_vec[, 6] <- rnorm(n, delta_mean, delta_sd)
-  ## r4
-  s_vec[, 7] <- rnorm(n, delta_mean, delta_sd)
-  ## r5
-  s_vec[, 8] <- rnorm(n, delta_mean, delta_sd)
+  s_vec[, 1:n.stage] <- runif(n.stage, 0, 2) 
+  s_vec[, n.stage+1] <- rbeta(1, beta_shape1, beta_shape2)
+  s_vec[, (n.stage+2):(2*n.stage)] <- rnorm(n.stage-1, delta_mean, delta_sd)
   return(s_vec)
 }
 
@@ -61,8 +54,9 @@ SEIRfitting=function(init_sets_list,
                      pars_sampler=default_pars_sampler,
                      pars_name=c("b12", "b3", "b4", "b5", "r12", "delta3", "delta4", "delta5"),
                      calc_clearance=T,
-                     n_burn_in=4000,
-                     n_iterations=180000) {
+                     n_burn_in=10000,
+                     n_iterations=240000,
+                     all.date = all.date) {
   if (randomize_startValue & !is.na(startValue)) {
     print("startValue will be ignored since randomize_startValue is set to TRUE!")
   } else if (!randomize_startValue & is.na(startValue)) {
@@ -73,8 +67,8 @@ SEIRfitting=function(init_sets_list,
   onset_obs <- init_sets_list$daily_new_case
   init_states <- init_sets_list$init_states
   n_pars = length(pars_name)
-  n_stage = length(init_sets_list$stage_intervals)
-  
+  n.stage = length(init_sets_list$stage_intervals)
+  n_stage = n.stage
   ## take a try: pars = c(b12, b3, b3, b5, r12, delta3, delta4, delta5)
   # SEIRpred(pars = c(1.4, 0.4, 0.1, 0.1, 0.5, -1, 0, 0), init_settings = init_sets_list)[, "Onset_expect"]
   ################################################################################################################
@@ -104,7 +98,7 @@ SEIRfitting=function(init_sets_list,
   
   ## take a try 
   # pars_sampler(n = 1)
-  pars_prior <- createPrior(density = pars_density, sampler = pars_sampler, 
+  pars_prior <- createPrior(density = pars_density, sampler = function(){pars_sampler(n.stage = n.stage)}, 
                             lower = init_sets_list$par_lower, upper = init_sets_list$par_upper)
   
   if (!skip_MCMC) {
@@ -115,13 +109,17 @@ SEIRfitting=function(init_sets_list,
       startValue_list = list()
       log_likelihood = rep(0,n.simu)
       for(l in 1:n.simu){
-      #  print(l)
-        startValue=pars_sampler()  
+        if(l%%500==0){
+          print(l)  
+        }
+        
+        startValue=pars_sampler(n.stage = n.stage)  
         startValue_list[[l]] = startValue
         log_likelihood[l] = loglh_func(startValue)
       }
       
       startValue =startValue_list[[which.max(log_likelihood)]]
+      print(max(log_likelihood))
       while (is.infinite(loglh_func(startValue))) {
         startValue=pars_sampler()
       }
@@ -193,7 +191,7 @@ SEIRfitting=function(init_sets_list,
   dev.off()
   
   png(paste0("../output/par_hist_run_",run_id,".png"))
-  par(mfrow = c(2, 4))
+  par(mfrow = c(4, round(n.stage/2)+1))
   for(i in 1:n_pars) {
     hist(mcmc_pars_estimate[, i], xlab = pars_name[i], main = "", col = "red")
     rm(i)
@@ -201,7 +199,7 @@ SEIRfitting=function(init_sets_list,
   dev.off()
   
   png(paste0("../output/par_traj_run_",run_id,".png"), width=1000, height=500)
-  par(mfrow = c(2, 4))
+  par(mfrow = c(4, round(n.stage/2)+1))
   for(i in 1:n_pars) {
     plot(1:nrow(mcmc_pars_estimate), mcmc_pars_estimate[, i], ylab = pars_name[i], xlab = "iter", main = "", type = "l")
     rm(i)
@@ -209,7 +207,8 @@ SEIRfitting=function(init_sets_list,
   dev.off()
   
   if (plot_combined_fig) {
-    SEIRplot(pars_estimate = mcmc_pars_estimate, file_name = run_id, init_settings = init_sets_list, panel_B_R_ylim = panel_B_R_ylim)
+    SEIRplot(pars_estimate = mcmc_pars_estimate, file_name = run_id, init_settings = init_sets_list, panel_B_R_ylim = panel_B_R_ylim,
+             stage_intervals=stage_intervals)
   }
   
   par(mfrow = c(1, 1))

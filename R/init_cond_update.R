@@ -6,8 +6,11 @@ generate_init_condi <- function(r0,
                                 alpha = 0.55,
                                 Dh = 30,
                                 N ,
-                                flowN = c(0, 0, 0, 0, 0),
-                                stateInput
+                                flowN ,
+                                stateInput,
+                                stateDataClean,
+                                jan1_idx,
+                                stage_intervals
 ) {
   
   stopifnot(r0>=0 & r0<=1 & Di>=0 & Dp>=0 & De>=0 & all(Dp>=0) & alpha>=0 & alpha<=1 & Dh>=0 & N>=0 & all(flowN>=0))
@@ -18,19 +21,15 @@ generate_init_condi <- function(r0,
   ## De           : latent period
   ## r0           : initial ascertainment rate
   ## realData     : real data from the CDC
-  
+  realData_all <- stateDataClean
+  #leave 10 days for prediction
+  realData <- realData_all[1:(nrow(realData_all)-10),]
   R0 <- 0
   H0 <- 0
+  n.stage <- length(stage_intervals)
   
-  allData <- read.csv("../data/JHU_COVID-19_State.csv")#[-c(1:24), ]
-  idx <- which(allData$stateName==stateInput)
-  realData_all =  allData[idx,]
-  #realData_all <- allData %>% filter(stateName==stateInput) 
-  #jan1_idx = min(which(realData_all$positiveIncreas>20))
-  jan1_idx = 46
-  realData <- realData_all[c(jan1_idx:nrow(realData_all)),]
-  daily_new_case <- realData$positiveIncrease[1:110]
-  daily_new_case_all <- realData$positiveIncrease
+  daily_new_case <- realData$positiveIncrease
+  daily_new_case_all <- realData_all$positiveIncrease
   realData_all <- realData_all %>% select(positiveIncrease)
   realData <- realData %>% select(positiveIncrease)
   ##
@@ -47,15 +46,15 @@ generate_init_condi <- function(r0,
   ## helper function
   # transform variables to a form that SEIRpred can use
   # so that SEIRpred can be re-used as much as possible
-  transform_var_main_5stage=function(pars) {
-    b_vec <- pars[1:4]
-    b_vec <- c(b_vec[1], b_vec[1], b_vec[2:4])
-    ##
-    r12 <- pars[5]
-    r3 <- 1 / (1 + (1 - r12) / (r12 * exp(pars[6])))
-    r4 <- 1 / (1 + (1 - r3) / (r3 * exp(pars[7])))
-    r5 <- 1 / (1 + (1 - r4) / (r4 * exp(pars[8])))
-    r_vec <- c(r12,r12,r3,r4,r5)
+  transform_var_main_stage=function(pars) {
+    n.stage <- length(pars)/2
+    b_vec <- pars[1:n.stage]
+    r_vec <- pars[(n.stage+1):(2*n.stage)]
+    r1 = r_vec[1]
+    for(l in 2:n.stage){
+      rtemp = 1 / (1 + (1 - r_vec[l-1]) / (r_vec[l-1] * exp(r_vec[l])))
+      r_vec[l] = rtemp
+    }
     
     return(list(b_vec, r_vec))
   }
@@ -72,16 +71,11 @@ generate_init_condi <- function(r0,
               daily_new_case_all = daily_new_case_all, 
               init_states = init_states,
               days_to_fit=1:length(daily_new_case),
-              stage_intervals=list(
-                c(start=1, end=10),
-                c(start=11, end=25),
-                c(start=26, end=40),
-                c(start=41, end=55),
-                c(start=56, end=110)
-              ),
-              var_trans_fun=transform_var_main_5stage,
-              par_lower = c(b12 = 0, b3 = 0, b4 = 0, b5 = 0, r12 = 0, delta3 = -10, delta4 = -10, delta5 = -10),
-              par_upper = c(b12 = 2, b3 = 2, b4 = 2, b5 = 2, r12 = 1, delta3 = 10, delta4 = 10, delta5 = 10)))
+              stage_intervals=stage_intervals,
+              var_trans_fun=transform_var_main_stage,
+              par_lower = c(rep(0,n.stage),0,rep(-10,n.stage-1)),
+              par_upper =  c(rep(2,n.stage),1,rep(10,n.stage-1)))
+  )
   # TODO: please confirm the following:
   # boundaries for delta3-5 will not be used, they are here merely to meet the formality imposed by runMCMC
 }

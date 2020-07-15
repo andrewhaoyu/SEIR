@@ -17,13 +17,8 @@
 #' @param num_periods             number of periods to simulate
 #################################################################################################
 SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
-                     stage_intervals=list(
-                       c(start=1, end=10),
-                       c(start=11, end=25),
-                       c(start=26, end=40),
-                       c(start=41, end=55),
-                       c(start=56, end=110)
-                     )) {
+                     stage_intervals=stage_intervals,
+                     all.date = all.date) {
   #total days to predict
   n.days <- length(init_settings$daily_new_case_all)
   stages <- length(stage_intervals)
@@ -34,19 +29,22 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
     end.vec[k] <- stage_intervals[[k]][2]
   }
   #days cut = total days/stages
-  cut.days = round(n.days/5)
   init_settings$days_to_fit <- 1:n.days
   
   library(vioplot)
+ my.color = c("#BC3C29FF","#0072B5FF", "#E18727FF", "#7876B1FF", "#FFDC91FF","#662506","#a6cee3","#fb9a99","#984ea3","#ffff33")
   ##
   onset_obs_all <- as.numeric(init_settings$daily_new_case_all)
   ptime <- 1:length(onset_obs_all)
-  mydate <- c(paste("Mar", 7:31), paste("Apr", 1:30), paste("May", 1:31),paste("Jun", 1:30),
-              paste("Jul", 1:8))
+  mydate <- format(all.date,"%b %d")
+  stage.label <- rep("c",stages)
+  for(l in 1:stages){
+    stage.label[l] = paste0(format(all.date[start.vec[l]],"%b %d")," - ",format(all.date[end.vec[l]],"%d"))
+  }
   #
   pdf(paste0("../output/Figure_", file_name, ".pdf"), width = 9, height = 10)
   par(mar = c(4, 5, 2.5, 1))
-  layout(matrix(c(1:6), byrow = T, nrow = 3))
+  layout(matrix(c(1:3), byrow = T, nrow = 3))
   
   l <- stages
   estN_mat <- apply(pars_estimate, 1, function(x) SEIRsimu(pars = x, init_settings = init_settings, num_periods = l)[, "Onset_expect"])
@@ -57,7 +55,7 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   plot(ptime, estN_mean, ylim = c(0, max(estN_up, onset_obs_all) * 1.05), xlab = "", ylab = "", type = "p", col = "white", pch = 16, xaxt="n", cex = 0.5)
   mtext("Onset date (2020)", side = 1, line  = 3, cex = 1.01)
   mtext("No. of ascertained cases", side = 2, line = 3, cex = 1.01)
-  axis(1, at = seq(1, n.days, cut.days), labels = mydate[seq(1, n.days, cut.days)])
+  axis(1, at = c(1,end.vec), labels = mydate[c(1,end.vec)])
   #
   
   abline(v = end.vec, lty = 3, lwd = 2, col = "darkgrey")
@@ -82,61 +80,72 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   rt_low <- sprintf("%.2f", round(apply(estRt_mat, 2, function(x) quantile(x, 0.025)), 2))
   rt_up <- sprintf("%.2f", round(apply(estRt_mat, 2, function(x) quantile(x, 0.975)), 2))
   #
-  vioplot(estRt_mat[, 1], estRt_mat[, 2], estRt_mat[, 3], estRt_mat[, 4], estRt_mat[, 5], names = NA, ylim = c(0, panel_B_R_ylim), col = c("#BC3C29FF","#0072B5FF", "#E18727FF", "#7876B1FF", "#FFDC91FF"), ylab = "", xlab = "")
+  vioplot(estRt_mat,names = NA, ylim = c(0, panel_B_R_ylim), col = my.color[1:stages], ylab = "", xlab = "")
+  #vioplot(estRt_mat[, 1], estRt_mat[, 2], estRt_mat[, 3], estRt_mat[, 4], estRt_mat[, 5], names = NA, ylim = c(0, panel_B_R_ylim), col = c("#BC3C29FF","#0072B5FF", "#E18727FF", "#7876B1FF", "#FFDC91FF"), ylab = "", xlab = "")
   mtext("Outbreak period (2020)", side = 1, line  = 3, cex = 1.01)
   mtext(expression("R"["0"]), side = 2, line = 3, cex = 1.01)
-  axis(1, at = c(1, 1.9, 3, 4, 5), tick = F, labels = c("Mar 07-16", "Mar 16-31", "Apr 1-Apr 15", "Apr 16-30", "May 1-June 26"))
+  axis(1, at = 1:n.stage, tick = F, labels = stage.label)
   abline(h = 1, lwd = 2, lty = 3, col = "red")
   #
-  text(1, min(estRt_mat[, 1]) - 0.2, labels = rt_mean[1])
-  text(1, min(estRt_mat[, 1]) - 0.45, labels = paste("(", rt_low[1], "-", rt_up[1], ")", sep = ""))
-  text(2, min(estRt_mat[, 2]) - 0.2, labels = rt_mean[2])
-  text(2, min(estRt_mat[, 2]) - 0.45, labels = paste("(", rt_low[2], "-", rt_up[2], ")", sep = ""))
-  text(3, max(estRt_mat[, 3]) + 0.4, labels = rt_mean[3])
-  text(3, max(estRt_mat[, 3]) + 0.15, labels = paste("(", rt_low[3], "-", rt_up[3], ")", sep = ""))
-  text(4, max(estRt_mat[, 4]) + 0.4, labels = rt_mean[4])
-  text(4, max(estRt_mat[, 4]) + 0.15, labels = paste("(", rt_low[4], "-", rt_up[4], ")", sep = ""))
-  text(5, max(estRt_mat[, 5]) + 0.4, labels = rt_mean[5])
-  text(5, max(estRt_mat[, 5]) + 0.15, labels = paste("(", rt_low[5], "-", rt_up[5], ")", sep = ""))
-  #text(par()$usr[1] - (par()$usr[2] -par()$usr[1]) * 0.12, par()$usr[4] + (par()$usr[4] - par()$usr[3]) * 0.06, labels = "B", xpd = T, cex = 2)
+  for(l in 1:stages){
+    if(min(estRt_mat[, l]>2)){
+      text(l, min(estRt_mat[, l]) - 0.3, labels = rt_mean[l])
+      text(l, min(estRt_mat[, l]) - 0.7, labels = paste("(", rt_low[l], "-", rt_up[l], ")", sep = ""))
+    }else{
+      text(l, max(estRt_mat[, l]) + 0.3, labels = rt_mean[l])
+      text(l, max(estRt_mat[, l]) + 0.7, labels = paste("(", rt_low[l], "-", rt_up[l], ")", sep = ""))
+      }
+    
+  }
+  # text(1, min(estRt_mat[, 1]) - 0.2, labels = rt_mean[1])
+  # text(1, min(estRt_mat[, 1]) - 0.45, labels = paste("(", rt_low[1], "-", rt_up[1], ")", sep = ""))
+  # text(2, min(estRt_mat[, 2]) - 0.2, labels = rt_mean[2])
+  # text(2, min(estRt_mat[, 2]) - 0.45, labels = paste("(", rt_low[2], "-", rt_up[2], ")", sep = ""))
+  # text(3, max(estRt_mat[, 3]) + 0.4, labels = rt_mean[3])
+  # text(3, max(estRt_mat[, 3]) + 0.15, labels = paste("(", rt_low[3], "-", rt_up[3], ")", sep = ""))
+  # text(4, max(estRt_mat[, 4]) + 0.4, labels = rt_mean[4])
+  # text(4, max(estRt_mat[, 4]) + 0.15, labels = paste("(", rt_low[4], "-", rt_up[4], ")", sep = ""))
+  # text(5, max(estRt_mat[, 5]) + 0.4, labels = rt_mean[5])
+  # text(5, max(estRt_mat[, 5]) + 0.15, labels = paste("(", rt_low[5], "-", rt_up[5], ")", sep = ""))
+  # #text(par()$usr[1] - (par()$usr[2] -par()$usr[1]) * 0.12, par()$usr[4] + (par()$usr[4] - par()$usr[3]) * 0.06, labels = "B", xpd = T, cex = 2)
   
   
   
   ##########################################   Panel C-E  ##########################################################
-  letters <- c("C","D","E")
-  for(l in (stages-1):2){
-    estN_mat <- apply(pars_estimate, 1, function(x) SEIRsimu(pars = x, init_settings = init_settings, num_periods = l)[, "Onset_expect"])
-    estN_mean <- round(apply(estN_mat, 1, mean), 0)
-    estN_up <- round(apply(estN_mat, 1, function(x) quantile(x, 0.975)), 0)
-    estN_low <- round(apply(estN_mat, 1, function(x) quantile(x, 0.025)), 0)
-    # start A
-    plot(ptime, estN_mean, ylim = c(0, max(estN_up, onset_obs_all) * 1.05), xlab = "", ylab = "", type = "p", col = "white", pch = 16, xaxt="n", cex = 0.5)
-    mtext("Onset date (2020)", side = 1, line  = 3, cex = 1.01)
-    mtext("No. of ascertained cases", side = 2, line = 3, cex = 1.01)
-    axis(1, at = seq(1, n.days, cut.days), labels = mydate[seq(1, n.days, cut.days)])
-    #
-    
-    abline(v = end.vec, lty = 3, lwd = 2, col = "darkgrey")
-    text(end.vec, par()$usr[4], labels = mydate[end.vec], col = "darkgrey", pos = 3, xpd = T)
-    #
-    polygon(c(ptime[1:end.vec[l]], rev(ptime[1:end.vec[l]])), c(estN_up[1:end.vec[l]], rev(estN_low[1:end.vec[l]])), col = "#F39B7FB2", border = NA)
-    polygon(c(ptime[-c(1:end.vec[l])], rev(ptime[-c(1:end.vec[l])])), c(estN_up[-c(1:end.vec[l])], rev(estN_low[-c(1:end.vec[l])])), col = "#4DBBD5B2", border = NA)
-    #
-    points(ptime[1:end.vec[l]], estN_mean[1:end.vec[l]], col = "#BC3C29FF", pch = 16, cex = 0.8)
-    points(ptime[-c(1:end.vec[l])], estN_mean[-c(1:end.vec[l])], col = "#0072B5FF", pch = 17, cex = 0.8)
-    points(ptime, onset_obs_all, col = "black", pch = 4, cex = 0.8)
-    #
-    legend("topleft", legend = c("Observed", "Fitted",  "Predicted"), col = c("black",  "#BC3C29FF", "#0072B5FF"), pch = c(4, 16, 17), bty = "n")
-    #text(par()$usr[1] - (par()$usr[2] -par()$usr[1]) * 0.12, par()$usr[4] + (par()$usr[4] - par()$usr[3]) * 0.06, labels = "A", xpd = T, cex = 2)
-    
-    
-    
-  }
+  # letters <- c("C","D","E")
+  # for(l in (stages-1):2){
+  #   estN_mat <- apply(pars_estimate, 1, function(x) SEIRsimu(pars = x, init_settings = init_settings, num_periods = l)[, "Onset_expect"])
+  #   estN_mean <- round(apply(estN_mat, 1, mean), 0)
+  #   estN_up <- round(apply(estN_mat, 1, function(x) quantile(x, 0.975)), 0)
+  #   estN_low <- round(apply(estN_mat, 1, function(x) quantile(x, 0.025)), 0)
+  #   # start A
+  #   plot(ptime, estN_mean, ylim = c(0, max(estN_up, onset_obs_all) * 1.05), xlab = "", ylab = "", type = "p", col = "white", pch = 16, xaxt="n", cex = 0.5)
+  #   mtext("Onset date (2020)", side = 1, line  = 3, cex = 1.01)
+  #   mtext("No. of ascertained cases", side = 2, line = 3, cex = 1.01)
+  #   axis(1, at = seq(1, n.days, cut.days), labels = mydate[seq(1, n.days, cut.days)])
+  #   #
+  #   
+  #   abline(v = end.vec, lty = 3, lwd = 2, col = "darkgrey")
+  #   text(end.vec, par()$usr[4], labels = mydate[end.vec], col = "darkgrey", pos = 3, xpd = T)
+  #   #
+  #   polygon(c(ptime[1:end.vec[l]], rev(ptime[1:end.vec[l]])), c(estN_up[1:end.vec[l]], rev(estN_low[1:end.vec[l]])), col = "#F39B7FB2", border = NA)
+  #   polygon(c(ptime[-c(1:end.vec[l])], rev(ptime[-c(1:end.vec[l])])), c(estN_up[-c(1:end.vec[l])], rev(estN_low[-c(1:end.vec[l])])), col = "#4DBBD5B2", border = NA)
+  #   #
+  #   points(ptime[1:end.vec[l]], estN_mean[1:end.vec[l]], col = "#BC3C29FF", pch = 16, cex = 0.8)
+  #   points(ptime[-c(1:end.vec[l])], estN_mean[-c(1:end.vec[l])], col = "#0072B5FF", pch = 17, cex = 0.8)
+  #   points(ptime, onset_obs_all, col = "black", pch = 4, cex = 0.8)
+  #   #
+  #   legend("topleft", legend = c("Observed", "Fitted",  "Predicted"), col = c("black",  "#BC3C29FF", "#0072B5FF"), pch = c(4, 16, 17), bty = "n")
+  #   #text(par()$usr[1] - (par()$usr[2] -par()$usr[1]) * 0.12, par()$usr[4] + (par()$usr[4] - par()$usr[3]) * 0.06, labels = "A", xpd = T, cex = 2)
+  #   
+  #   
+  #   
+  # }
   
   
   
   ##########################################   Panel F  ##########################################################
-  estAIP_mat <- apply(pars_estimate, 1, function(x) SEIRsimu(pars = x, init_settings = init_settings, num_periods = 5)[, c("I", "A", "P")])
+  estAIP_mat <- apply(pars_estimate, 1, function(x) SEIRsimu(pars = x, init_settings = init_settings, num_periods = n.stage)[, c("I", "A", "P")])
   estI_mat <- estAIP_mat[ptime, ]
   estA_mat <- estAIP_mat[ptime + length(ptime), ]
   estP_mat <- estAIP_mat[ptime + length(ptime) * 2, ]
@@ -147,7 +156,7 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   barpos <- barplot(estAIP_dat, col = c("#BC3C29FF", "#FFDC91FF", "#0072B5FF"), xlab = "", ylab = "", border = "NA")
   mtext("Date (2020)", side = 1, line  = 3, cex = 1.01)
   mtext("No. of active infectious cases", side = 2, line = 3, cex = 1.01)
-  axis(1, at = barpos[ seq(1, 124, 24)], labels = mydate[ seq(1, 124, 24)])
+  axis(1, at = barpos[ c(1,end.vec,length(all.date))], labels = mydate[ c(1,end.vec,length(all.date))])
   legend("topleft", legend = c("Presymptomatic (P)", "Unascertained (A)", "Ascertained (I)"), fill = c("#0072B5FF", "#FFDC91FF", "#BC3C29FF"), bty = "n")
   text(par()$usr[1] - (par()$usr[2] -par()$usr[1]) * 0.12, par()$usr[4] + (par()$usr[4] - par()$usr[3]) * 0.06, labels = "F", xpd = T, cex = 2)
   ##figure_F finished

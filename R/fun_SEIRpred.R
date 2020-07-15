@@ -19,12 +19,12 @@
 #################################################################################################
 SEIRpred <- function(pars, 
                      init_settings) {
+  
+  stage_intervals=init_settings$stage_intervals
+  n_stage=length(stage_intervals)
   tmp_ret=init_settings$var_trans_fun(pars)
   b_vec=tmp_ret[[1]]
   r_vec=tmp_ret[[2]]
-  stage_intervals=init_settings$stage_intervals
-  n_stage=length(stage_intervals)
-  
   ##
   Di <- init_settings$Di
   Dp <- init_settings$Dp
@@ -79,4 +79,6 @@ SEIRpred <- function(pars,
   }
   return(states_mat)
 }
+
+
 

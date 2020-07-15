@@ -35,10 +35,40 @@ panel_B_R_ylim=4;
 plot_combined_fig=T;
 pars_density=default_pars_density;
 pars_sampler=default_pars_sampler;
-pars_name=c("b12", "b3", "b4", "b5", "r12", "delta3", "delta4", "delta5");
+pars_name=c(paste0("b",c(1:n.stage)),"r1",paste0("delta",c(2:n.stage)));
 calc_clearance=T;
 n_burn_in=4000;
 n_iterations=180000
 
 
 pars = startValue
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Di=Di
+Dp=Dp
+De=De
+Dq=Dq
+alpha=alpha
+Dh=Dh
+N=N
+flowN=flowN
+daily_new_case = daily_new_case
+daily_new_case_all = daily_new_case_all
+init_states = init_states
+days_to_fit=1:length(daily_new_case)
+stage_intervals=stage_intervals
+var_trans_fun=transform_var_main_stage
+par_lower = c(rep(0,stages),0,rep(-10,stages-1))
+par_upper =  c(rep(2,stages),1,rep(10,stages-1))
