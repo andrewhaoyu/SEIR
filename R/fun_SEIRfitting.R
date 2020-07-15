@@ -54,8 +54,8 @@ SEIRfitting=function(init_sets_list,
                      pars_sampler=default_pars_sampler,
                      pars_name=c("b12", "b3", "b4", "b5", "r12", "delta3", "delta4", "delta5"),
                      calc_clearance=T,
-                     n_burn_in=10000,
-                     n_iterations=240000,
+                     n_burn_in=4000,
+                     n_iterations=18000,
                      all.date = all.date) {
   if (randomize_startValue & !is.na(startValue)) {
     print("startValue will be ignored since randomize_startValue is set to TRUE!")
