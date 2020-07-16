@@ -52,7 +52,7 @@ SEIRfitting=function(init_sets_list,
                      plot_combined_fig=T,
                      pars_density=default_pars_density,
                      pars_sampler=default_pars_sampler,
-                     pars_name=c("b12", "b3", "b4", "b5", "r12", "delta3", "delta4", "delta5"),
+                     pars_name=pars_name=c(paste0("b",c(1:n.stage)),"r1",paste0("delta",c(2:n.stage))),
                      calc_clearance=T,
                      n_burn_in=10000,
                      n_iterations=320000,
@@ -134,7 +134,7 @@ SEIRfitting=function(init_sets_list,
     #plot(mh_out)
     mcmc_pars_estimate <- getSample(mh_out, start = n_burn_in+2, thin = 1)  ## set start = 2002 as the burn in period
     mcmc_pars_estimate <- round(mcmc_pars_estimate, 3)
-    
+    print("get sample finished")
     colnames(mcmc_pars_estimate) <- pars_name 
     
     if (output_ret) {
@@ -153,7 +153,7 @@ SEIRfitting=function(init_sets_list,
                             round(quantile(mcmc_pars_estimate[,i_par],0.025),2)," - " , 
                             round(quantile(mcmc_pars_estimate[,i_par],0.975),2), ")")
   }
-  
+  print("summary string finished")
   summary_string = paste0(summary_string, paste(par_str,collapse = ", "),"\n\n")
   
   estRt_mat <- apply(mcmc_pars_estimate, 1, function(x) estimate_R(pars = x, init_settings = init_sets_list))
@@ -175,7 +175,7 @@ SEIRfitting=function(init_sets_list,
   }
   
   summary_string = paste0(summary_string, paste(r_str,collapse = ", "),"\n\n")
-  
+  print("estimate Rt finished")
   # if (calc_clearance) {
   #   clearance_date = Findzero(mcmc_pars_estimate, init_sets_list)
   #   
@@ -189,7 +189,7 @@ SEIRfitting=function(init_sets_list,
   cairo_pdf(paste0("../output/par_cor_run_",run_id,".pdf"),width=10,height=10)
   correlationPlot_modified(mcmc_pars_estimate, scaleCorText = F)
   dev.off()
-  
+  print("plot correlation plot finished")
   png(paste0("../output/par_hist_run_",run_id,".png"))
   par(mfrow = c(4, round(n.stage/2)+1))
   for(i in 1:n_pars) {
@@ -197,7 +197,7 @@ SEIRfitting=function(init_sets_list,
     rm(i)
   }
   dev.off()
-  
+  print("plot hist plot finished")
   png(paste0("../output/par_traj_run_",run_id,".png"), width=1000, height=500)
   par(mfrow = c(4, round(n.stage/2)+1))
   for(i in 1:n_pars) {
@@ -205,10 +205,10 @@ SEIRfitting=function(init_sets_list,
     rm(i)
   }
   dev.off()
-  
+  print("plot tracj finished")
   if (plot_combined_fig) {
     SEIRplot(pars_estimate = mcmc_pars_estimate, file_name = run_id, init_settings = init_sets_list, panel_B_R_ylim = panel_B_R_ylim,
-             stage_intervals=stage_intervals)
+             stage_intervals=stage_intervals,all.date = all.date)
   }
   
   par(mfrow = c(1, 1))
