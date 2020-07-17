@@ -55,7 +55,7 @@ all.cut.date <- c(floor_date(seq(start.date,end.date,by="month"),unit="month")+1
 ceiling_date(seq(start.date, end.date, by = 'month'), unit = "month")-1)
 all.cut.date <- all.cut.date[order(all.cut.date)]
 #remove the first cut date if it's too close to start.date
-if(as.numeric(all.cut.date[1]-start.date)<=8){
+if(as.numeric(all.cut.date[1]-start.date)<=3){
   all.cut.date <- all.cut.date[-1]
 }
 #remove the end cut date if it's too close to end.date
@@ -80,7 +80,7 @@ flowN <- rep(0,n.stage)
 Di = 2.9
 Dp = 2.3
 De = 2.9
-Dq <- c(21, 15, 10, 6, rep(2,n.stage-3))
+Dq <- c(21, 15, 10, 6, rep(2,n.stage-4))
 alpha = 0.55
 Dh = 30
 #force Apr 1, Apr 15, 
@@ -100,7 +100,9 @@ init_sets_list=get_init_sets_list(r0 = 0.23,
 
 SEIRfitting(init_sets_list, randomize_startValue = T,
             run_id = i1, output_ret = T, skip_MCMC=F,
-            all.date = all.date)
+            all.date = all.date,
+            n_burn_in=12000,
+            n_iterations=180000)
 
 ## to evaluate convergence, we run another two rounds of this program
 # SEIRfitting(init_sets_list, randomize_startValue = T, run_id = "main_analysis_rep1", output_ret = T, skip_MCMC=F)

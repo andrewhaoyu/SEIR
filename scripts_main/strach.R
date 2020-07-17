@@ -37,7 +37,7 @@ pars_density=default_pars_density;
 pars_sampler=default_pars_sampler;
 pars_name=c(paste0("b",c(1:n.stage)),"r1",paste0("delta",c(2:n.stage)));
 calc_clearance=T;
-n_burn_in=4000;
+n_burn_in=12000;
 n_iterations=180000
 
 
