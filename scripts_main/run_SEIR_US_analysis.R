@@ -32,7 +32,7 @@ source(paste0(code_root, "R/fun_Findzero.R"))
 
 statename = c("New York","Massachusetts",
               "Florida","Michigan")
-allData <- read.csv("../data/JHU_COVID-19_State.csv")
+allData <- read.csv("../data/US_State_data.csv")
 idx <- which(allData$stateName==statename[i1])
 N = allData$population[idx[1]]
 print(statename[i1])
