@@ -102,7 +102,7 @@ SEIRfitting(init_sets_list, randomize_startValue = T,
             run_id = i1, output_ret = T, skip_MCMC=F,
             all.date = all.date,
             n_burn_in=12000,
-            n_iterations=180000)
+            n_iterations=320000)
 
 ## to evaluate convergence, we run another two rounds of this program
 # SEIRfitting(init_sets_list, randomize_startValue = T, run_id = "main_analysis_rep1", output_ret = T, skip_MCMC=F)
