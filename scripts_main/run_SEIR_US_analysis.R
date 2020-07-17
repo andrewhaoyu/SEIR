@@ -8,7 +8,7 @@ args = commandArgs(trailingOnly = T)
 i1 = as.numeric(args[[1]])
 
 #code_root = "/data/zhangh24/SEIR/"
-code_root = "/n/home13/zhangh24/SEIR"
+code_root = "/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/"
 setwd(paste0(code_root, "scripts_main"))
 #install.packages("BayesianTools")
 library(BayesianTools)
@@ -17,7 +17,7 @@ library(vioplot)
 #install.packages("corrplot")
 library(corrplot)
 library(readr)
-#install.packages("cairoDevice")
+install.packages("cairoDevice")
 library(cairoDevice)
 library(dplyr)
 ##
@@ -48,6 +48,7 @@ all.date <- as.Date(stateDataClean$date)
 n.days <- nrow(stateDataClean)-10
 n.days.all <- nrow(stateDataClean)
 days_to_fit <- 1:n.days
+#install.packages("lubridate")
 library(lubridate)
 date_in_model <- as.Date(stateDataClean$date)
 start.date <- as.Date(stateDataClean$date[1])
