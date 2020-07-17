@@ -7,7 +7,8 @@
 args = commandArgs(trailingOnly = T)
 i1 = as.numeric(args[[1]])
 
-code_root = "/data/zhangh24/SEIR/"
+#code_root = "/data/zhangh24/SEIR/"
+code_root = "/n/home13/zhangh24/SEIR"
 setwd(paste0(code_root, "scripts_main"))
 #install.packages("BayesianTools")
 library(BayesianTools)
