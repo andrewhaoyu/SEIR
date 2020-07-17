@@ -17,7 +17,7 @@ library(vioplot)
 #install.packages("corrplot")
 library(corrplot)
 library(readr)
-install.packages("cairoDevice")
+#install.packages("cairoDevice")
 library(cairoDevice)
 library(dplyr)
 ##
