@@ -1,8 +1,8 @@
 library(cairoDevice)
 
 default_pars_density <- function(pars) {
-  n.stage = length(par)/2
-  d_vec <- rep(NA, length(par))
+  n.stage = length(pars)/2
+  d_vec <- rep(NA, length(pars))
   ##b12, b3, b4, b5
   #bvec
   # for(i in c(1:n.stage)) {
