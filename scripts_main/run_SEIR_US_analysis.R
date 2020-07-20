@@ -8,7 +8,8 @@ args = commandArgs(trailingOnly = T)
 i1 = as.numeric(args[[1]])
 
 #code_root = "/data/zhangh24/SEIR/"
-code_root = "/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/"
+#code_root = "/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/"
+code_root = "/dcl01/chatterj/data/hzhang1/temp/SEIR/"
 setwd(paste0(code_root, "scripts_main"))
 #install.packages("BayesianTools")
 library(BayesianTools)
@@ -18,7 +19,7 @@ library(vioplot)
 library(corrplot)
 library(readr)
 #install.packages("cairoDevice")
-library(cairoDevice)
+#library(cairoDevice)
 library(dplyr)
 ##
 source(paste0(code_root, "R/fun_SEIRpred.R"))
@@ -42,6 +43,7 @@ stateData <- allData[idx,]
 jdx <- which(stateData$positiveIncrease>20)
 #start analysis date
 jan1_idx = min(jdx)
+stateDataClean = 
 stateDataClean = stateData[jan1_idx:nrow(stateData),]
 all.date <- as.Date(stateDataClean$date)
 #leave 10 days for prediction
@@ -95,7 +97,8 @@ init_sets_list=get_init_sets_list(r0 = 0.23,
                                   jan1_idx = jan1_idx,
                                   stateDataClean = stateDataClean,
                                   stateInput = statename[i1],
-                                  stage_intervals = stage_intervals)
+                                  stage_intervals = stage_intervals,
+                                  stateData=stateData)
 
 # good initial conditions
 # c(1.284, 0.384, 0.174, 0.096, 0.161, -0.046, -0.379, 0.569)

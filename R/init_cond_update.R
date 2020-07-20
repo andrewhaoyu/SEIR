@@ -10,7 +10,8 @@ generate_init_condi <- function(r0,
                                 stateInput,
                                 stateDataClean,
                                 jan1_idx,
-                                stage_intervals
+                                stage_intervals,
+                                stateData
 ) {
   
   stopifnot(r0>=0 & r0<=1 & Di>=0 & Dp>=0 & De>=0 & all(Dp>=0) & alpha>=0 & alpha<=1 & Dh>=0 & N>=0 & all(flowN>=0))
@@ -21,18 +22,10 @@ generate_init_condi <- function(r0,
   ## De           : latent period
   ## r0           : initial ascertainment rate
   ## realData     : real data from the CDC
-  realData_all <- stateDataClean
-  #leave 10 days for prediction
-  realData <- realData_all[1:(nrow(realData_all)-10),]
+  realData_all <- stateData %>% select(positiveIncrease)
   R0 <- 0
   H0 <- 0
   n.stage <- length(stage_intervals)
-  
-  daily_new_case <- realData$positiveIncrease
-  daily_new_case_all <- realData_all$positiveIncrease
-  realData_all <- realData_all %>% select(positiveIncrease)
-  realData <- realData %>% select(positiveIncrease)
-  ##
   E0 <- sum(realData_all[(jan1_idx+round(Dp)):(jan1_idx+round(Dp)+round(De)-1),1]) / r0 ## Jan 3-5 for De=2.9 and Dp=2.3
   # E0 <- (40 + 23 + 47) / r0                                              
   P0 <- sum(realData_all[jan1_idx:(jan1_idx+round(Dp)-1),1]) / r0                     ## Jan 1-2 for Dp=2.3
@@ -42,6 +35,15 @@ generate_init_condi <- function(r0,
   A0 <- I0 * (1 - r0) / r0
   S0 <- N - E0 - P0 - I0 - A0 - H0 - R0
   init_states <- round(c(S = S0, E = E0, P = P0, I = I0, A = A0, H = H0, R = R0), 0)
+  
+  #leave 10 days for prediction
+  realData_all <- stateDataClean
+  realData <- realData_all[1:(nrow(realData_all)-10),]
+  daily_new_case <- realData$positiveIncrease
+  daily_new_case_all <- realData_all$positiveIncrease
+  realData_all <- realData_all %>% select(positiveIncrease)
+  realData <- realData %>% select(positiveIncrease)
+  ##
   
   ## helper function
   # transform variables to a form that SEIRpred can use

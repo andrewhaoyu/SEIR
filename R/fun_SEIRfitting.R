@@ -1,4 +1,4 @@
-library(cairoDevice)
+#library(cairoDevice)
 
 default_pars_density <- function(pars) {
   n.stage = length(pars)/2

@@ -72,3 +72,8 @@ stage_intervals=stage_intervals
 var_trans_fun=transform_var_main_stage
 par_lower = c(rep(0,stages),0,rep(-10,stages-1))
 par_upper =  c(rep(2,stages),1,rep(10,stages-1))
+
+
+setwd("/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/")
+library(data.table)
+data <- fread("./output/pars_est_run_1.txt",header=T)
