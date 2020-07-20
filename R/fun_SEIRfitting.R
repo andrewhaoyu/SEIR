@@ -46,7 +46,7 @@ SEIRfitting=function(init_sets_list,
                      randomize_startValue=F, 
                      startValue=NA, 
                      output_ret=T, 
-                     run_id=0, 
+                     run_id, 
                      skip_MCMC=F, 
                      panel_B_R_ylim=4,
                      plot_combined_fig=T,
@@ -190,7 +190,8 @@ SEIRfitting=function(init_sets_list,
   correlationPlot_modified(mcmc_pars_estimate, scaleCorText = F)
   dev.off()
   print("plot correlation plot finished")
-  png(paste0("../output/par_hist_run_",run_id,".png"))
+  #png(paste0("../output/par_hist_run_",run_id,".png"))
+  pdf(paste0("../output/par_hist_run_",run_id,".pdf"),width = 9, height = 10)
   par(mfrow = c(4, round(n.stage/2)+1))
   for(i in 1:n_pars) {
     hist(mcmc_pars_estimate[, i], xlab = pars_name[i], main = "", col = "red")
@@ -198,7 +199,8 @@ SEIRfitting=function(init_sets_list,
   }
   dev.off()
   print("plot hist plot finished")
-  png(paste0("../output/par_traj_run_",run_id,".png"), width=1000, height=500)
+  #png(paste0("../output/par_traj_run_",run_id,".png"), width=1000, height=500)
+  pdf(paste0("../output/par_traj_run_",run_id,".pdf"),width = 9, height = 10)
   par(mfrow = c(4, round(n.stage/2)+1))
   for(i in 1:n_pars) {
     plot(1:nrow(mcmc_pars_estimate), mcmc_pars_estimate[, i], ylab = pars_name[i], xlab = "iter", main = "", type = "l")
