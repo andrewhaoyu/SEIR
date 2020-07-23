@@ -8,8 +8,8 @@ args = commandArgs(trailingOnly = T)
 i1 = as.numeric(args[[1]])
 
 #code_root = "/data/zhangh24/SEIR/"
-#code_root = "/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/"
-code_root = "/dcl01/chatterj/data/hzhang1/temp/SEIR/"
+code_root = "/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/"
+#code_root = "/dcl01/chatterj/data/hzhang1/temp/SEIR/"
 setwd(paste0(code_root, "scripts_main"))
 #install.packages("BayesianTools")
 library(BayesianTools)
@@ -40,10 +40,10 @@ N = allData$population[idx[1]]
 print(statename[i1])
 stateData <- allData[idx,]
 #find first date with positive cases more than 20
-jdx <- which(stateData$positiveIncrease>20)
+jdx <- which(stateData$positiveIncrease>50)
 #start analysis date
 jan1_idx = min(jdx)
-stateDataClean = 
+
 stateDataClean = stateData[jan1_idx:nrow(stateData),]
 all.date <- as.Date(stateDataClean$date)
 #leave 10 days for prediction
@@ -82,14 +82,30 @@ for(l in 1:(n.stage)){
 }
 flowN <- rep(0,n.stage)
 Di = 2.9
-Dp = 2.3
+Dp = 4
 De = 2.9
-Dq <- c(21, 15, 10, 6, rep(2,n.stage-4))
+
 alpha = 0.55
 Dh = 30
 #force Apr 1, Apr 15, 
 N <- stateDataClean$population[1]
 
+Dq <- rep(0,n.stage)
+
+GenerateDq <- function(cut.date){
+  if(cut.date<="2020-04-01"){
+    return(10)
+  }else if(cut.date<="2020-04-15"){
+    return(6)
+  } else{
+    return(3)
+  }
+}
+
+for(i in 1:(n.stage-1)){
+  Dq[i] <- GenerateDq(all.cut.date[i])
+}
+Dq[length(Dq)] = 3
 init_sets_list=get_init_sets_list(r0 = 0.23,
                                   N = N,
                                   Dq = Dq,

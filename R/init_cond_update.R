@@ -1,6 +1,6 @@
 generate_init_condi <- function(r0,
                                 Di = 2.9,
-                                Dp = 2.3,
+                                Dp = 4,
                                 De = 2.9,
                                 Dq ,
                                 alpha = 0.55,
