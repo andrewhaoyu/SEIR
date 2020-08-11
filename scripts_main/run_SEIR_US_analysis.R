@@ -59,7 +59,7 @@ all.cut.date <- c(floor_date(seq(start.date,end.date,by="month"),unit="month")+1
 ceiling_date(seq(start.date, end.date, by = 'month'), unit = "month")-1)
 all.cut.date <- all.cut.date[order(all.cut.date)]
 #remove the first cut date if it's too close to start.date
-if(as.numeric(all.cut.date[1]-start.date)<=3){
+if(as.numeric(all.cut.date[1]-start.date)<=7){
   all.cut.date <- all.cut.date[-1]
 }
 #remove the end cut date if it's too close to end.date
