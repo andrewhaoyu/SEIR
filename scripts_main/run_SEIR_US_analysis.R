@@ -5,11 +5,16 @@
 # code_root="C:/Users/xingj/Documents/WangLabAdmin/COVID-19/NatSEIR_Rcode/"
 #load state number
 args = commandArgs(trailingOnly = T)
-i1 = as.numeric(args[[1]])
-i2 = as.numeric(args[[2]])
+ind = as.numeric(args[[1]])
+#number of statess
+#number of replicates
+n_rep <- 3
 
-code_root = "/data/zhangh24/SEIR/"
-#code_root = "/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/"
+i1 = floor(ind/n_rep)+1
+i2 = ind-n_rep*(i1-1)
+
+#code_root = "/data/zhangh24/SEIR/"
+code_root = "/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/"
 #code_root = "/dcl01/chatterj/data/hzhang1/temp/SEIR/"
 setwd(paste0(code_root, "scripts_main"))
 #install.packages("BayesianTools")
