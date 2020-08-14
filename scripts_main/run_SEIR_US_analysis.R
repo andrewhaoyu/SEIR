@@ -10,7 +10,7 @@ ind = as.numeric(args[[1]])
 #number of replicates
 n_rep <- 3
 
-i1 = floor(ind/n_rep)+1
+i1 = ceiling(ind/n_rep)
 i2 = ind-n_rep*(i1-1)
 
 #code_root = "/data/zhangh24/SEIR/"
