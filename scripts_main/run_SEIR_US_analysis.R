@@ -6,9 +6,10 @@
 #load state number
 args = commandArgs(trailingOnly = T)
 i1 = as.numeric(args[[1]])
+i2 = as.numeric(args[[2]])
 
-#code_root = "/data/zhangh24/SEIR/"
-code_root = "/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/"
+code_root = "/data/zhangh24/SEIR/"
+#code_root = "/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/"
 #code_root = "/dcl01/chatterj/data/hzhang1/temp/SEIR/"
 setwd(paste0(code_root, "scripts_main"))
 #install.packages("BayesianTools")
@@ -120,10 +121,10 @@ init_sets_list=get_init_sets_list(r0 = 0.23,
 # c(1.284, 0.384, 0.174, 0.096, 0.161, -0.046, -0.379, 0.569)
 
 SEIRfitting(init_sets_list, randomize_startValue = T,
-            run_id = i1, output_ret = T, skip_MCMC=F,
+            run_id = paste0(i1,"_",i2), output_ret = T, skip_MCMC=F,
             all.date = all.date,
-            n_burn_in=20000,
-            n_iterations=340000)
+            n_burn_in=30000,
+            n_iterations=500000)
 
 ## to evaluate convergence, we run another two rounds of this program
 # SEIRfitting(init_sets_list, randomize_startValue = T, run_id = "main_analysis_rep1", output_ret = T, skip_MCMC=F)
