@@ -49,25 +49,38 @@ generate_init_condi <- function(r0,
   ## helper function
   # transform variables to a form that SEIRpred can use
   # so that SEIRpred can be re-used as much as possible
-  transform_var_main_stage=function(pars) {
-    n.stage <- length(pars)/2
-    b_vec <- pars[1:n.stage]
-    r_vec <- pars[(n.stage+1):(2*n.stage)]
-    r1 = r_vec[1]
-    for(l in 2:n.stage){
-      rtemp = 1 / (1 + (1 - r_vec[l-1]) / (r_vec[l-1] * exp(r_vec[l])))
-      r_vec[l] = rtemp
-    }
-    
-    return(list(b_vec, r_vec))
-  }
+ 
   
   if(method=="possion"){
     par_lower = c(rep(0,n.stage),0,rep(-10,n.stage-1))
     par_upper =  c(rep(2,n.stage),1,rep(10,n.stage-1))
+    transform_var_main_stage=function(pars) {
+      n.stage <- length(pars)/2
+      b_vec <- pars[1:n.stage]
+      r_vec <- pars[(n.stage+1):(2*n.stage)]
+      r1 = r_vec[1]
+      for(l in 2:n.stage){
+        rtemp = 1 / (1 + (1 - r_vec[l-1]) / (r_vec[l-1] * exp(r_vec[l])))
+        r_vec[l] = rtemp
+      }
+      
+      return(list(b_vec, r_vec))
+    }
   }else if(method=="nb"){
     par_lower = c(rep(0,n.stage),0,rep(-10,n.stage-1),0)
-    par_upper =  c(rep(2,n.stage),1,rep(10,n.stage-1),50)
+    par_upper =  c(rep(2,n.stage),1,rep(10,n.stage-1),500)
+    transform_var_main_stage=function(pars) {
+      n.stage <- (length(pars)-1)/2
+      b_vec <- pars[1:n.stage]
+      r_vec <- pars[(n.stage+1):(2*n.stage)]
+      r1 = r_vec[1]
+      for(l in 2:n.stage){
+        rtemp = 1 / (1 + (1 - r_vec[l-1]) / (r_vec[l-1] * exp(r_vec[l])))
+        r_vec[l] = rtemp
+      }
+      
+      return(list(b_vec, r_vec))
+    }
   }
   
   return(list(Di=Di,

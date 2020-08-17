@@ -54,8 +54,8 @@ Func_list = function(method){
     return(list(default_pars_density,default_pars_sampler,loglh_func,pars_name))
   }else if(method=="nb"){
     default_pars_density <- function(pars) {
-      n.stage = length(pars-1)/2
-      d_vec <- rep(NA, length(pars)+1)
+      n.stage = (length(pars)-1)/2
+      d_vec <- rep(NA, length(pars))
       ##b12, b3, b4, b5
       #bvec
       # for(i in c(1:n.stage)) {
@@ -181,6 +181,7 @@ SEIRfitting=function(init_sets_list,
   
     if (randomize_startValue) {  
       startValue=pars_sampler(n.stage = n.stage)
+      print(loglh_func(startValue))
       while (is.infinite(loglh_func(startValue))) {
         startValue=pars_sampler(n.stage = n.stage)
       }
