@@ -1,7 +1,7 @@
 #library(cairoDevice)
 
 Func_list = function(method){
-  if(method=="possion"){
+  if(method=="poisson"){
     default_pars_density <- function(pars) {
       n.stage = length(pars)/2
       d_vec <- rep(NA, length(pars))

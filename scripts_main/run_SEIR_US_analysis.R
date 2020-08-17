@@ -30,7 +30,7 @@ for(i1 in i1_opt){
 i1 = i1_vec[ind]
 i2 = i2_vec[ind]
 i3 = i3_vec[ind]
-method_vec = c("possion","nb")
+method_vec = c("poisson","nb")
 method = method_vec[i3]
 #code_root = "/data/zhangh24/SEIR/"
 code_root = "/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/"
