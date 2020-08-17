@@ -10,8 +10,27 @@ ind = as.numeric(args[[1]])
 #number of replicates
 n_rep <- 3
 
-i1 = ceiling(ind/n_rep)
-i2 = ind-n_rep*(i1-1)
+i1_opt = c(1:4)
+i2_opt = c(1:3)
+i3_opt = c(1:2)
+total = length(i1_opt)*length(i2_opt)*length(i3_opt)
+i1_vec = i2_vec = i3_vec = rep(0,total)
+temp = 1
+for(i1 in i1_opt){
+  for(i2 in i2_opt){
+    for(i3 in i3_opt){
+      i1_vec[temp] = i1_opt[i1]
+      i2_vec[temp] = i2_opt[i2]
+      i3_vec[temp] = i3_opt[i3]
+      temp = temp+1
+    }
+  }
+  
+}
+i1 = i1_vec[ind]
+i2 = i2_vec[ind]
+i3 = i3_vec[ind]
+method = c("possion","nb")
 
 #code_root = "/data/zhangh24/SEIR/"
 code_root = "/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/"

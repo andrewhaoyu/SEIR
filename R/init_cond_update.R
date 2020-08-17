@@ -11,7 +11,8 @@ generate_init_condi <- function(r0,
                                 stateDataClean,
                                 jan1_idx,
                                 stage_intervals,
-                                stateData
+                                stateData,
+                                method
 ) {
   
   stopifnot(r0>=0 & r0<=1 & Di>=0 & Dp>=0 & De>=0 & all(Dp>=0) & alpha>=0 & alpha<=1 & Dh>=0 & N>=0 & all(flowN>=0))
@@ -61,6 +62,14 @@ generate_init_condi <- function(r0,
     return(list(b_vec, r_vec))
   }
   
+  if(method=="possion"){
+    par_lower = c(rep(0,n.stage),0,rep(-10,n.stage-1))
+    par_upper =  c(rep(2,n.stage),1,rep(10,n.stage-1))
+  }else if(method=="nb"){
+    par_lower = c(rep(0,n.stage),0,rep(-10,n.stage-1),0)
+    par_upper =  c(rep(2,n.stage),1,rep(10,n.stage-1),50)
+  }
+  
   return(list(Di=Di,
               Dp=Dp,
               De=De,
@@ -75,8 +84,8 @@ generate_init_condi <- function(r0,
               days_to_fit=1:length(daily_new_case),
               stage_intervals=stage_intervals,
               var_trans_fun=transform_var_main_stage,
-              par_lower = c(rep(0,n.stage),0,rep(-10,n.stage-1)),
-              par_upper =  c(rep(2,n.stage),1,rep(10,n.stage-1)))
+              par_lower = par_lower,
+              par_upper =  par_upper)
   )
   # TODO: please confirm the following:
   # boundaries for delta3-5 will not be used, they are here merely to meet the formality imposed by runMCMC
@@ -89,3 +98,5 @@ delta_mean <- 0
 delta_sd <- 1
 beta_shape1 <- 7.3
 beta_shape2 <- 24.6
+gamma_shape = 5
+gamma_rate = 1

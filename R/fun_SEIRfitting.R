@@ -1,37 +1,121 @@
 #library(cairoDevice)
 
-default_pars_density <- function(pars) {
-  n.stage = length(pars)/2
-  d_vec <- rep(NA, length(pars))
-  ##b12, b3, b4, b5
-  #bvec
-  # for(i in c(1:n.stage)) {
-  #   d_vec[i] <- dunif(pars[i], 0, 2, log = T)
-  # }
-  d_vec[1:n.stage] =  log(1/2)
+Func_list = function(method){
+  if(method=="possion"){
+    default_pars_density <- function(pars) {
+      n.stage = length(pars)/2
+      d_vec <- rep(NA, length(pars))
+      ##b12, b3, b4, b5
+      #bvec
+      # for(i in c(1:n.stage)) {
+      #   d_vec[i] <- dunif(pars[i], 0, 2, log = T)
+      # }
+      d_vec[1:n.stage] =  log(1/2)
+      
+      #rvec1
+      d_vec[n.stage+1] = dbeta(pars[n.stage+1],beta_shape1, beta_shape2, log = T)
+      #rvec
+      d_vec[(n.stage+2):(2*n.stage)] = 
+        dnorm(pars[(n.stage+2):(2*n.stage)],delta_mean, delta_sd, log = T)
+      #rvec
+      # for(l in (n.stage+1):(2*n.stage)){
+      #   r_temp = pars[l]
+      #   d_vec[l] = dbeta(r_temp, beta_shape1, beta_shape2, log = T)
+      # }
+      return(sum(d_vec))
+    }
+    
+    default_pars_sampler <- function(n.stage=n.stage) {
+      s_vec <- matrix(NA, 1, 2*n.stage)
+      
+      ## b12, b3, b4, b5
+      s_vec[, 1:n.stage] <- runif(n.stage, 0, 2) 
+      s_vec[, n.stage+1] <- rbeta(1, beta_shape1, beta_shape2)
+      s_vec[, (n.stage+2):(2*n.stage)] <- rnorm(n.stage-1, delta_mean, delta_sd)
+      return(s_vec)
+    }
+    ## likelihood function
+    loglh_func <- function(pars){
+      ypred <- SEIRpred(pars, init_settings = init_sets_list)
+      ypred <- ypred[, "Onset_expect"]
+      
+      # meant to suppress warnings when ypred is negative
+      suppressWarnings(p <- dpois(as.numeric(onset_obs), ypred,log=T))
+      
+      #if(any(p == 0) || any(is.nan(p))){
+      if(any(is.nan(p))){  
+        logL <- -Inf
+      }else{
+        logL <- sum(p)
+      }
+      return(logL)
+    }
+    pars_name=c(paste0("b",c(1:n.stage)),"r1",paste0("delta",c(2:n.stage)))
+    return(list(default_pars_density,default_pars_sampler,loglh_func,pars_name))
+  }else if(method=="nb"){
+    default_pars_density <- function(pars) {
+      n.stage = length(pars)/2
+      d_vec <- rep(NA, length(pars))
+      ##b12, b3, b4, b5
+      #bvec
+      # for(i in c(1:n.stage)) {
+      #   d_vec[i] <- dunif(pars[i], 0, 2, log = T)
+      # }
+      d_vec[1:n.stage] =  log(1/2)
+      
+      #rvec1
+      d_vec[n.stage+1] = dbeta(pars[n.stage+1],beta_shape1, beta_shape2, log = T)
+      #rvec
+      d_vec[(n.stage+2):(2*n.stage)] = 
+        dnorm(pars[(n.stage+2):(2*n.stage)],delta_mean, delta_sd, log = T)
+      d_vec[2*n.stage+1] = dgamma(phi,gamma_shape,gamma_rate,log =T)
+      return(sum(d_vec))
+      #rvec
+      # for(l in (n.stage+1):(2*n.stage)){
+      #   r_temp = pars[l]
+      #   d_vec[l] = dbeta(r_temp, beta_shape1, beta_shape2, log = T)
+      # }
+      return(sum(d_vec))
+    }
+    
+    default_pars_sampler <- function(n.stage=n.stage) {
+      s_vec <- matrix(NA, 1, 2*n.stage)
+      
+      ## b12, b3, b4, b5
+      s_vec[, 1:n.stage] <- runif(n.stage, 0, 2) 
+      s_vec[, n.stage+1] <- rbeta(1, beta_shape1, beta_shape2)
+      s_vec[, (n.stage+2):(2*n.stage)] <- rnorm(n.stage-1, delta_mean, delta_sd)
+      s_vec[, 2*n.stage+1] <- rgamma(1,gamma_shape,gamma_rate)
+      return(s_vec)
+    }
+    ## likelihood function
+    loglh_func <- function(pars){
+      
+      
+      ypred <- SEIRpred(pars, init_settings = init_sets_list)
+      ypred <- ypred[, "Onset_expect"]
+      phi = pars[length(pars)]
+      #p = phi/(phi+as.numeric(ypred))
+      # meant to suppress warnings when ypred is negative
+      suppressWarnings(p <- dnbinom(x = as.numeric(onset_obs), 
+                                    size = phi,
+                                    mu = ypred,log=T))
+      
+      #if(any(p == 0) || any(is.nan(p))){
+      if(any(is.nan(p))){  
+        logL <- -Inf
+      }else{
+        logL <- sum(p)
+      }
+      return(logL)
+    }
+    pars_name=c(paste0("b",c(1:n.stage)),"r1",paste0("delta",c(2:n.stage)),paste0("phi"))
+    return(list(default_pars_density,default_pars_sampler,loglh_func,pars_name))
+  }
   
-  #rvec1
-  d_vec[n.stage+1] = dbeta(pars[n.stage+1],beta_shape1, beta_shape2, log = T)
-  #rvec
-  d_vec[(n.stage+2):(2*n.stage)] = 
-    dnorm(pars[(n.stage+2):(2*n.stage)],delta_mean, delta_sd, log = T)
-  #rvec
-  # for(l in (n.stage+1):(2*n.stage)){
-  #   r_temp = pars[l]
-  #   d_vec[l] = dbeta(r_temp, beta_shape1, beta_shape2, log = T)
-  # }
-  return(sum(d_vec))
 }
 
-default_pars_sampler <- function(n.stage=n.stage) {
-  s_vec <- matrix(NA, 1, 2*n.stage)
-  
-  ## b12, b3, b4, b5
-  s_vec[, 1:n.stage] <- runif(n.stage, 0, 2) 
-  s_vec[, n.stage+1] <- rbeta(1, beta_shape1, beta_shape2)
-  s_vec[, (n.stage+2):(2*n.stage)] <- rnorm(n.stage-1, delta_mean, delta_sd)
-  return(s_vec)
-}
+
 
 ## wrapper for the analysis run
 ## Create BayesianSetup and settings, lower/upper for parameters: b12, b3, b3, b5, r12, delta3, delta4, delta5
@@ -50,19 +134,24 @@ SEIRfitting=function(init_sets_list,
                      skip_MCMC=F, 
                      panel_B_R_ylim=4,
                      plot_combined_fig=T,
-                     pars_density=default_pars_density,
-                     pars_sampler=default_pars_sampler,
-                     pars_name=c(paste0("b",c(1:n.stage)),"r1",paste0("delta",c(2:n.stage))),
                      calc_clearance=T,
-                     n_burn_in=10000,
+                     n_burn_in=20000,
                      n_iterations=320000,
-                     all.date = all.date) {
+                     all.date = all.date,
+                     method = method) {
   if (randomize_startValue & !is.na(startValue)) {
     print("startValue will be ignored since randomize_startValue is set to TRUE!")
   } else if (!randomize_startValue & is.na(startValue)) {
     print("Please specify a startValue since you have set randomize_startValue to FALSE! Exiting!")
     q(save="no")
   }
+  Fun_list_result = Func_list(method)
+  pars_density=Fun_list_result[[1]]
+  pars_sampler=Fun_list_result[[2]]
+  loglh_func = Fun_list_result[[3]]
+  pars_name=Fun_list_result[[4]]
+  
+  
   
   onset_obs <- init_sets_list$daily_new_case
   init_states <- init_sets_list$init_states
@@ -72,22 +161,6 @@ SEIRfitting=function(init_sets_list,
   ## take a try: pars = c(b12, b3, b3, b5, r12, delta3, delta4, delta5)
   # SEIRpred(pars = c(1.4, 0.4, 0.1, 0.1, 0.5, -1, 0, 0), init_settings = init_sets_list)[, "Onset_expect"]
   ################################################################################################################
-  ## likelihood function
-  loglh_func <- function(pars){
-    ypred <- SEIRpred(pars, init_settings = init_sets_list)
-    ypred <- ypred[, "Onset_expect"]
-    
-    # meant to suppress warnings when ypred is negative
-    suppressWarnings(p <- dpois(as.numeric(onset_obs), ypred,log=T))
-    
-    #if(any(p == 0) || any(is.nan(p))){
-    if(any(is.nan(p))){  
-    logL <- -Inf
-    }else{
-      logL <- sum(p)
-    }
-    return(logL)
-  }
   ## take a try
   # loglh_func(pars = c(1.4, 0.4, 0.1, 0.1, 0.5, -1, 0, 0))
   

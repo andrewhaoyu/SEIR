@@ -6,5 +6,5 @@ estN <- new.data[,1]
 onset <- new.data[,2]
 plot(new.data[,1],new.data[,2])
 outcome <- ((onset-estN)^2-onset)/estN
-model <- lm(outcome~estN)
+model <- lm(outcome~estN=1)
 summary(model)
