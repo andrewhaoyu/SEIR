@@ -18,7 +18,7 @@ jan1_idx = 25
 
 
 
-
+mcmc_pars_estimate = read.table(paste0("../output/pars_est_run_",run_id,".txt"),header=T)
 randomize_startValue = T;
 run_id = "main_analysis"; 
 output_ret = T;

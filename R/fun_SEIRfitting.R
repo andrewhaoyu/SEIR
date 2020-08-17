@@ -206,7 +206,7 @@ SEIRfitting=function(init_sets_list,
     mcmc_pars_estimate = read.table(paste0("../output/pars_est_run_",run_id,".txt"), header = T)
     pars_name = names(mcmc_pars_estimate)
   }
-  n.par = mcmc_pars_estimate
+  n.par = ncol(mcmc_pars_estimate)
   summary_string=paste0(paste(pars_name, collapse = ","), "\n")
   
   par_str=list()
@@ -275,7 +275,7 @@ SEIRfitting=function(init_sets_list,
              stage_intervals=stage_intervals,all.date = all.date)
   }
   
-  par(mfrow = c(1, 1))
+  #par(mfrow = c(1, 1))
   # corrplot(cor(mcmc_pars_estimate))
   # pairs(mcmc_pars_estimate)
   
