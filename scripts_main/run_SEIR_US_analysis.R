@@ -146,9 +146,9 @@ init_sets_list=get_init_sets_list(r0 = 0.23,
 # c(1.284, 0.384, 0.174, 0.096, 0.161, -0.046, -0.379, 0.569)
 
 SEIRfitting(init_sets_list, randomize_startValue = T,
-            run_id = paste0(i1,"_",i2), output_ret = T, skip_MCMC=F,
+            run_id = paste0(i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
             all.date = all.date,
-            n_burn_in=30000,
+            n_burn_in=40000,
             n_iterations=500000,
             method = method)
 

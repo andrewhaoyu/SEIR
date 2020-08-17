@@ -38,7 +38,7 @@ Func_list = function(method){
     loglh_func <- function(pars){
       ypred <- SEIRpred(pars, init_settings = init_sets_list)
       ypred <- ypred[, "Onset_expect"]
-      
+      onset_obs <- init_sets_list$daily_new_case
       # meant to suppress warnings when ypred is negative
       suppressWarnings(p <- dpois(as.numeric(onset_obs), ypred,log=T))
       
@@ -54,7 +54,7 @@ Func_list = function(method){
     return(list(default_pars_density,default_pars_sampler,loglh_func,pars_name))
   }else if(method=="nb"){
     default_pars_density <- function(pars) {
-      n.stage = length(pars)/2
+      n.stage = length(pars-1)/2
       d_vec <- rep(NA, length(pars)+1)
       ##b12, b3, b4, b5
       #bvec
@@ -68,6 +68,7 @@ Func_list = function(method){
       #rvec
       d_vec[(n.stage+2):(2*n.stage)] = 
         dnorm(pars[(n.stage+2):(2*n.stage)],delta_mean, delta_sd, log = T)
+      phi = pars[2*n.stage+1]
       d_vec[2*n.stage+1] = dgamma(phi,gamma_shape,gamma_rate,log =T)
       return(sum(d_vec))
       #rvec
@@ -75,7 +76,7 @@ Func_list = function(method){
       #   r_temp = pars[l]
       #   d_vec[l] = dbeta(r_temp, beta_shape1, beta_shape2, log = T)
       # }
-      return(sum(d_vec))
+      
     }
     
     default_pars_sampler <- function(n.stage=n.stage) {
@@ -93,6 +94,7 @@ Func_list = function(method){
       
       
       ypred <- SEIRpred(pars, init_settings = init_sets_list)
+      onset_obs <- init_sets_list$daily_new_case
       ypred <- ypred[, "Onset_expect"]
       phi = pars[length(pars)]
       #p = phi/(phi+as.numeric(ypred))
@@ -178,23 +180,9 @@ SEIRfitting=function(init_sets_list,
     bayesSEIR <- createBayesianSetup(loglh_func, prior = pars_prior)
   
     if (randomize_startValue) {  
-      n.simu = 50000
-      startValue_list = list()
-      log_likelihood = rep(0,n.simu)
-      for(l in 1:n.simu){
-        if(l%%500==0){
-          print(l)  
-        }
-        
-        startValue=pars_sampler(n.stage = n.stage)  
-        startValue_list[[l]] = startValue
-        log_likelihood[l] = loglh_func(startValue)
-      }
-      
-      startValue =startValue_list[[which.max(log_likelihood)]]
-      print(max(log_likelihood))
+      startValue=pars_sampler(n.stage = n.stage)
       while (is.infinite(loglh_func(startValue))) {
-        startValue=pars_sampler()
+        startValue=pars_sampler(n.stage = n.stage)
       }
     }
     
