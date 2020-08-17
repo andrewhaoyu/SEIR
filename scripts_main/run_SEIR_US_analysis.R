@@ -30,8 +30,8 @@ for(i1 in i1_opt){
 i1 = i1_vec[ind]
 i2 = i2_vec[ind]
 i3 = i3_vec[ind]
-method = c("possion","nb")
-
+method_vec = c("possion","nb")
+method = method_vec[i3]
 #code_root = "/data/zhangh24/SEIR/"
 code_root = "/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/"
 #code_root = "/dcl01/chatterj/data/hzhang1/temp/SEIR/"
@@ -139,7 +139,8 @@ init_sets_list=get_init_sets_list(r0 = 0.23,
                                   stateDataClean = stateDataClean,
                                   stateInput = statename[i1],
                                   stage_intervals = stage_intervals,
-                                  stateData=stateData)
+                                  stateData=stateData,
+                                  method = method)
 
 # good initial conditions
 # c(1.284, 0.384, 0.174, 0.096, 0.161, -0.046, -0.379, 0.569)
@@ -148,7 +149,8 @@ SEIRfitting(init_sets_list, randomize_startValue = T,
             run_id = paste0(i1,"_",i2), output_ret = T, skip_MCMC=F,
             all.date = all.date,
             n_burn_in=30000,
-            n_iterations=500000)
+            n_iterations=500000,
+            method = method)
 
 ## to evaluate convergence, we run another two rounds of this program
 # SEIRfitting(init_sets_list, randomize_startValue = T, run_id = "main_analysis_rep1", output_ret = T, skip_MCMC=F)

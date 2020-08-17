@@ -55,7 +55,7 @@ Func_list = function(method){
   }else if(method=="nb"){
     default_pars_density <- function(pars) {
       n.stage = length(pars)/2
-      d_vec <- rep(NA, length(pars))
+      d_vec <- rep(NA, length(pars)+1)
       ##b12, b3, b4, b5
       #bvec
       # for(i in c(1:n.stage)) {
@@ -79,7 +79,7 @@ Func_list = function(method){
     }
     
     default_pars_sampler <- function(n.stage=n.stage) {
-      s_vec <- matrix(NA, 1, 2*n.stage)
+      s_vec <- matrix(NA, 1, 2*n.stage+1)
       
       ## b12, b3, b4, b5
       s_vec[, 1:n.stage] <- runif(n.stage, 0, 2) 
