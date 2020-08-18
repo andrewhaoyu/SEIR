@@ -1,16 +1,9 @@
-rm(list = ls())
-## IMPORTANT: Please set code_root variable properly. 
-## code_root should be set to the directory where the repository README file is located. 
-## For more information, please read the repository README file
+args = commandArgs(trailingOnly = T)
+i3 = as.numeric(args[[1]])
+#check the ascertainment rate for different states
 code_root="/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/"
 
 setwd(paste0(code_root, "scripts_main"))
-
-
-
-
-
-#confirm number of stage
 stage.list <- rep(0,4)
 i2 = 1
 for(i1 in 1:4){
@@ -77,11 +70,6 @@ for(i1 in 1:4){
 }
 
 
-
-
-
-
-
 library(readr)
 library(coda)
 library(cairoDevice)
@@ -94,39 +82,52 @@ library(cairoDevice)
 # }
 
 #i2 = 1
-for(i1 in 1:4){
-  for(i3 in 1:2){
+
+
+  transform_var_main_stage=function(pars) {
+    n.stage <- length(pars)/2
+    b_vec <- pars[1:n.stage]
+    r_vec <- pars[(n.stage+1):(2*n.stage)]
+    r1 = r_vec[1]
+    for(l in 2:n.stage){
+      rtemp = 1 / (1 + (1 - r_vec[l-1]) / (r_vec[l-1] * exp(r_vec[l])))
+      r_vec[l] = rtemp
+    }
+    
+    return(list(b_vec, r_vec))
+  }
+
+#for(i3 in 1:2){
+  analysis_result_table <- NULL
+  for(i1 in 1:4){
     n.stage = stage.list[i1]
     pars_name=c(paste0("b",c(1:n.stage)),"r1",paste0("delta",c(2:n.stage)))
-    pars_estimate_main=read.table(paste0("../output/pars_est_run_",i1,"_",1,"_",i3,".txt"), header=T)
-    pars_estimate_main_rep1=read.table(paste0("../output/pars_est_run_",i1,"_",2,"_",i3,".txt"), header=T)
-    pars_estimate_main_rep2=read.table(paste0("../output/pars_est_run_",i1,"_",3,"_",i3,".txt"), header=T)
-    
-    mcmc_main=mcmc(data=pars_estimate_main)
-    mcmc_rep1=mcmc(data=pars_estimate_main_rep1)
-    mcmc_rep2=mcmc(data=pars_estimate_main_rep2)
-    
-    mcmc_3traj=mcmc.list(mcmc_main,mcmc_rep1,mcmc_rep2)
-    
-    gelman.diag(mcmc_3traj)
-    # our results: multivariate psrf = 1
-    p_vec <- c(1:10000)
-    
-    plot_par_3traj = function(par_name, plotmath_name) {
-      # red-like: #BC3C29, blue-like: #0072B5, orange-like: #E18727
-      plot(p_vec, pars_estimate_main[p_vec, par_name], type="l", col="#0072B5", main=plotmath_name, xlab="", ylab="")
-      points(p_vec, pars_estimate_main_rep1[p_vec, par_name], type="l", col="#BC3C29")
-      points(p_vec, pars_estimate_main_rep2[p_vec, par_name], type="l", col="#E18727")
+    mcmc_pars_estimate=read.table(paste0("../output/pars_est_run_",i1,"_",1,"_",i3,".txt"), header=T)
+    r_mat <- mcmc_pars_estimate[,(n.stage+1):(2*n.stage)]
+    colnames(r_mat) <- paste0("r",c(1:n.stage))
+    for(l in 1:nrow(mcmc_pars_estimate)){
+      r_mat[l,] <- transform_var_main_stage(mcmc_pars_estimate[l,])[[2]]
     }
     
-    png(paste0("../output/mcmc_convergence",i1,"_",i3,".png"), width=15, height=10,res = 300, units = "in")
-    par(mfrow=c(3, ceiling(ncol(pars_estimate_main)/3)))
-    for(k in 1:ncol(pars_estimate_main)){
-      plot_par_3traj(colnames(pars_estimate_main)[k], colnames(pars_estimate_main)[k])
-    }
-    dev.off()
+    r_est = colMeans(r_mat)
+    r_est_low = apply(r_mat,2,function(x){quantile(x,0.025)})
+    r_est_high = apply(r_mat,2,function(x){quantile(x,0.975)})
     
+    analysis_result_table_temp <- r_est
+    pla = 2
+    for(l in 1:length(r_est)){
+      analysis_result_table_temp[l] =  paste0(round(r_est[l],pla)," (",
+                                         round(r_est_low[l],pla),
+                                         "-",
+                                         round(r_est_high[l],pla)
+                                         ,")")
+    }
+    
+    analysis_result_table <- rbind(analysis_result_table,
+                                   analysis_result_table_temp)
     
   }
-    
-}
+  write.csv(analysis_result_table,file=
+              paste0("../output/ascertainment_rate_",i3,".csv"))
+  
+#}
