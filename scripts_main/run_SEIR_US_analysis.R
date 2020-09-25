@@ -5,35 +5,40 @@
 # code_root="C:/Users/xingj/Documents/WangLabAdmin/COVID-19/NatSEIR_Rcode/"
 #load state number
 args = commandArgs(trailingOnly = T)
-ind = as.numeric(args[[1]])
-#number of statess
-#number of replicates
-n_rep <- 3
-
-i1_opt = c(1:4)
-i2_opt = c(1:3)
-i3_opt = c(1:2)
-total = length(i1_opt)*length(i2_opt)*length(i3_opt)
-i1_vec = i2_vec = i3_vec = rep(0,total)
-temp = 1
-for(i1 in i1_opt){
-  for(i2 in i2_opt){
-    for(i3 in i3_opt){
-      i1_vec[temp] = i1_opt[i1]
-      i2_vec[temp] = i2_opt[i2]
-      i3_vec[temp] = i3_opt[i3]
-      temp = temp+1
-    }
-  }
-  
-}
-i1 = i1_vec[ind]
-i2 = i2_vec[ind]
-i3 = i3_vec[ind]
+#i1 represent state
+#i2 represent replicate
+i1 = as.numeric(args[[1]])
+i2 = as.nueric(args[[2]])
+# ind = as.numeric(args[[1]])
+# #number of statess
+# #number of replicates
+# n_rep <- 3
+# 
+# i1_opt = c(1:4)
+# i2_opt = c(1:3)
+# i3_opt = c(1:2)
+# total = length(i1_opt)*length(i2_opt)*length(i3_opt)
+# i1_vec = i2_vec = i3_vec = rep(0,total)
+# temp = 1
+# for(i1 in i1_opt){
+#   for(i2 in i2_opt){
+#     for(i3 in i3_opt){
+#       i1_vec[temp] = i1_opt[i1]
+#       i2_vec[temp] = i2_opt[i2]
+#       i3_vec[temp] = i3_opt[i3]
+#       temp = temp+1
+#     }
+#   }
+#   
+# }
+# i1 = i1_vec[ind]
+# i2 = i2_vec[ind]
+#i3 = i3_vec[ind]
+i3 = 2
 method_vec = c("poisson","nb")
 method = method_vec[i3]
-#code_root = "/data/zhangh24/SEIR/"
-code_root = "/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/"
+code_root = "/data/zhangh24/SEIR/"
+#code_root = "/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/"
 #code_root = "/dcl01/chatterj/data/hzhang1/temp/SEIR/"
 setwd(paste0(code_root, "scripts_main"))
 #install.packages("BayesianTools")
@@ -57,29 +62,51 @@ source(paste0(code_root, "R/fun_SEIRplot.R"))
 source(paste0(code_root, "R/fun_Findzero.R"))
 ##
 
-statename = c("New York","Massachusetts",
+#statename = c("New York","Massachusetts",
+#              "Florida","Michigan")
+statename = c("NY","MA",
+                            "FL","MI")
+#downloaded from https://covidtracking.com/data/download
+allData <- read.csv("../data/all-states-history.csv")
+#keep date to 08/31/2020
+library(lubridate)
+date_in_model <- as.Date(allData$date,format="%m/%d/%Y")
+idx <- which(date_in_model<="20-08-31")
+allData <- allData[idx,]
+#population number (downloaded from https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html)
+stateName = c("New York","Massachusetts",
               "Florida","Michigan")
-allData <- read.csv("../data/US_State_data.csv")
-idx <- which(allData$stateName==statename[i1])
-N = allData$population[idx[1]]
+
+#plug in the population number
+population <- read.csv("../data/state_population.csv")
+idx <- which(population$State==stateName[i1])
+N = population$Population[idx]
+
+#idx <- which(allData$stateName==statename[i1])
+idx <- which(allData$state==statename[i1])
+
 print(statename[i1])
 stateData <- allData[idx,]
+#order the data by date
+stateData$date = as.Date(stateData$date,format="%m/%d/%Y")
+stateData = stateData[order(stateData$date),]
+
 #find first date with positive cases more than 20
 jdx <- which(stateData$positiveIncrease>50)
 #start analysis date
 jan1_idx = min(jdx)
 
 stateDataClean = stateData[jan1_idx:nrow(stateData),]
-all.date <- as.Date(stateDataClean$date)
+all.date <- stateDataClean$date
 #leave 10 days for prediction
-n.days <- nrow(stateDataClean)-10
+n.days <- nrow(stateDataClean)-15
 n.days.all <- nrow(stateDataClean)
 days_to_fit <- 1:n.days
 #install.packages("lubridate")
-library(lubridate)
-date_in_model <- as.Date(stateDataClean$date)
-start.date <- as.Date(stateDataClean$date[1])
-end.date <- as.Date(stateDataClean$date[n.days])
+
+date_in_model <- stateDataClean$date
+start.date <- date_in_model[1]
+end.date <- date_in_model[n.days]
 all.cut.date <- c(floor_date(seq(start.date,end.date,by="month"),unit="month")+14,
 ceiling_date(seq(start.date, end.date, by = 'month'), unit = "month")-1)
 all.cut.date <- all.cut.date[order(all.cut.date)]
@@ -106,21 +133,20 @@ for(l in 1:(n.stage)){
   
 }
 flowN <- rep(0,n.stage)
-Di = 2.9
-Dp = 4
-De = 2.9
+Di = 3.5
+Dp = 2.75
+De = 2.45
 
 alpha = 0.55
 Dh = 30
-#force Apr 1, Apr 15, 
-N <- stateDataClean$population[1]
+
 
 Dq <- rep(0,n.stage)
 
 GenerateDq <- function(cut.date){
-  if(cut.date<="2020-04-01"){
+  if(cut.date<="20-04-01"){
     return(10)
-  }else if(cut.date<="2020-04-15"){
+  }else if(cut.date<="20-04-15"){
     return(6)
   } else{
     return(3)
