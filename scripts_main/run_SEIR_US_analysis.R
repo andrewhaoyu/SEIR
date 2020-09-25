@@ -157,9 +157,14 @@ for(i in 1:(n.stage-1)){
   Dq[i] <- GenerateDq(all.cut.date[i])
 }
 Dq[length(Dq)] = 3
-init_sets_list=get_init_sets_list(r0 = 0.23,
-                                  N = N,
-                                  Dq = Dq,
+init_sets_list=get_init_sets_list(r0=0.23,
+                                  Di = Di,
+                                  Dp = Dp,
+                                  De = De,
+                                  Dq =Dq,
+                                  alpha = alpha,
+                                  Dh = Dh,
+                                  N=N,
                                   flowN = flowN,
                                   jan1_idx = jan1_idx,
                                   stateDataClean = stateDataClean,
