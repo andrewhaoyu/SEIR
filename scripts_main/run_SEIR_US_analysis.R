@@ -8,7 +8,7 @@ args = commandArgs(trailingOnly = T)
 #i1 represent state
 #i2 represent replicate
 i1 = as.numeric(args[[1]])
-i2 = as.nueric(args[[2]])
+i2 = as.numeric(args[[2]])
 # ind = as.numeric(args[[1]])
 # #number of statess
 # #number of replicates
