@@ -117,7 +117,17 @@ Func_list = function(method){
   
 }
 
-
+pars_sampler_start <- function(n.stage=n.stage) {
+  s_vec <- matrix(NA, 1, 2*n.stage+1)
+  
+  #make the tranmission small so that the susceptability people won't be 0
+  #otherwise the starting log L will easily be inf
+  s_vec[, 1:n.stage] <- runif(n.stage, 0, 1) 
+  s_vec[, n.stage+1] <- rbeta(1, beta_shape1, beta_shape2)
+  s_vec[, (n.stage+2):(2*n.stage)] <- rnorm(n.stage-1, delta_mean, delta_sd)
+  s_vec[, 2*n.stage+1] <- rgamma(1,gamma_shape,gamma_rate)
+  return(s_vec)
+}
 
 ## wrapper for the analysis run
 ## Create BayesianSetup and settings, lower/upper for parameters: b12, b3, b3, b5, r12, delta3, delta4, delta5
@@ -192,7 +202,7 @@ SEIRfitting=function(init_sets_list,
     # startValue = c(b12 = 1.359, b3 = 0.537, b4 = 0.203, b5 = 0.196, r12 = 0.305, delta3 = -0.964, delta4 = -0.593, delta5 = -0.309)
     mh_settings = list(startValue = startValue,
                        adapt = T, DRlevels = 2, iterations = n_iterations, thin = 10,
-                       message = T)
+                       message = F)
     mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "Metropolis", settings = mh_settings)
     #plot(mh_out)
     mcmc_pars_estimate <- getSample(mh_out, start = n_burn_in+2, thin = 1)  ## set start = 2002 as the burn in period

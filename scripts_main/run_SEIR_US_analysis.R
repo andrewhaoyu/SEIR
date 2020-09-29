@@ -99,7 +99,7 @@ jan1_idx = min(jdx)
 stateDataClean = stateData[jan1_idx:nrow(stateData),]
 all.date <- stateDataClean$date
 #leave 10 days for prediction
-n.days <- nrow(stateDataClean)-15
+n.days <- nrow(stateDataClean)-10
 n.days.all <- nrow(stateDataClean)
 days_to_fit <- 1:n.days
 #install.packages("lubridate")
@@ -110,12 +110,23 @@ end.date <- date_in_model[n.days]
 all.cut.date <- c(floor_date(seq(start.date,end.date,by="month"),unit="month")+14,
 ceiling_date(seq(start.date, end.date, by = 'month'), unit = "month")-1)
 all.cut.date <- all.cut.date[order(all.cut.date)]
+#remove the first cut date smaller than the start date
+if(as.numeric(all.cut.date[1]<=start.date)){
+  all.cut.date <- all.cut.date[-1]
+}
+
 #remove the first cut date if it's too close to start.date
 if(as.numeric(all.cut.date[1]-start.date)<=7){
   all.cut.date <- all.cut.date[-1]
 }
+
+#remove the last cut date bigger than the end date
+if(end.date<=all.cut.date[length(all.cut.date)]){
+  all.cut.date <- all.cut.date[-length(all.cut.date)]
+}
+
 #remove the end cut date if it's too close to end.date
-if(as.numeric(end.date-all.cut.date[length(all.cut.date)]<=8)){
+if(as.numeric(end.date-all.cut.date[length(all.cut.date)]<=7)){
   all.cut.date <- all.cut.date[-length(all.cut.date)]
 }
 idx <- which(date_in_model%in%all.cut.date)
