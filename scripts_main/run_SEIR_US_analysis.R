@@ -190,8 +190,8 @@ init_sets_list=get_init_sets_list(r0=0.23,
 SEIRfitting(init_sets_list, randomize_startValue = T,
             run_id = paste0(i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
             all.date = all.date,
-            n_burn_in=40000,
-            n_iterations=500000,
+            n_burn_in=80000,
+            n_iterations=1000000,
             method = method)
 
 ## to evaluate convergence, we run another two rounds of this program
