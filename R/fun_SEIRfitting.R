@@ -88,7 +88,7 @@ Func_list = function(method){
       
       
       ## b1
-      s_vec[, 1] <- runif(n.stage, 0, 2) 
+      s_vec[, 1] <- runif(1, 0, 2) 
       ## b2...
       s_vec[, 2:n.stage] <- rnorm(n.stage-1, delta_mean, delta_sd) 
       #r1
