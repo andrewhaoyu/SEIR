@@ -71,7 +71,12 @@ generate_init_condi <- function(r0,
     par_upper =  c(rep(2,n.stage),1,rep(10,n.stage-1),50)
     transform_var_main_stage=function(pars) {
       n.stage <- (length(pars)-1)/2
+      #b_vec <- pars[1:n.stage]
       b_vec <- pars[1:n.stage]
+      for(l in 2:n.stage){
+        b_temp = b_vec[l-1]*exp(b_vec[l])
+        b_vec[l] = b_temp
+      }
       r_vec <- pars[(n.stage+1):(2*n.stage)]
       r1 = r_vec[1]
       for(l in 2:n.stage){
@@ -109,7 +114,9 @@ get_init_sets_list = generate_init_condi
 
 delta_mean <- 0
 delta_sd <- 1
-beta_shape1 <- 7.3
-beta_shape2 <- 24.6
+#beta_shape1 <- 7.3
+#beta_shape2 <- 24.6
+beta_shape1 <- 1
+beta_shape2 <- 1
 gamma_shape = 5
 gamma_rate = 1
