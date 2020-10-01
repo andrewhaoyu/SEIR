@@ -67,8 +67,9 @@ generate_init_condi <- function(r0,
       return(list(b_vec, r_vec))
     }
   }else if(method=="nb"){
-    par_lower = c(rep(0,n.stage),0,rep(-10,n.stage-1),0)
-    par_upper =  c(rep(2,n.stage),1,rep(10,n.stage-1),50)
+    #par_lower = c(rep(0,n.stage),0,rep(-10,n.stage-1),0)
+    par_lower = c(0,rep(-10,n.stage-1),0,rep(-10,n.stage-1),0)
+    par_upper =  c(2,rep(10,n.stage-1),1,rep(10,n.stage-1),50)
     transform_var_main_stage=function(pars) {
       n.stage <- (length(pars)-1)/2
       #b_vec <- pars[1:n.stage]
@@ -118,5 +119,6 @@ delta_sd <- 1
 #beta_shape2 <- 24.6
 beta_shape1 <- 1
 beta_shape2 <- 1
-gamma_shape = 5
+gamma_shape = 1
 gamma_rate = 1
+

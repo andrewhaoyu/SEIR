@@ -100,7 +100,7 @@ Func_list = function(method){
       # s_vec[, 1:n.stage] <- runif(n.stage, 0, 2) 
       # s_vec[, n.stage+1] <- rbeta(1, beta_shape1, beta_shape2)
       # s_vec[, (n.stage+2):(2*n.stage)] <- rnorm(n.stage-1, delta_mean, delta_sd)
-      s_vec[, 2*n.stage+1] <- rinvgamma(n,
+      s_vec[, 2*n.stage+1] <- rinvgamma(1,
                                         shape = gamma_shape,
                                         rate = gamma_rate)
         

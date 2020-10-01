@@ -186,7 +186,7 @@ init_sets_list=get_init_sets_list(r0=0.23,
 
 # good initial conditions
 # c(1.284, 0.384, 0.174, 0.096, 0.161, -0.046, -0.379, 0.569)
-
+library(invgamma)
 SEIRfitting(init_sets_list, randomize_startValue = T,
             run_id = paste0(i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
             all.date = all.date,
