@@ -54,7 +54,8 @@ library(dplyr)
 ##
 source(paste0(code_root, "R/fun_SEIRpred.R"))
 source(paste0(code_root, "R/fun_SEIRsimu.R"))
-source(paste0(code_root, "R/fun_SEIRfitting_new.R"))
+source(paste0(code_root, "R/fun_SEIRfitting.R"))
+#source(paste0(code_root, "R/init_cond_update.R"))
 source(paste0(code_root, "R/init_cond_update.R"))
 source(paste0(code_root, "R/fun_R0estimate.R"))
 source(paste0(code_root, "R/correlationPlot_modified.R"))
@@ -190,8 +191,8 @@ library(invgamma)
 SEIRfitting(init_sets_list, randomize_startValue = T,
             run_id = paste0(i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
             all.date = all.date,
-            n_burn_in=80000,
-            n_iterations=1000000,
+            n_burn_in=130000,
+            n_iterations=1500000,
             method = method)
 
 ## to evaluate convergence, we run another two rounds of this program

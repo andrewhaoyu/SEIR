@@ -86,7 +86,12 @@ Func_list = function(method){
       s_vec[, 1:n.stage] <- runif(n.stage, 0, 2) 
       s_vec[, n.stage+1] <- rbeta(1, beta_shape1, beta_shape2)
       s_vec[, (n.stage+2):(2*n.stage)] <- rnorm(n.stage-1, delta_mean, delta_sd)
-      s_vec[, 2*n.stage+1] <- rgamma(1,gamma_shape,gamma_rate)
+      s_vec[, 2*n.stage+1] <-  rinvgamma(1,
+                                         shape = gamma_shape,
+                                         rate = gamma_rate)
+      
+        
+        #rgamma(1,gamma_shape,gamma_rate)
       return(s_vec)
     }
     ## likelihood function
@@ -100,7 +105,8 @@ Func_list = function(method){
       #p = phi/(phi+as.numeric(ypred))
       # meant to suppress warnings when ypred is negative
       suppressWarnings(p <- dnbinom(x = as.numeric(onset_obs), 
-                                    size = phi,
+                                    size = 1/phi,
+                                    #size = phi,
                                     mu = ypred,log=T))
       
       #if(any(p == 0) || any(is.nan(p))){
