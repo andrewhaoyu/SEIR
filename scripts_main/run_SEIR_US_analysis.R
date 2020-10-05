@@ -9,6 +9,7 @@ args = commandArgs(trailingOnly = T)
 #i2 represent replicate
 i1 = as.numeric(args[[1]])
 i2 = as.numeric(args[[2]])
+i3 = as.numeric(args[[3]])
 # ind = as.numeric(args[[1]])
 # #number of statess
 # #number of replicates
@@ -34,9 +35,8 @@ i2 = as.numeric(args[[2]])
 # i1 = i1_vec[ind]
 # i2 = i2_vec[ind]
 #i3 = i3_vec[ind]
-i3 = 2
 method_vec = c("poisson","nb")
-method = method_vec[i3]
+method = method_vec[2]
 code_root = "/data/zhangh24/SEIR/"
 #code_root = "/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/"
 #code_root = "/dcl01/chatterj/data/hzhang1/temp/SEIR/"
@@ -169,6 +169,8 @@ for(i in 1:(n.stage-1)){
   Dq[i] <- GenerateDq(all.cut.date[i])
 }
 Dq[length(Dq)] = 3
+
+r0_vec = c(0.05,0.10,0.15,0.20,0.23,0.30,0.35,0.40,0.5)
 init_sets_list=get_init_sets_list(r0=0.23,
                                   Di = Di,
                                   Dp = Dp,
@@ -191,8 +193,8 @@ library(invgamma)
 SEIRfitting(init_sets_list, randomize_startValue = T,
             run_id = paste0(i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
             all.date = all.date,
-            n_burn_in=130000,
-            n_iterations=1500000,
+            n_burn_in=170000,
+            n_iterations=2000000,
             method = method)
 
 ## to evaluate convergence, we run another two rounds of this program
