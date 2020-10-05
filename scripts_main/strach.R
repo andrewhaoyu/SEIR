@@ -13,3 +13,22 @@ all.date = all.date;
 method = method;
 pars = startValue
 
+
+library(data.table)
+s.t <- list(data.frame(a=rnorm(100),b=rnorm(100),chain=rep("chain1",100),x=c(1:100)),
+          data.frame(a=rnorm(100),b=rnorm(100),chain=rep("chain2",100),x=c(1:100)))
+s.t.data <- rbindlist(s.t)
+
+s.t.data.long <- melt(s.t.data,id.var=c("chain","x"))
+
+ggplot(s.t.data.long)+
+  geom_line(aes(x= x,y = value,color=chain))+
+  facet_wrap(~variable)+
+  theme_Publication()
+
+
+library(ggmcmc)
+data(radon)
+s.radon.short <- radon$s.radon.short
+S <- ggs(s.radon.short)
+ggs_traceplot(S)
