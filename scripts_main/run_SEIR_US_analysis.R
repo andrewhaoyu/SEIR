@@ -10,6 +10,7 @@ args = commandArgs(trailingOnly = T)
 i1 = as.numeric(args[[1]])
 i2 = as.numeric(args[[2]])
 i3 = as.numeric(args[[3]])
+set.seed(i1*100+i2*10+i3)
 # ind = as.numeric(args[[1]])
 # #number of statess
 # #number of replicates
