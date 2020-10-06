@@ -69,7 +69,9 @@ Func_list = function(method){
       d_vec[(n.stage+2):(2*n.stage)] = 
         dnorm(pars[(n.stage+2):(2*n.stage)],delta_mean, delta_sd, log = T)
       phi = pars[2*n.stage+1]
-      d_vec[2*n.stage+1] = dgamma(phi,gamma_shape,gamma_rate,log =T)
+      d_vec[2*n.stage+1] = dinvgamma(phi,shape = gamma_shape,
+                                     rate = gamma_rate,log =T)
+        #dgamma(phi,gamma_shape,gamma_rate,log =T)
       return(sum(d_vec))
       #rvec
       # for(l in (n.stage+1):(2*n.stage)){
