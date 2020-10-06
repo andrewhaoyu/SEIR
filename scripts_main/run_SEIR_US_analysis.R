@@ -212,7 +212,7 @@ if(i4==1){
 
 library(invgamma)
 SEIRfitting(init_sets_list, randomize_startValue = T,
-            run_id = paste0(i1,"_",i2,"_",i3,"_",i4), output_ret = T, skip_MCMC=F,
+            run_id = paste0(i1,"_",i2,"_",i3,"_",i4,"_",i5), output_ret = T, skip_MCMC=F,
             all.date = all.date,
             n_burn_in=170000,
             n_iterations=2000000,
