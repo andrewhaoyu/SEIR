@@ -202,6 +202,15 @@ SEIRfitting=function(init_sets_list,
   
     if (randomize_startValue) {  
       startValue=pars_sampler(n.stage = n.stage)
+      best_logl = loglh_func(startValue)
+      for(l in 1:100){
+        temp = pars_sampler(n.stage = n.stage)
+        temp_logl = loglh_func(temp)
+        if(best_logl<temp_logl){
+          startValue = temp
+        }
+      }
+      
       print(loglh_func(startValue))
       while (is.infinite(loglh_func(startValue))) {
         startValue=pars_sampler(n.stage = n.stage)

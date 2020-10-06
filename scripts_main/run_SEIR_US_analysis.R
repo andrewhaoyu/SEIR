@@ -10,7 +10,9 @@ args = commandArgs(trailingOnly = T)
 i1 = as.numeric(args[[1]])
 i2 = as.numeric(args[[2]])
 i3 = as.numeric(args[[3]])
-set.seed(i1*100+i2*10+i3)
+i4 = as.numeric(args[[4]])
+i5 = as.numeric(args[[5]])
+set.seed(i1*1000+i2*100+i3*10+i4)
 # ind = as.numeric(args[[1]])
 # #number of statess
 # #number of replicates
@@ -55,9 +57,16 @@ library(dplyr)
 ##
 source(paste0(code_root, "R/fun_SEIRpred.R"))
 source(paste0(code_root, "R/fun_SEIRsimu.R"))
-source(paste0(code_root, "R/fun_SEIRfitting.R"))
+
 #source(paste0(code_root, "R/init_cond_update.R"))
-source(paste0(code_root, "R/init_cond_update.R"))
+if(i5 ==1){
+  source(paste0(code_root, "R/fun_SEIRfitting.R"))  
+  source(paste0(code_root, "R/init_cond_update.R"))
+}else if(i5 ==2){
+  source(paste0(code_root, "R/fun_SEIRfitting_new.R"))  
+  source(paste0(code_root, "R/init_cond_new.R"))
+}
+
 source(paste0(code_root, "R/fun_R0estimate.R"))
 source(paste0(code_root, "R/correlationPlot_modified.R"))
 source(paste0(code_root, "R/fun_SEIRplot.R"))
@@ -170,8 +179,7 @@ for(i in 1:(n.stage-1)){
   Dq[i] <- GenerateDq(all.cut.date[i])
 }
 Dq[length(Dq)] = 3
-
-r0_vec = c(0.05,0.10,0.15,0.20,0.23,0.30,0.35,0.40,0.5)
+r0_vec = c(0.10,0.15,0.20,0.23,0.30,0.35,0.40,0.5)
 r0 = r0_vec[i3]
 init_sets_list=get_init_sets_list(r0=r0,
                                   Di = Di,
@@ -191,12 +199,23 @@ init_sets_list=get_init_sets_list(r0=r0,
 
 # good initial conditions
 # c(1.284, 0.384, 0.174, 0.096, 0.161, -0.046, -0.379, 0.569)
+if(i4==1){
+  beta_shape1 <- 1
+  beta_shape2 <- 1
+  
+}else if(i4==2){
+  beta_shape1 <- 7.3
+  beta_shape2 <- 24.6
+  
+}
+
+
 library(invgamma)
 SEIRfitting(init_sets_list, randomize_startValue = T,
-            run_id = paste0(i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
+            run_id = paste0(i1,"_",i2,"_",i3,"_",i4), output_ret = T, skip_MCMC=F,
             all.date = all.date,
-            n_burn_in=130000,
-            n_iterations=1500000,
+            n_burn_in=170000,
+            n_iterations=2000000,
             method = method)
 
 ## to evaluate convergence, we run another two rounds of this program
