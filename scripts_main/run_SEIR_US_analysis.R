@@ -7,12 +7,17 @@
 args = commandArgs(trailingOnly = T)
 #i1 represent state
 #i2 represent replicate
+#i3 represent initial ascertainment
+#i4 represent prior
+#i5 represent reparametrization
+#i6 represent asympotomatic infection rate
 i1 = as.numeric(args[[1]])
 i2 = as.numeric(args[[2]])
-i3 = as.numeric(args[[3]])
-i4 = as.numeric(args[[4]])
-i5 = as.numeric(args[[5]])
-set.seed(i1*1000+i2*100+i3*10+i4)
+i3 = 4
+i4 = 1
+i5 = 1
+i6 = as.numeric(args[[3]])
+set.seed(i1*1000+i2*100+i6)
 # ind = as.numeric(args[[1]])
 # #number of statess
 # #number of replicates
@@ -163,6 +168,8 @@ alpha = 0.55
 Dh = 30
 
 
+
+
 Dq <- rep(0,n.stage)
 
 GenerateDq <- function(cut.date){
@@ -212,7 +219,7 @@ if(i4==1){
 
 library(invgamma)
 SEIRfitting(init_sets_list, randomize_startValue = T,
-            run_id = paste0(i1,"_",i2,"_",i3,"_",i4,"_",i5), output_ret = T, skip_MCMC=F,
+            run_id = paste0("101120_",i1,"_",i2,"_",i3,"_",i4,"_",i5), output_ret = T, skip_MCMC=F,
             all.date = all.date,
             n_burn_in=170000,
             n_iterations=2000000,
