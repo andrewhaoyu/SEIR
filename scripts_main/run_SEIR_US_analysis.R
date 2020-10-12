@@ -78,11 +78,12 @@ source(paste0(code_root, "R/fun_SEIRplot.R"))
 source(paste0(code_root, "R/fun_Findzero.R"))
 ##
 
-#statename = c("New York","Massachusetts",
-#              "Florida","Michigan")
+
+#use covidtracing data to analyze
+#downloaded from https://covidtracking.com/data/download
 statename = c("NY","MA",
                             "FL","MI")
-#downloaded from https://covidtracking.com/data/download
+#
 allData <- read.csv("../data/all-states-history.csv")
 #keep date to 08/31/2020
 library(lubridate)
@@ -92,13 +93,13 @@ allData <- allData[idx,]
 #population number (downloaded from https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html)
 stateName = c("New York","Massachusetts",
               "Florida","Michigan")
-
+#
 #plug in the population number
 population <- read.csv("../data/state_population.csv")
 idx <- which(population$State==stateName[i1])
 N = population$Population[idx]
+#
 
-#idx <- which(allData$stateName==statename[i1])
 idx <- which(allData$state==statename[i1])
 
 print(statename[i1])
@@ -106,6 +107,27 @@ stateData <- allData[idx,]
 #order the data by date
 stateData$date = as.Date(stateData$date,format="%m/%d/%Y")
 stateData = stateData[order(stateData$date),]
+
+
+
+#use JHU data to analyze
+#download data from https://raw.githubusercontent.com/lin-lab/COVID-data-cleaning/master/jhu_data/cleaned_data/JHU_COVID-19_State.csv
+# statename = c("New York","Massachusetts",
+#              "Florida","Michigan")
+# 
+# allData <- read.csv("../data/US_State_data.csv")
+# 
+# library(lubridate)
+# 
+# date_in_model <- as.Date(allData$date,format="%Y-%m-%d")
+# allData$date <- date_in_model
+# idx <- which(date_in_model<="2020-08-31")
+# 
+# allData <- allData[idx,]
+# idx <- which(allData$stateName==statename[i1])
+# N = allData$population[idx][1]
+# idx <- which(allData$stateName==statename[i1])
+# stateData <- allData[idx,]
 
 #find first date with positive cases more than 20
 jdx <- which(stateData$positiveIncrease>50)
