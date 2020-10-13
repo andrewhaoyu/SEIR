@@ -244,10 +244,10 @@ if(i4==1){
 
 library(invgamma)
 SEIRfitting(init_sets_list, randomize_startValue = T,
-            run_id = paste0("101120_",i1,"_",i2,"_",i6), output_ret = T, skip_MCMC=F,
+            run_id = paste0("101220_",i1,"_",i2,"_",i6), output_ret = T, skip_MCMC=F,
             all.date = all.date,
-            n_burn_in=80000,
-            n_iterations=1000000,
+            n_burn_in=170000,
+            n_iterations=2000000,
             method = method)
 
 ## to evaluate convergence, we run another two rounds of this program
