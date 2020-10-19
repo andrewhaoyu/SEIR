@@ -14,7 +14,7 @@ args = commandArgs(trailingOnly = T)
 i1 = as.numeric(args[[1]])
 i2 = as.numeric(args[[2]])
 i3 = as.numeric(args[[3]])
-#i4 = 1
+i4 = 1
 #i5 = 1
 #i6 = as.numeric(args[[4]])
 set.seed(i1*1000+i2*100+i3)
@@ -113,7 +113,9 @@ source(paste0(code_root, "R/fun_Findzero.R"))
 #use JHU data to analyze
 #download data from https://raw.githubusercontent.com/lin-lab/COVID-data-cleaning/master/jhu_data/cleaned_data/JHU_COVID-19_State.csv
 statename = c("New York","Massachusetts",
-              "Florida","Michigan")
+              "Florida","Michigan","Connecticut",
+              "Illinois","Indiana","Louisiana","Missouri",
+              "Utah")
 
 allData <- read.csv("../data/US_State_data.csv")
 

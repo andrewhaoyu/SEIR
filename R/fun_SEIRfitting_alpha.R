@@ -56,7 +56,7 @@ Func_list = function(method){
     return(list(default_pars_density,default_pars_sampler,loglh_func,pars_name))
   }else if(method=="nb"){
     default_pars_density <- function(pars) {
-      n.stage = (length(pars)-1)/2
+      n.stage = (length(pars)-2)/2
       d_vec <- rep(NA, length(pars))
       ##b12, b3, b4, b5
       #bvec
