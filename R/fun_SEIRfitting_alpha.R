@@ -287,33 +287,33 @@ SEIRfitting=function(init_sets_list,
   
   write_file(summary_string, paste0("../output/summary_run_",run_id,".txt"))
   
-  cairo_pdf(paste0("../output/par_cor_run_",run_id,".pdf"),width=10,height=10)
-  correlationPlot_modified(mcmc_pars_estimate, scaleCorText = F)
-  dev.off()
-  print("plot correlation plot finished")
-  #png(paste0("../output/par_hist_run_",run_id,".png"))
-  pdf(paste0("../output/par_hist_run_",run_id,".pdf"),width = 9, height = 10)
-  par(mfrow = c(4, ceiling(n.par/4)))
-  for(i in 1:n_pars) {
-    hist(mcmc_pars_estimate[, i], xlab = pars_name[i], main = "", col = "red")
-    rm(i)
-  }
-  dev.off()
-  print("plot hist plot finished")
-  #png(paste0("../output/par_traj_run_",run_id,".png"), width=1000, height=500)
-  pdf(paste0("../output/par_traj_run_",run_id,".pdf"),width = 9, height = 10)
-  par(mfrow = c(4, ceiling(n.par/4)))
-  for(i in 1:n_pars) {
-    plot(1:nrow(mcmc_pars_estimate), mcmc_pars_estimate[, i], ylab = pars_name[i], xlab = "iter", main = "", type = "l")
-    rm(i)
-  }
-  dev.off()
-  print("plot tracj finished")
-  if (plot_combined_fig) {
-    SEIRplot(pars_estimate = mcmc_pars_estimate, file_name = run_id, init_settings = init_sets_list, panel_B_R_ylim = panel_B_R_ylim,
-             stage_intervals=stage_intervals,all.date = all.date)
-  }
-  
+  # cairo_pdf(paste0("../output/par_cor_run_",run_id,".pdf"),width=10,height=10)
+  # correlationPlot_modified(mcmc_pars_estimate, scaleCorText = F)
+  # dev.off()
+  # print("plot correlation plot finished")
+  # #png(paste0("../output/par_hist_run_",run_id,".png"))
+  # pdf(paste0("../output/par_hist_run_",run_id,".pdf"),width = 9, height = 10)
+  # par(mfrow = c(4, ceiling(n.par/4)))
+  # for(i in 1:n_pars) {
+  #   hist(mcmc_pars_estimate[, i], xlab = pars_name[i], main = "", col = "red")
+  #   rm(i)
+  # }
+  # dev.off()
+  # print("plot hist plot finished")
+  # #png(paste0("../output/par_traj_run_",run_id,".png"), width=1000, height=500)
+  # pdf(paste0("../output/par_traj_run_",run_id,".pdf"),width = 9, height = 10)
+  # par(mfrow = c(4, ceiling(n.par/4)))
+  # for(i in 1:n_pars) {
+  #   plot(1:nrow(mcmc_pars_estimate), mcmc_pars_estimate[, i], ylab = pars_name[i], xlab = "iter", main = "", type = "l")
+  #   rm(i)
+  # }
+  # dev.off()
+  # print("plot tracj finished")
+  # if (plot_combined_fig) {
+  #   SEIRplot(pars_estimate = mcmc_pars_estimate, file_name = run_id, init_settings = init_sets_list, panel_B_R_ylim = panel_B_R_ylim,
+  #            stage_intervals=stage_intervals,all.date = all.date)
+  # }
+  # 
   #par(mfrow = c(1, 1))
   # corrplot(cor(mcmc_pars_estimate))
   # pairs(mcmc_pars_estimate)
