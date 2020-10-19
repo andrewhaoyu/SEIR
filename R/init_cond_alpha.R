@@ -15,8 +15,8 @@ generate_init_condi <- function(r0,
                                 method
 ) {
   
-  stopifnot(r0>=0 & r0<=1 & Di>=0 & Dp>=0 & De>=0 & all(Dp>=0) & alpha>=0 & alpha<=1 & Dh>=0 & N>=0 & all(flowN>=0))
-  
+  #stopifnot(r0>=0 & r0<=1 & Di>=0 & Dp>=0 & De>=0 & all(Dp>=0) & alpha>=0 & alpha<=1 & Dh>=0 & N>=0 & all(flowN>=0))
+  stopifnot(r0>=0 & r0<=1 & Di>=0 & Dp>=0 & De>=0 & all(Dp>=0) & Dh>=0 & N>=0 & all(flowN>=0))
   ## N            : population size
   ## H0           : initial number of hospitalized cases based on the reports
   ## R0           : initial number of removed individuals

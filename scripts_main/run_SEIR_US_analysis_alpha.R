@@ -188,8 +188,8 @@ De = 2.45
 
 
 
-alpha_vec <- c(0.15,0.25,0.35,0.45,0.55,0.65,0.75,0.85)
-alpha = alpha_vec[i6]
+#alpha_vec <- c(0.15,0.25,0.35,0.45,0.55,0.65,0.75,0.85)
+#alpha = alpha_vec[i6]
 Dh = 30
 
 
@@ -218,7 +218,7 @@ init_sets_list=get_init_sets_list(r0=r0,
                                   Dp = Dp,
                                   De = De,
                                   Dq =Dq,
-                                  alpha = alpha,
+                                  #alpha = alpha,
                                   Dh = Dh,
                                   N=N,
                                   flowN = flowN,
