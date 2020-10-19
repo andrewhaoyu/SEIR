@@ -112,10 +112,16 @@ source(paste0(code_root, "R/fun_Findzero.R"))
 
 #use JHU data to analyze
 #download data from https://raw.githubusercontent.com/lin-lab/COVID-data-cleaning/master/jhu_data/cleaned_data/JHU_COVID-19_State.csv
-statename = c("New York","Massachusetts",
-              "Florida","Michigan","Connecticut",
-              "Illinois","Indiana","Louisiana","Missouri",
-              "Utah")
+statename = c("New York",
+              #"Massachusetts",
+              #"Florida",
+              #"Michigan",
+              "Connecticut",
+              "Illinois",
+              "Indiana",
+              "Louisiana")
+              #"Missouri",
+              #"Utah")
 
 allData <- read.csv("../data/US_State_data.csv")
 

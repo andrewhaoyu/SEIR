@@ -212,7 +212,7 @@ SEIRfitting=function(init_sets_list,
       print(loglh_func(startValue))
       for(l in 1:100){
         temp = pars_sampler(n.stage = n.stage)
-        temp_logl = loglh_func(temp)
+      #  temp_logl = loglh_func(temp)
         print(temp_logl)
         if(best_logl<temp_logl){
           startValue = temp
