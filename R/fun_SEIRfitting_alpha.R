@@ -140,7 +140,7 @@ Func_list = function(method){
       }
       return(logL)
     }
-    pars_name=c(paste0("b",c(1:n.stage)),"r1",paste0("delta",c(2:n.stage)),paste0("phi"))
+    pars_name=c(paste0("b",c(1:n.stage)),"r1",paste0("delta",c(2:n.stage)),paste0("phi"),paste0("alpha"))
     return(list(default_pars_density,default_pars_sampler,loglh_func,pars_name))
   }
   
@@ -209,9 +209,11 @@ SEIRfitting=function(init_sets_list,
     if (randomize_startValue) {  
       startValue=pars_sampler(n.stage = n.stage)
       best_logl = loglh_func(startValue)
+      print(loglh_func(startValue))
       for(l in 1:100){
         temp = pars_sampler(n.stage = n.stage)
         temp_logl = loglh_func(temp)
+        print(temp_logl)
         if(best_logl<temp_logl){
           startValue = temp
         }
