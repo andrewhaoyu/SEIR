@@ -90,7 +90,7 @@ Func_list = function(method){
     }
     
     default_pars_sampler <- function(n.stage=n.stage) {
-      s_vec <- matrix(NA, 1, 2*n.stage+1)
+      s_vec <- matrix(NA, 1, 2*n.stage+2)
       
       
       ## b1
