@@ -236,7 +236,8 @@ init_sets_list=get_init_sets_list(r0=r0,
                                   stage_intervals = stage_intervals,
                                   stateData=stateData,
                                   method = method)
-
+init_sets_list$daily_new_case[init_sets_list$daily_new_case<=0] = 0
+init_sets_list$daily_new_case_all[init_sets_list$daily_new_case_all<=0] = 0
 # good initial conditions
 # c(1.284, 0.384, 0.174, 0.096, 0.161, -0.046, -0.379, 0.569)
 if(i4==1){
