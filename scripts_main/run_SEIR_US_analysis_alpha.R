@@ -252,9 +252,12 @@ if(i4==1){
 
 
 library(invgamma)
-GeneratePlot(init_sets_list, 
-                      panel_B_R_ylim=6,
-                      all.date = all.date)
+SEIRfitting(init_sets_list, randomize_startValue = T,
+            run_id = paste0("101820_",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
+            all.date = all.date,
+            n_burn_in=170000,
+            n_iterations=2000000,
+            method = method)
 ## to evaluate convergence, we run another two rounds of this program
 # SEIRfitting(init_sets_list, randomize_startValue = T, run_id = "main_analysis_rep1", output_ret = T, skip_MCMC=F)
 # SEIRfitting(init_sets_list, randomize_startValue = T, run_id = "main_analysis_rep2", output_ret = T, skip_MCMC=F)
