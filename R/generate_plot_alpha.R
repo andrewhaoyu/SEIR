@@ -64,8 +64,7 @@ GeneratePlot=function(init_sets_list,
   }
   names(par_str) = colnames(mcmc_pars_estimate_original)
   print("summary string finished")
-  library(data.table)
-  rbindlist(par_str)
+
   
   
   estRt_mat <- apply(mcmc_pars_estimate, 1, function(x) estimate_R(pars = x, init_settings = init_sets_list))
