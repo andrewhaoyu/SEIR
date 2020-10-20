@@ -28,10 +28,8 @@ GeneratePlot=function(init_sets_list,
   #summary_string=paste0(paste(pars_name, collapse = ","), "\n")
   
   
-  b_vec=tmp_ret[[1]]
-  r_vec=tmp_ret[[2]]
   #get the b and r under orignal scale
-  mcmc_pars_estimate_original <- mcmc_pars_estimate
+  
   
   transform_delta_to_orginal=function(pars) {
     n.stage <- (length(pars)-2)/2
