@@ -17,7 +17,6 @@ GeneratePlot=function(init_sets_list,
   
   onset_obs <- init_sets_list$daily_new_case
   init_states <- init_sets_list$init_states
-  n_pars = length(pars_name)
   n.stage = length(init_sets_list$stage_intervals)
   stage_intervals = init_sets_list$stage_intervals
   n_stage = n.stage
