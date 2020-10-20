@@ -1,4 +1,4 @@
-i1 = as.numeric(args[[1]])
+
 code_root = "/Users/zhangh24/GoogleDrive/covid_project/SEIR/"
 #code_root = "/n/holystore01/LABS/xlin/Lab/hzhang/SEIR/"
 #code_root = "/dcl01/chatterj/data/hzhang1/temp/SEIR/"
@@ -6,7 +6,7 @@ setwd(paste0(code_root, "scripts_main"))
 #install.packages("BayesianTools")
 library(BayesianTools)
 #install.packages("vioplot")
-library(vioplot)
+#library(vioplot)
 #install.packages("corrplot")
 library(corrplot)
 library(readr)
@@ -62,6 +62,7 @@ source(paste0(code_root, "R/fun_Findzero.R"))
 
 #use JHU data to analyze
 #download data from https://raw.githubusercontent.com/lin-lab/COVID-data-cleaning/master/jhu_data/cleaned_data/JHU_COVID-19_State.csv
+p_jhu_list <- list()
 for(i1 in 1:8){
   statename = c("New York","Massachusetts",
                 "Florida","Michigan",
@@ -99,17 +100,113 @@ for(i1 in 1:8){
   idx <- which(weekday!="Saturday"&weekday!="Sunday")
   weekend[idx] <- "weekday"
   stateDataClean$weekend <- weekend
+  outlier <- rep("c",nrow(stateDataClean))
+  idx <- which(stateDataClean$positiveIncrease>=0)
+  outlier[idx] <- "normal"
+  idx <- which(stateDataClean$positiveIncrease<0)
+  if(length(idx)>0){
+    outlier[idx] <- "outlier"  
+  }
   
+  stateDataClean$outlier <- outlier
   library(ggplot2)
   
   p <- ggplot(stateDataClean) + 
-    geom_point(aes(date,positiveIncrease,color=weekend))+
+    geom_point(aes(date,positiveIncrease,color=weekend,shape=outlier))+
     theme_Publication()+
     ggtitle(paste0(statename[i1]," daily reported cases by JHU"))
-  png(filename = paste0("../output/result_101220/weekday_effect_",i1,".png"),
-      width = 10, height = 8, res =300, units = "in")
-  print(p)
-  dev.off()
+  p_jhu_list[[i1]] = p
+  # png(filename = paste0("../output/result_101220/weekday_effect_",i1,".png"),
+  #     width = 10, height = 8, res =300, units = "in")
+  # print(p)
+  # dev.off()
 }
 
+
+
+
+
+
+
+#use covidtracing data to analyze
+#downloaded from https://covidtracking.com/data/download
+statename = c("NY","MA",
+                "FL","MI","CT","IL","IN","LA"
+              )
+#
+allData <- read.csv("../data/all-states-history.csv")
+#keep date to 08/31/2020
+library(lubridate)
+date_in_model <- as.Date(allData$date,format="%m/%d/%Y")
+idx <- which(date_in_model<="0020-08-31")
+allData <- allData[idx,]
+#population number (downloaded from https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html)
+stateName = c("New York","Massachusetts",
+              "Florida","Michigan",
+              "Connecticut",
+              "Illinois",
+              "Indiana",
+              "Louisiana")
+#
+#plug in the population number
+population <- read.csv("../data/state_population.csv")
+p_covid_tracking_list <- list()
+for(i1 in 1:8){
+  idx <- which(population$State==stateName[i1])
+  N = population$Population[idx]
+  #
+  
+  idx <- which(allData$state==statename[i1])
+  
+  print(statename[i1])
+  stateData <- allData[idx,]
+  #order the data by date
+  stateData$date = as.Date(stateData$date,format="%m/%d/%Y")
+  stateData = stateData[order(stateData$date),]
+  jdx <- which(stateData$positiveIncrease>50)
+  #start analysis date
+  jan1_idx = min(jdx)
+  
+  stateDataClean = stateData[jan1_idx:nrow(stateData),]
+  all.date <- stateDataClean$date
+  weekday <- weekdays(all.date)
+  
+  weekend <- weekday
+  idx <- which(weekday=="Saturday"|weekday=="Sunday")
+  weekend[idx] <- "weekend"
+  idx <- which(weekday!="Saturday"&weekday!="Sunday")
+  weekend[idx] <- "weekday"
+  stateDataClean$weekend <- weekend
+  outlier <- rep("c",nrow(stateDataClean))
+  idx <- which(stateDataClean$positiveIncrease>=0)
+  outlier[idx] <- "normal"
+  idx <- which(stateDataClean$positiveIncrease<0)
+  if(length(idx)>0){
+    outlier[idx] <- "outlier"  
+  }
+  
+  stateDataClean$outlier <- outlier
+  library(ggplot2)
+  
+  p <- ggplot(stateDataClean) + 
+    geom_point(aes(date,positiveIncrease,color=weekend,shape=outlier))+
+    theme_Publication()+
+    ggtitle(paste0(statename[i1]," daily reported cases by COVID tracking"))
+  p_covid_tracking_list[[i1]] <- p
+  # png(filename = paste0("../output/result_101220/covid_weekday_effect_",i1,".png"),
+  #     width = 10, height = 8, res =300, units = "in")
+  # print(p)
+  # dev.off()
+  
+}
+#install.packages("ggpubr")
+library(ggpubr)
+for(i1 in 1:8){
+  p <- ggarrange(p_jhu_list[[i1]],p_covid_tracking_list[[i1]])
+  png(filename = paste0("../output/result_101220/covid_weekday_effect_",i1,".png"),
+      width = 16, height = 8, res =300, units = "in")
+  print(p)
+  dev.off()
+  
+}
 

@@ -140,7 +140,7 @@ Func_list = function(method){
       }
       return(logL)
     }
-    pars_name=c(paste0("b",c(1:n.stage)),"r1",paste0("delta",c(2:n.stage)),paste0("phi"),paste0("alpha"))
+    pars_name=c(paste0("b1",paste0("omega",c(2:n.stage)),"r1",paste0("delta",c(2:n.stage)),paste0("phi"),paste0("alpha")))
     return(list(default_pars_density,default_pars_sampler,loglh_func,pars_name))
   }
   

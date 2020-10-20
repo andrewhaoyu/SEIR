@@ -5,13 +5,13 @@ i3 = as.numeric(args[[1]])
 code_root="/Users/zhangh24/GoogleDrive/covid_project/SEIR/"
 setwd(paste0(code_root, "scripts_main"))
 stage.list <- rep(0,4)
-i2 = 1
+i2 = 2
 for(i1 in 1:4){
   
   #install.packages("BayesianTools")
   library(BayesianTools)
   #install.packages("vioplot")
-  library(vioplot)
+  #library(vioplot)
   #install.packages("corrplot")
   library(corrplot)
   library(readr)
@@ -80,7 +80,7 @@ for(i1 in 1:4){
 
 library(readr)
 library(coda)
-library(cairoDevice)
+#library(cairoDevice)
 
 # if (!file.exists("../output/pars_est_run_main_analysis.txt") | 
 #     !file.exists("../output/pars_est_run_main_analysis_rep1.txt") |
@@ -143,4 +143,119 @@ transform_var_main_stage=function(pars) {
   write.csv(analysis_result_table,file=
               paste0("../output/ascertainment_rate_101320.csv"))
   
-#}
+  test_result_table <- NULL
+  
+  
+  for(i1 in 1:4){
+    statename = c("NY","MA",
+                  "FL","MI","CT","IL","IN","LA"
+    )
+    #
+    allData <- read.csv("../data/all-states-history.csv")
+    #keep date to 08/31/2020
+    library(lubridate)
+    date_in_model <- as.Date(allData$date,format="%m/%d/%Y")
+    idx <- which(date_in_model<="0020-08-31")
+    allData <- allData[idx,]
+    #population number (downloaded from https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html)
+    stateName = c("New York","Massachusetts",
+                  "Florida","Michigan",
+                  "Connecticut",
+                  "Illinois",
+                  "Indiana",
+                  "Louisiana")
+    #
+    idx <- which(population$State==stateName[i1])
+    N = population$Population[idx]
+    #
+    
+    idx <- which(allData$state==statename[i1])
+    
+    print(statename[i1])
+    stateData <- allData[idx,]
+    #order the data by date
+    stateData$date = as.Date(stateData$date,format="%m/%d/%Y")
+    stateData = stateData[order(stateData$date),]
+    jdx <- which(stateData$positiveIncrease>50)
+    #start analysis date
+    jan1_idx = min(jdx)
+    
+    stateDataClean = stateData[jan1_idx:nrow(stateData),]
+    all.date <- stateDataClean$date
+    #leave 10 days for prediction
+    n.days <- nrow(stateDataClean)-10
+    n.days.all <- nrow(stateDataClean)
+    days_to_fit <- 1:n.days
+    
+    date_in_model <- stateDataClean$date
+    start.date <- date_in_model[1]
+    end.date <- date_in_model[n.days]
+    all.cut.date <- c(floor_date(seq(start.date,end.date,by="month"),unit="month")+14,
+                      ceiling_date(seq(start.date, end.date, by = 'month'), unit = "month")-1)
+    all.cut.date <- all.cut.date[order(all.cut.date)]
+    #remove the first cut date smaller than the start date
+    if(as.numeric(all.cut.date[1]<=start.date)){
+      all.cut.date <- all.cut.date[-1]
+    }
+    
+    #remove the first cut date if it's too close to start.date
+    if(as.numeric(all.cut.date[1]-start.date)<=7){
+      all.cut.date <- all.cut.date[-1]
+    }
+    
+    #remove the last cut date bigger than the end date
+    if(end.date<=all.cut.date[length(all.cut.date)]){
+      all.cut.date <- all.cut.date[-length(all.cut.date)]
+    }
+    
+    #remove the end cut date if it's too close to end.date
+    if(as.numeric(end.date-all.cut.date[length(all.cut.date)]<=7)){
+      all.cut.date <- all.cut.date[-length(all.cut.date)]
+    }
+    idx <- which(date_in_model%in%all.cut.date)
+    days.to.fit <- 1:length(date_in_model)
+    n.stage <- length(idx)+1
+    stage_intervals <- list()
+    for(l in 1:(n.stage)){
+      if(l<=(n.stage-1)&l>=2){
+        stage_intervals[[l]] = c(start=idx[l-1]+1,end = idx[l])  
+      }else if(l==1){
+        stage_intervals[[l]] = c(start=1,end = idx[l])  
+      }else{
+        stage_intervals[[l]] = c(start=idx[l-1]+1,end = n.days)  
+      }
+      
+    }
+    total.test.temp <- rep(0,n.stage)
+    
+    for(l in 1:n.stage){
+      total.test.temp[l] <- mean(stateDataClean$totalTestResultsIncrease[stage_intervals[[l]][1]:stage_intervals[[l]][2]])
+      
+    }
+    
+    test_result_table <- rbind(test_result_table,
+                               total.test.temp)
+    #}
+    
+  }
+  logit <- function(x){
+    log(x/(1-x))
+  }
+  analysis_result_table <- analysis_result_table[,1:10]
+  
+  for(i1 in 1:4){
+    data <- data.frame(ascertainment = analysis_result_table[i1,],
+                       averaged_test = test_result_table[i1,])
+    p <- ggplot(data,aes(x=averaged_test,y = logit(ascertainment)))+
+      geom_point()+
+      theme_Publication()+
+      ggtitle(paste0(statename[i1]))
+    png(filename = paste0("../output/result_101220/ascertainment_",i1,".png"),
+        width = 16, height = 8, res =300, units = "in")
+    print(p)
+    dev.off()
+    
+  }
+  
+  
+  
