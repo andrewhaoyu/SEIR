@@ -254,6 +254,7 @@ if(i4==1){
 
 library(invgamma)
 GeneratePlot(init_sets_list, 
+             run_id = paste0("101220_",i1,"_",i2,"_",i6),
                       panel_B_R_ylim=6,
                       all.date = all.date)
 # SEIRfitting(init_sets_list, randomize_startValue = T,

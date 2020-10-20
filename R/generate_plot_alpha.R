@@ -9,6 +9,7 @@
 #' @param skip_MCMC This is meant for redrawing all results without rerunning MCMC
 #' @param panel_B_R_ylim the y limit in panel B of the main result plot
 GeneratePlot=function(init_sets_list, 
+                    run_id = runid,
                      panel_B_R_ylim=6,
                      all.date = all.date) {
   
