@@ -12,12 +12,12 @@ args = commandArgs(trailingOnly = T)
 #i5 represent reparametrization
 #i6 represent asympotomatic infection rate
 i1 = as.numeric(args[[1]])
-i2 = as.numeric(args[[2]])
-i3 = as.numeric(args[[3]])
+#i2 = as.numeric(args[[2]])
+i3 = as.numeric(args[[2]])
 i4 = 1
 #i5 = 1
 #i6 = as.numeric(args[[4]])
-set.seed(i1*1000+i2*100+i3)
+#set.seed(i1*1000+i2*100+i3)
 # ind = as.numeric(args[[1]])
 # #number of statess
 # #number of replicates
@@ -60,23 +60,23 @@ library(readr)
 #library(cairoDevice)
 library(dplyr)
 ##
-source(paste0(code_root, "R/fun_SEIRpred_alpha.R"))
-source(paste0(code_root, "R/fun_SEIRsimu_alpha.R"))
+source(paste0(code_root, "R/fun_SEIRpred.R"))
+source(paste0(code_root, "R/fun_SEIRsimu.R"))
 
 #source(paste0(code_root, "R/init_cond_update.R"))
 #if(i5 ==1){
-source(paste0(code_root, "R/fun_SEIRfitting_alpha.R"))  
-source(paste0(code_root, "R/init_cond_alpha.R"))
+source(paste0(code_root, "R/fun_SEIRfitting.R"))  
+source(paste0(code_root, "R/init_cond_update.R"))
 #}else if(i5 ==2){
 # source(paste0(code_root, "R/fun_SEIRfitting_new.R"))  
 #  source(paste0(code_root, "R/init_cond_new.R"))
 #}
 
-source(paste0(code_root, "R/fun_R0estimate_alpha.R"))
+source(paste0(code_root, "R/fun_R0estimate.R"))
 source(paste0(code_root, "R/correlationPlot_modified.R"))
 source(paste0(code_root, "R/fun_SEIRplot.R"))
 source(paste0(code_root, "R/fun_Findzero.R"))
-source(paste0(code_root,"R/generate_plot_alpha.R"))
+source(paste0(code_root,"R/generate_plot.R"))
 ##
 
 

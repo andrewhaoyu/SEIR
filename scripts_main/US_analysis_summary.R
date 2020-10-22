@@ -17,7 +17,7 @@ i3 = as.numeric(args[[3]])
 i4 = 1
 i5 = 1
 #i6 = as.numeric(args[[3]])
-set.seed(i1*1000+i2*100+i3)
+#set.seed(i1*1000+i2*100+i3)
 # ind = as.numeric(args[[1]])
 # #number of statess
 # #number of replicates
@@ -64,18 +64,15 @@ source(paste0(code_root, "R/fun_SEIRpred.R"))
 source(paste0(code_root, "R/fun_SEIRsimu.R"))
 
 #source(paste0(code_root, "R/init_cond_update.R"))
-if(i5 ==1){
+
   source(paste0(code_root, "R/fun_SEIRfitting.R"))  
   source(paste0(code_root, "R/init_cond_update.R"))
-}else if(i5 ==2){
-  source(paste0(code_root, "R/fun_SEIRfitting_new.R"))  
-  source(paste0(code_root, "R/init_cond_new.R"))
-}
 
 source(paste0(code_root, "R/fun_R0estimate.R"))
 source(paste0(code_root, "R/correlationPlot_modified.R"))
 source(paste0(code_root, "R/fun_SEIRplot.R"))
 source(paste0(code_root, "R/fun_Findzero.R"))
+source(paste0(code_root,"R/generate_plot.R"))
 ##
 
 
@@ -155,7 +152,7 @@ date_in_model <- stateDataClean$date
 start.date <- date_in_model[1]
 end.date <- date_in_model[n.days]
 all.cut.date <- c(floor_date(seq(start.date,end.date,by="month"),unit="month")+14,
-ceiling_date(seq(start.date, end.date, by = 'month'), unit = "month")-1)
+                  ceiling_date(seq(start.date, end.date, by = 'month'), unit = "month")-1)
 all.cut.date <- all.cut.date[order(all.cut.date)]
 #remove the first cut date smaller than the start date
 if(as.numeric(all.cut.date[1]<=start.date)){
@@ -244,29 +241,17 @@ init_sets_list=get_init_sets_list(r0=r0,
 
 # good initial conditions
 # c(1.284, 0.384, 0.174, 0.096, 0.161, -0.046, -0.379, 0.569)
-if(i4==1){
   beta_shape1 <- 1
   beta_shape2 <- 1
   
-}else if(i4==2){
-  beta_shape1 <- 7.3
-  beta_shape2 <- 24.6
-  
-}
 
 
 library(invgamma)
-#update the outlier
-idx <- which(init_sets_list$daily_new_case<0)
-init_sets_list$daily_new_case[idx]= 0
-idx <- which(init_sets_list$daily_new_case_all<0)
-init_sets_list$daily_new_case_all[idx]= 0
-SEIRfitting(init_sets_list, randomize_startValue = T,
-            run_id = paste0("102120_",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
-            all.date = all.date,
-            n_burn_in=190000,
-            n_iterations=2200000,
-            method = method)
+  i2 = 1
+GeneratePlot(init_sets_list, 
+             run_id = paste0("101820_",i1,"_",i2,"_",i3),
+             panel_B_R_ylim=6,
+             all.date = all.date)
 
 ## to evaluate convergence, we run another two rounds of this program
 # SEIRfitting(init_sets_list, randomize_startValue = T, run_id = "main_analysis_rep1", output_ret = T, skip_MCMC=F)

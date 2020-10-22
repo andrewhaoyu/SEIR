@@ -161,4 +161,14 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   text(par()$usr[1] - (par()$usr[2] -par()$usr[1]) * 0.12, par()$usr[4] + (par()$usr[4] - par()$usr[3]) * 0.06, labels = "F", xpd = T, cex = 2)
   ##figure_F finished
   dev.off()
+  prevalance <- cumsum(estP_mean)/(Dp*N)
+  estP_cum <- apply(estP_mat,2,cumsum)
+  prevalance_low <- estP_cum/(Dp*N)
+  prevalance_low <- apply(prevelance_mat,1,function(x)quantile(x,0.025))
+  prevalance_high <- apply(prevelance_mat,1,function(x)quantile(x,0.975))
+  library(ggplot2)
+  data = data.frame(date= all.date,prevalance,low = prevelance_low,high= prevelance_high)
+  ggplot(data,aes(x=date))+geom_line(aes(y = prevelance))+
+    geom_ribbon(aes(ymin=low,ymax=high),alpha = 0.2)+
+    theme_Publication()
 }
