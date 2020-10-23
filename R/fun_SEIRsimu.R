@@ -125,7 +125,7 @@ SEIRsimu <- function(pars, init_settings, num_periods = 5) {
     }
   }
   else {
-    print("num_periods has to be 2, 3, 4 or 5!")
+    print("num_periods has to be within 2 to total number of stage!")
     #q(save="no")
     }
   

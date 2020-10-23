@@ -73,6 +73,7 @@ source(paste0(code_root, "R/correlationPlot_modified.R"))
 source(paste0(code_root, "R/fun_SEIRplot.R"))
 source(paste0(code_root, "R/fun_Findzero.R"))
 source(paste0(code_root,"R/generate_plot.R"))
+source(paste0(code_root,"R/theme_Publication.R"))
 ##
 
 
@@ -248,11 +249,12 @@ init_sets_list=get_init_sets_list(r0=r0,
 CDC <- read.csv("../data/CDC_antibody_test.csv")
 Collection_start = as.Date(CDC$Collection_start,format="%m/%d/%y")
 Collection_end = as.Date(CDC$Collection_end,format="%m/%d/%y")
-Infection_date = median(seq(c(Collection_start,Collection_end),1))
-library(dplyr)
-CDC = CDC %>% 
-  mutate(Collection_start = as.Date(Collection_start),
-         )
+Infection_date = as.integer((Collection_end-Collection_start)/2)+Collection_start-21-4
+#IN results contain both RTPCR+antibody
+idx <- which(CDC$Statename=="IN")
+Infection_date <- "2020-04-27"
+CDC$Infection_date = Infection_date
+
 
 library(invgamma)
   i2 = 1

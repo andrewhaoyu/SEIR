@@ -47,7 +47,15 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   layout(matrix(c(1:3), byrow = T, nrow = 3))
   
   l <- stages
-  estN_mat <- apply(pars_estimate, 1, function(x) SEIRsimu(pars = x, init_settings = init_settings, num_periods = l)[, "Onset_expect"])
+  estSEAIP_mat <- apply(pars_estimate, 1, function(x) SEIRsimu(pars = x, init_settings = init_settings, num_periods = n.stage)[, c("S","E","I", "A", "P","Onset_expect")])
+  estS_mat <- estSEAIP_mat[ptime,]
+  estE_mat <- estSEAIP_mat[ptime + length(ptime),]
+  estI_mat <- estSEAIP_mat[ptime + length(ptime)*2, ]
+  estA_mat <- estSEAIP_mat[ptime + length(ptime)*3, ]
+  estP_mat <- estSEAIP_mat[ptime + length(ptime) * 4, ]
+  estN_mat <- estSEAIP_mat[ptime + length(ptime) * 5, ]
+  
+  #estN_mat <- apply(pars_estimate, 1, function(x) SEIRsimu(pars = x, init_settings = init_settings, num_periods = l)[, "Onset_expect"])
   estN_mean <- round(apply(estN_mat, 1, mean), 0)
   estN_up <- round(apply(estN_mat, 1, function(x) quantile(x, 0.975)), 0)
   estN_low <- round(apply(estN_mat, 1, function(x) quantile(x, 0.025)), 0)
@@ -145,10 +153,8 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   
   
   ##########################################   Panel F  ##########################################################
-  estAIP_mat <- apply(pars_estimate, 1, function(x) SEIRsimu(pars = x, init_settings = init_settings, num_periods = n.stage)[, c("I", "A", "P")])
-  estI_mat <- estAIP_mat[ptime, ]
-  estA_mat <- estAIP_mat[ptime + length(ptime), ]
-  estP_mat <- estAIP_mat[ptime + length(ptime) * 2, ]
+  
+  
   estI_mean <- apply(estI_mat, 1, mean)
   estA_mean <- apply(estA_mat, 1, mean)
   estP_mean <- apply(estP_mat, 1, mean)
@@ -161,14 +167,23 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   text(par()$usr[1] - (par()$usr[2] -par()$usr[1]) * 0.12, par()$usr[4] + (par()$usr[4] - par()$usr[3]) * 0.06, labels = "F", xpd = T, cex = 2)
   ##figure_F finished
   dev.off()
-  prevalance <- cumsum(estP_mean)/(Dp*N)
-  estP_cum <- apply(estP_mat,2,cumsum)
-  prevalance_low <- estP_cum/(Dp*N)
-  prevalance_low <- apply(prevelance_mat,1,function(x)quantile(x,0.025))
-  prevalance_high <- apply(prevelance_mat,1,function(x)quantile(x,0.975))
+  prevalence <- rowMeans((N-estS_mat)/N)
+  prevalence_low <- apply(estS_mat,1,function(x){quantile((N-x)/N,0.025)})
+  prevalence_high <- apply(estS_mat,1,function(x){quantile((N-x)/N,0.975)})
+  
   library(ggplot2)
-  data = data.frame(date= all.date,prevalance,low = prevelance_low,high= prevelance_high)
-  ggplot(data,aes(x=date))+geom_line(aes(y = prevelance))+
-    geom_ribbon(aes(ymin=low,ymax=high),alpha = 0.2)+
-    theme_Publication()
+  if(statename[i1]%in%CDC$Statename){
+    data = data.frame(date= as.Date(as.character(all.date),format="%y-%m-%d"),Prevalance=100*prevalence,Prevalence_low = 100*prevalence_low,Prevalence_high= 100*prevalence_high)
+    
+    CDC_filter <- CDC %>% filter(Statename==statename[i1]) %>% 
+      mutate(date = as.Date(Infection_date),format="%y-%m-%d") %>% 
+      select(Statename,Prevalance,Prevalance_low,Prevalance_high,date)
+    ggplot(data,aes(x=date))+geom_line(aes(y = Prevalance))+
+      geom_ribbon(aes(ymin=Prevalence_low,ymax=Prevalence_high),alpha = 0.2)+
+      geom_point(data= CDC_filter,aes(x=date,y = Prevalance))+
+      geom_errorbar(data=CDC_filter,aes(ymin = Prevalance_low,ymax=Prevalance_high))+
+      theme_Publication()
+    
+  }
+  
 }
