@@ -73,7 +73,7 @@ source(paste0(code_root, "R/correlationPlot_modified.R"))
 source(paste0(code_root, "R/fun_SEIRplot.R"))
 source(paste0(code_root, "R/fun_Findzero.R"))
 source(paste0(code_root,"R/generate_plot.R"))
-source(paste0(code_root,"R/theme_Publication.R"))
+source(paste0(code_root,"R/theme_publication.R"))
 ##
 
 
