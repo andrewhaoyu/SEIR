@@ -244,7 +244,15 @@ init_sets_list=get_init_sets_list(r0=r0,
   beta_shape1 <- 1
   beta_shape2 <- 1
   
-
+#load CDC anti body test data
+CDC <- read.csv("../data/CDC_antibody_test.csv")
+Collection_start = as.Date(CDC$Collection_start,format="%m/%d/%y")
+Collection_end = as.Date(CDC$Collection_end,format="%m/%d/%y")
+Infection_date = median(seq(c(Collection_start,Collection_end),1))
+library(dplyr)
+CDC = CDC %>% 
+  mutate(Collection_start = as.Date(Collection_start),
+         )
 
 library(invgamma)
   i2 = 1
