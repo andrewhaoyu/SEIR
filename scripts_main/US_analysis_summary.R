@@ -259,7 +259,7 @@ CDC$Infection_date = Infection_date
 library(invgamma)
   i2 = 1
 GeneratePlot(init_sets_list, 
-             run_id = paste0("101820_",i1,"_",i2,"_",i3),
+             run_id = paste0("102120_",i1,"_",i2,"_",i3),
              panel_B_R_ylim=6,
              all.date = all.date)
 
