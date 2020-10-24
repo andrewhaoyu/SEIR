@@ -57,7 +57,7 @@ GeneratePlot=function(init_sets_list,
   
   
   transform_delta_to_orginal=function(pars) {
-    n.stage <- (length(pars)-2)/2
+    n.stage <- (length(pars)-1)/2
     #b_vec <- pars[1:n.stage]
     b_vec <- pars[1:n.stage]
     for(l in 2:n.stage){
@@ -78,7 +78,7 @@ GeneratePlot=function(init_sets_list,
   
   mcmc_pars_estimate_original = 
     t(apply(mcmc_pars_estimate,1,transform_delta_to_orginal))
-  colnames(mcmc_pars_estimate_original) = c(paste0("b",1:n.stage),paste0("r",1:n.stage),"phi","alpha")
+  colnames(mcmc_pars_estimate_original) = c(paste0("b",1:n.stage),paste0("r",1:n.stage),"phi")
   par_str=rep("c",n_pars)
   for (i_par in 1:n_pars) {
     par_str[i_par]=paste0(round(mean(mcmc_pars_estimate_original[,i_par]),2), " (",
