@@ -185,7 +185,7 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
       geom_errorbar(data=CDC_filter,aes(ymin = Prevalance_low,ymax=Prevalance_high))+
       theme_Publication()+
       ggtitle(paste0("Prevalance estimate in ",paste0(statename[i1])))
-    png(paste0("../output/Prevalance_", file_name, ".pdf"), width = 10, height = 10,res=300,units="in")
+    png(paste0("../output/Prevalance_", file_name, ".png"), width = 10, height = 10,res=300,units="in")
     p
     dev.off()
     
@@ -201,7 +201,7 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
       #geom_errorbar(data=CDC_filter,aes(ymin = Prevalance_low,ymax=Prevalance_high))+
       theme_Publication()+
       ggtitle(paste0("Prevalance estimate in ",paste0(statename[i1])))
-    png(paste0("../output/Prevalance_", file_name, ".pdf"), width = 10, height = 10,res=300,units="in")
+    png(paste0("../output/Prevalance_", file_name, ".png"), width = 10, height = 10,res=300,units="in")
     p
     dev.off()
     
