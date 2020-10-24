@@ -53,7 +53,9 @@ SEIRsimu <- function(pars, init_settings, num_periods = 5) {
     R <- states_old[7]
     ## S
     ## meaning S->E, S->, S->S
-    pS_vec <- c(b * (alpha * P + I + alpha * A) / N, n / N, 1 - b * (alpha * P + I + alpha * A) / N - n / N)
+    #the probality can't be more than 1 and lower than 0
+    
+    pS_vec <- c(min(1,b * (alpha * P + I + alpha * A) / N), n / N, max(0,1 - b * (alpha * P + I + alpha * A) / N - n / N))
     sample_S <- rmultinom(1, size = S, prob = pS_vec)
     ## E
     ## meaning E->P, E->, E->E

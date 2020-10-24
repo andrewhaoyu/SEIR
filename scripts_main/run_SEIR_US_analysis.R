@@ -61,7 +61,7 @@ library(readr)
 library(dplyr)
 ##
 source(paste0(code_root, "R/fun_SEIRpred.R"))
-source(paste0(code_root, "R/fun_SEIRsimu.R"))
+source(paste0(code_root, "R/fun_SEIRsimu_update.R"))
 
 #source(paste0(code_root, "R/init_cond_update.R"))
 if(i5 ==1){

@@ -60,8 +60,8 @@ SEIRsimu <- function(pars, init_settings, num_periods = 5) {
     b <- stage_pars[1]
     r <- stage_pars[2]
     Dq <- stage_pars[3]
-    #n <- stage_pars[4]
-    n <- rpois(1, lambda = stage_pars[4])      ## stochastic, Poisson Distribution
+    n <- stage_pars[4]
+    #n <- rpois(1, lambda = as.numeric(stage_pars[4]))     ## stochastic, Poisson Distribution
     ## old states number: c(S, E, P, I, A, H, R)
     S <- states_old[1]
     E <- states_old[2]
