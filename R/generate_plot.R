@@ -10,7 +10,7 @@
 #' @param panel_B_R_ylim the y limit in panel B of the main result plot
 GeneratePlot=function(init_sets_list, 
                       run_id = runid,
-                      panel_B_R_ylim=6,
+                      panel_B_R_ylim=7,
                       all.date = all.date) {
   
   plot_combined_fig=T

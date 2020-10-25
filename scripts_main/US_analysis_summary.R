@@ -252,7 +252,7 @@ Collection_end = as.Date(CDC$Collection_end,format="%m/%d/%y")
 Infection_date = as.integer((Collection_end-Collection_start)/2)+Collection_start-21-4
 #IN results contain both RTPCR+antibody
 idx <- which(CDC$Statename=="IN")
-Infection_date <- "2020-04-27"
+Infection_date[idx] <- "2020-04-27"
 CDC$Infection_date = Infection_date
 library(invgamma)
 #update the outlier
