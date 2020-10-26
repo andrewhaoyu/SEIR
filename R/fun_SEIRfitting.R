@@ -220,8 +220,11 @@ SEIRfitting=function(init_sets_list,
     ## DRAM: Adaptive MCMC, prior optimization, delayed rejection
     # startValue = c(b12=1.2, b3=0.4, b4=0.2, b5=0.1, r12=0.5, delta3=-1, delta4=0, delta5=0)
     # startValue = c(b12 = 1.359, b3 = 0.537, b4 = 0.203, b5 = 0.196, r12 = 0.305, delta3 = -0.964, delta4 = -0.593, delta5 = -0.309)
+    # mh_settings = list(startValue = startValue,
+    #                    adapt = T, DRlevels = 2, iterations = n_iterations, thin = 10,
+    #                    message = F)
     mh_settings = list(startValue = startValue,
-                       adapt = T, DRlevels = 2, iterations = n_iterations, thin = 10,
+                       adapt = T, iterations = n_iterations, thin = 10,
                        message = F)
     #mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "Metropolis", settings = mh_settings)
     mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "DEzs", settings = mh_settings)
