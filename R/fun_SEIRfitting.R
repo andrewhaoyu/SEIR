@@ -203,7 +203,7 @@ SEIRfitting=function(init_sets_list,
     if (randomize_startValue) {  
       startValue=pars_sampler(n.stage = n.stage)
       best_logl = loglh_func(startValue)
-      for(l in 1:10000){
+      for(l in 1:1000){
         temp = pars_sampler(n.stage = n.stage)
         temp_logl = loglh_func(temp)
         if(best_logl<temp_logl){
@@ -225,7 +225,7 @@ SEIRfitting=function(init_sets_list,
     #                    message = F)
     mh_settings = list(startValue = startValue,
                        adapt = T, iterations = n_iterations, thin = 10,
-                       message = T)
+                       message = F)
     #mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "Metropolis", settings = mh_settings)
     mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "DEzs", settings = mh_settings)
     #plot(mh_out)
