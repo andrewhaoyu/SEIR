@@ -225,7 +225,7 @@ SEIRfitting=function(init_sets_list,
     #                    message = F)
     mh_settings = list(startValue = startValue,
                        adapt = T, iterations = n_iterations, thin = 10,
-                       message = F)
+                       message = T)
     #mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "Metropolis", settings = mh_settings)
     mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "DEzs", settings = mh_settings)
     #plot(mh_out)
