@@ -222,19 +222,31 @@ SEIRfitting=function(init_sets_list,
     # startValue = c(b12 = 1.359, b3 = 0.537, b4 = 0.203, b5 = 0.196, r12 = 0.305, delta3 = -0.964, delta4 = -0.593, delta5 = -0.309)
     # mh_settings = list(startValue = startValue,
     #                    adapt = T, DRlevels = 2, iterations = n_iterations, thin = 10,
-    #                    message = F)
-    mh_settings = list(startValue = startValue,
-                       iterations = n_iterations, thin = 10,
+    #                    message = T)
+    mh_settings = list(
+      #startValue = startValue,
+                       iterations = n_iterations,
+                       
+                       thin = 10,
                        message = T)
     #mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "Metropolis", settings = mh_settings)
     mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "DEzs", settings = mh_settings)
     #plot(mh_out)
-    mcmc_pars_estimate <- getSample(mh_out, start = n_burn_in+2, thin = 1)  ## set start = 2002 as the burn in period
+    #plot(mh_out)
+    mcmc_pars_estimate <- getSample(mh_out)
+    mcmc_pars_estimate <- mcmc_pars_estimate[(n_burn_in+2):nrow(mcmc_pars_estimate),]
+                                    #start = n_burn_in+2) 
+    #mcmc_pars_estimate <- getSample(mh_out,                
+                                    #start = n_burn_in+2, 
+                                    #thin = 1)  ## set start = 2002 as the burn in period
     mcmc_pars_estimate <- round(mcmc_pars_estimate, 3)
     print("get sample finished")
     colnames(mcmc_pars_estimate) <- pars_name 
     
     if (output_ret) {
+      if(i2==1){
+        save(mh_out,file = paste0("../output/mcmc_out",run_id,".rdata"))  
+      }
       write.table(mcmc_pars_estimate, paste0("../output/pars_est_run_",run_id,".txt"), quote = F, row.names = F, sep = "\t")
     }
   } else {
