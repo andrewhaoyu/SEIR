@@ -222,7 +222,7 @@ for(i in 1:(n.stage-1)){
   Dq[i] <- GenerateDq(all.cut.date[i])
 }
 Dq[length(Dq)] = 3
-r0_vec = c(0.10,0.15,0.20,0.23,0.30,0.35,0.40,0.5)
+r0_vec = c(0.05,0.10,0.15,0.20,0.23,0.30,0.35,0.40,0.5)
 r0 = r0_vec[i3]
 init_sets_list=get_init_sets_list(r0=r0,
                                   Di = Di,
