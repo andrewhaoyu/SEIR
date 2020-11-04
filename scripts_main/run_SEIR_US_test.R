@@ -266,10 +266,10 @@ init_sets_list$daily_new_case_all[idx]= 0
 SEIRfitting(init_sets_list, randomize_startValue = T,
             run_id = paste0("110420_",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
             all.date = all.date,
-            n_burn_in=2800,
-            n_iterations=30000,
-            # n_burn_in=280000,
-            # n_iterations=3000000,
+            #n_burn_in=2800,
+            #n_iterations=30000,
+             n_burn_in=93333,
+             n_iterations=1000000,
             method = method)
 
 ## to evaluate convergence, we run another two rounds of this program
