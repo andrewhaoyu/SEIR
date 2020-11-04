@@ -69,7 +69,7 @@ generate_init_condi <- function(r0,
   }else if(method=="nb"){
     #par_lower = c(rep(0,n.stage),0,rep(-10,n.stage-1),0)
     par_lower = c(0,rep(-10,n.stage-1),0,rep(-10,n.stage-1),0)
-    par_upper =  c(2,rep(10,n.stage-1),1,rep(10,n.stage-1),1000)
+    par_upper =  c(3,rep(10,n.stage-1),1,rep(10,n.stage-1),1000)
     transform_var_main_stage=function(pars) {
       n.stage <- (length(pars)-1)/2
       #b_vec <- pars[1:n.stage]

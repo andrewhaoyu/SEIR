@@ -64,7 +64,7 @@ Func_list = function(method){
       #   d_vec[i] <- dunif(pars[i], 0, 2, log = T)
       # }
       d_vec[1] =  log(1/2)
-      d_vec[2:n.stage] =  dnorm(pars[(n.stage+2):(2*n.stage)],delta_mean, delta_sd, log = T)
+      d_vec[2:n.stage] =  dnorm(pars[2:(n.stage)],delta_mean, delta_sd, log = T)
       #rvec1
       d_vec[n.stage+1] = dbeta(pars[n.stage+1],beta_shape1, beta_shape2, log = T)
       #rvec

@@ -9,12 +9,12 @@ Func_list = function(method){
       # for(i in c(1:n.stage)) {
       #   d_vec[i] <- dunif(pars[i], 0, 2, log = T)
       # }
-      d_vec[1] =  log(1/2)
-      d_vec[2:n.stage] =  dnorm(pars[(n.stage+2):(2*n.stage)],delta_mean, delta_sd, log = T)
+      d_vec[1] =  log(1/3)
+      d_vec[2:n.stage] =  dnorm(pars[2:n.stage],delta_mean, delta_sd, log = T)
       #rvec1
       d_vec[n.stage+1] = dnorm(pars[n.stage+1],delta_mean, delta_sd, log = T)
       #rvec
-      d_vec[n.stage+2] = dnorm(pars[n.stage+2],delta_mean, 0.1, log = T)
+      d_vec[n.stage+2] = dnorm(pars[n.stage+2],delta_mean, delta_sd, log = T)
       phi = pars[n.stage+3]
       #d_vec[2*n.stage+1] = dgamma(phi,gamma_shape,gamma_rate,log =T)
       d_vec[n.stage+3] = dinvgamma(phi,shape = gamma_shape,
@@ -33,12 +33,12 @@ Func_list = function(method){
       
       
       ## b1
-      s_vec[, 1] <- runif(1, 0, 2) 
+      s_vec[, 1] <- runif(1, 0, 3) 
       ## b2...
       s_vec[, 2:n.stage] <- rnorm(n.stage-1, delta_mean, delta_sd) 
       #r1
       s_vec[, n.stage+1] <- rnorm(1, delta_mean, delta_sd)
-      s_vec[, n.stage+2] <- rnorm(1, delta_mean, 0.1)
+      s_vec[, n.stage+2] <- rnorm(1, delta_mean, delta_sd)
      
       s_vec[, n.stage+3] <- rinvgamma(1,
                                         shape = gamma_shape,

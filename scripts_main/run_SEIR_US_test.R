@@ -67,8 +67,8 @@ source(paste0(code_root, "R/fun_SEIRsimu_test.R"))
 
 #source(paste0(code_root, "R/init_cond_update.R"))
 
-  source(paste0(code_root, "R/fun_SEIRfitting_test.R"))  
-  source(paste0(code_root, "R/init_cond_test.R"))
+source(paste0(code_root, "R/fun_SEIRfitting_test.R"))  
+source(paste0(code_root, "R/init_cond_test.R"))
 
 source(paste0(code_root, "R/fun_R0estimate.R"))
 source(paste0(code_root, "R/correlationPlot_modified.R"))
@@ -203,7 +203,7 @@ for(l in 1:(n.stage)){
   test_stage[l] <- mean(test_increase[stage_intervals[[l]][1]:stage_intervals[[l]][2]])
 }
 test_stage[l+1] <- mean(test_increase[(stage_intervals[[l]][2]+1):n.days.all])
-test_stage = test_stage/1000
+test_stage = test_stage/10000
 alpha <- 0.55
 
 Dh = 30
