@@ -71,7 +71,7 @@ generate_init_condi <- function(r0,
     par_lower = c(0,rep(-10,n.stage-1),-10,-10,0)
     par_upper =  c(2,rep(10,n.stage-1),10,10,1000)
     transform_var_main_stage=function(pars) {
-      n.stage <- (length(pars)-1)/2
+      #n.stage <- (length(pars)-1)/2
       #b_vec <- pars[1:n.stage]
       b_vec <- pars[1:n.stage]
       for(l in 2:n.stage){

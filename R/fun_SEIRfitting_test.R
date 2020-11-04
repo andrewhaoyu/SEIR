@@ -1,62 +1,8 @@
 #library(cairoDevice)
 
 Func_list = function(method){
-  if(method=="poisson"){
     default_pars_density <- function(pars) {
-      n.stage = length(pars)/2
-      d_vec <- rep(NA, length(pars))
-      ##b12, b3, b4, b5
-      #bvec
-      # for(i in c(1:n.stage)) {
-      #   d_vec[i] <- dunif(pars[i], 0, 2, log = T)
-      # }
-      d_vec[1:n.stage] =  log(1/2)
-      
-      #rvec1
-      d_vec[n.stage+1] = dbeta(pars[n.stage+1],beta_shape1, beta_shape2, log = T)
-      #rvec
-      d_vec[(n.stage+2):(2*n.stage)] = 
-        dnorm(pars[(n.stage+2):(2*n.stage)],delta_mean, delta_sd, log = T)
-      #rvec
-      # for(l in (n.stage+1):(2*n.stage)){
-      #   r_temp = pars[l]
-      #   d_vec[l] = dbeta(r_temp, beta_shape1, beta_shape2, log = T)
-      # }
-      return(sum(d_vec))
-    }
-    
-    default_pars_sampler <- function(n.stage=n.stage) {
-      s_vec <- matrix(NA, 1, 2*n.stage)
-      #b
-      s_vec[, 1:n.stage] <- runif(n.stage, 0, 2) 
-      #r1
-      s_vec[, n.stage+1] <- rbeta(1, beta_shape1, beta_shape2)
-      #r2..
-      s_vec[, (n.stage+2):(2*n.stage)] <- rnorm(n.stage-1, delta_mean, delta_sd)
-      
-      return(s_vec)
-    }
-    ## likelihood function
-    loglh_func <- function(pars){
-      ypred <- SEIRpred(pars, init_settings = init_sets_list)
-      ypred <- ypred[, "Onset_expect"]
-      onset_obs <- init_sets_list$daily_new_case
-      # meant to suppress warnings when ypred is negative
-      suppressWarnings(p <- dpois(as.numeric(onset_obs), ypred,log=T))
-      
-      #if(any(p == 0) || any(is.nan(p))){
-      if(any(is.nan(p))){  
-        logL <- -Inf
-      }else{
-        logL <- sum(p)
-      }
-      return(logL)
-    }
-    pars_name=c(paste0("b",c(1:n.stage)),"r1",paste0("delta",c(2:n.stage)))
-    return(list(default_pars_density,default_pars_sampler,loglh_func,pars_name))
-  }else if(method=="nb"){
-    default_pars_density <- function(pars) {
-      n.stage = (length(pars)-1)/2
+     # n.stage = (length(pars)-1)/2
       d_vec <- rep(NA, length(pars))
       ##b12, b3, b4, b5
       #bvec
@@ -68,7 +14,7 @@ Func_list = function(method){
       #rvec1
       d_vec[n.stage+1] = dnorm(pars[n.stage+1],delta_mean, delta_sd, log = T)
       #rvec
-      d_vec[n.stage+2] = dnorm(pars[n.stage+2],delta_mean, delta_sd, log = T)
+      d_vec[n.stage+2] = dnorm(pars[n.stage+2],delta_mean, 0.1, log = T)
       phi = pars[n.stage+3]
       #d_vec[2*n.stage+1] = dgamma(phi,gamma_shape,gamma_rate,log =T)
       d_vec[n.stage+3] = dinvgamma(phi,shape = gamma_shape,
@@ -83,7 +29,7 @@ Func_list = function(method){
     }
     
     default_pars_sampler <- function(n.stage=n.stage) {
-      s_vec <- matrix(NA, 1, 2*n.stage+1)
+      s_vec <- matrix(NA, 1, n.stage+3)
       
       
       ## b1
@@ -92,7 +38,7 @@ Func_list = function(method){
       s_vec[, 2:n.stage] <- rnorm(n.stage-1, delta_mean, delta_sd) 
       #r1
       s_vec[, n.stage+1] <- rnorm(1, delta_mean, delta_sd)
-      s_vec[, n.stage+2] <- rnorm(1, delta_mean, delta_sd)
+      s_vec[, n.stage+2] <- rnorm(1, delta_mean, 0.1)
      
       s_vec[, n.stage+3] <- rinvgamma(1,
                                         shape = gamma_shape,
@@ -130,7 +76,7 @@ Func_list = function(method){
     }
     pars_name=c(paste0("b",c(1:n.stage)),"c0","c1",paste0("phi"))
     return(list(default_pars_density,default_pars_sampler,loglh_func,pars_name))
-  }
+  
   
 }
 
@@ -153,7 +99,7 @@ SEIRfitting=function(init_sets_list,
                      output_ret=T, 
                      run_id, 
                      skip_MCMC=F, 
-                     panel_B_R_ylim=4,
+                     panel_B_R_ylim=7,
                      plot_combined_fig=T,
                      calc_clearance=T,
                      n_burn_in=20000,

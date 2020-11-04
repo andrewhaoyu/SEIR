@@ -61,7 +61,7 @@ library(readr)
 library(dplyr)
 ##
 
-source(paste0(code_root, "R/fun_SEIRpred_test.r"))
+source(paste0(code_root, "R/fun_SEIRpred_test.R"))
 
 source(paste0(code_root, "R/fun_SEIRsimu_test.R"))
 
@@ -243,7 +243,7 @@ init_sets_list=get_init_sets_list(r0=r0,
                                   stage_intervals = stage_intervals,
                                   stateData=stateData,
                                   method = method)
-
+init_sets_list$test_stage = test_stage
 # good initial conditions
 # c(1.284, 0.384, 0.174, 0.096, 0.161, -0.046, -0.379, 0.569)
 if(i4==1){
@@ -264,7 +264,7 @@ init_sets_list$daily_new_case[idx]= 0
 idx <- which(init_sets_list$daily_new_case_all<0)
 init_sets_list$daily_new_case_all[idx]= 0
 SEIRfitting(init_sets_list, randomize_startValue = T,
-            run_id = paste0("102520_",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
+            run_id = paste0("110420_",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
             all.date = all.date,
             #n_burn_in=2800,
             #n_iterations=30000,
