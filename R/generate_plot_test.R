@@ -64,21 +64,21 @@ GeneratePlot=function(init_sets_list,
       b_temp = b_vec[l-1]*exp(b_vec[l])
       b_vec[l] = b_temp
     }
-    r_vec <- pars[(n.stage+1):(2*n.stage)]
-    r1 = r_vec[1]
-    for(l in 2:n.stage){
-      rtemp = 1 / (1 + (1 - r_vec[l-1]) / (r_vec[l-1] * exp(r_vec[l])))
-      r_vec[l] = rtemp
-    }
+    # r_vec <- pars[(n.stage+1):(2*n.stage)]
+    # r1 = r_vec[1]
+    # for(l in 2:n.stage){
+    #   rtemp = 1 / (1 + (1 - r_vec[l-1]) / (r_vec[l-1] * exp(r_vec[l])))
+    #   r_vec[l] = rtemp
+    # }
     result <- pars
-    result[1:(2*n.stage)] = c(b_vec,r_vec)
+    result[1:(n.stage)] = c(b_vec)
     return(result)
   }
   
   
   mcmc_pars_estimate_original = 
     t(apply(mcmc_pars_estimate,1,transform_delta_to_orginal))
-  colnames(mcmc_pars_estimate_original) = c(paste0("b",1:n.stage),paste0("r",1:n.stage),"phi")
+  colnames(mcmc_pars_estimate_original) = c(paste0("b",1:n.stage),"c0","c1","phi")
   par_str=rep("c",n_pars)
   for (i_par in 1:n_pars) {
     par_str[i_par]=paste0(round(mean(mcmc_pars_estimate_original[,i_par]),2), " (",
@@ -135,7 +135,7 @@ GeneratePlot=function(init_sets_list,
   #   rm(i)
   # }
   # dev.off()
- # print("plot tracj finished")
+  # print("plot tracj finished")
   if (plot_combined_fig) {
     SEIRplot(pars_estimate = mcmc_pars_estimate, file_name = run_id, init_settings = init_sets_list, panel_B_R_ylim = panel_B_R_ylim,
              stage_intervals=stage_intervals,all.date = all.date)
