@@ -60,17 +60,13 @@ library(readr)
 #library(cairoDevice)
 library(dplyr)
 ##
-source(paste0(code_root, "R/fun_SEIRpred.R"))
-source(paste0(code_root, "R/fun_SEIRsimu_update.R"))
+source(paste0(code_root, "R/fun_SEIRpred_test.R"))
+source(paste0(code_root, "R/fun_SEIRsimu_test.R"))
 
 #source(paste0(code_root, "R/init_cond_update.R"))
-if(i5 ==1){
-  source(paste0(code_root, "R/fun_SEIRfitting.R"))  
-  source(paste0(code_root, "R/init_cond_update.R"))
-}else if(i5 ==2){
-  source(paste0(code_root, "R/fun_SEIRfitting_new.R"))  
-  source(paste0(code_root, "R/init_cond_new.R"))
-}
+
+  source(paste0(code_root, "R/fun_SEIRfitting_test.R"))  
+  source(paste0(code_root, "R/init_cond_test.R"))
 
 source(paste0(code_root, "R/fun_R0estimate.R"))
 source(paste0(code_root, "R/correlationPlot_modified.R"))
