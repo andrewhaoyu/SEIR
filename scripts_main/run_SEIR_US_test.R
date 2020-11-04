@@ -60,7 +60,9 @@ library(readr)
 #library(cairoDevice)
 library(dplyr)
 ##
-source(paste0(code_root, "R/fun_SEIRpred_test.R"))
+
+source(paste0(code_root, "R/fun_SEIRpred_test.r"))
+
 source(paste0(code_root, "R/fun_SEIRsimu_test.R"))
 
 #source(paste0(code_root, "R/init_cond_update.R"))
