@@ -17,6 +17,7 @@
 #' @param num_periods             number of periods to simulate
 estimate_R <- function(pars, init_settings) {
   tmp_ret=init_settings$var_trans_fun(pars)
+  n_stage=length(stage_intervals)
   b_vec=tmp_ret[[1]]
   #r_vec=tmp_ret[[2]]
   c0 = pars[n_stage+1]
