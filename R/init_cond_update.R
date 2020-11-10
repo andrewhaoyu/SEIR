@@ -39,7 +39,7 @@ generate_init_condi <- function(r0,
   
   #leave 10 days for prediction
   realData_all <- stateDataClean
-  realData <- realData_all[1:(nrow(realData_all)-10),]
+  realData <- realData_all[1:(nrow(realData_all)-15),]
   daily_new_case <- realData$positiveIncrease
   daily_new_case_all <- realData_all$positiveIncrease
   realData_all <- realData_all %>% select(positiveIncrease)
