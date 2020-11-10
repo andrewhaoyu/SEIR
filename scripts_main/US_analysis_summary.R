@@ -90,8 +90,8 @@ statename = c("NY",
 allData <- read.csv("../data/all-states-history.csv")
 #keep date to 08/31/2020
 library(lubridate)
-date_in_model <- as.Date(allData$date,format="%m/%d/%Y")
-idx <- which(date_in_model<="20-08-31")
+date_in_model <- as.Date(allData$date,format="%Y-%m-%d")
+idx <- which(date_in_model<="2020-08-31")
 allData <- allData[idx,]
 #population number (downloaded from https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html)
 stateName = c("New York","Massachusetts",
@@ -112,7 +112,7 @@ idx <- which(allData$state==statename[i1])
 print(statename[i1])
 stateData <- allData[idx,]
 #order the data by date
-stateData$date = as.Date(stateData$date,format="%m/%d/%Y")
+stateData$date = as.Date(stateData$date,format="%Y-%m-%d")
 stateData = stateData[order(stateData$date),]
 
 
@@ -144,7 +144,7 @@ jan1_idx = min(jdx)
 stateDataClean = stateData[jan1_idx:nrow(stateData),]
 all.date <- stateDataClean$date
 #leave 10 days for prediction
-n.days <- nrow(stateDataClean)-10
+n.days <- nrow(stateDataClean)-15
 n.days.all <- nrow(stateDataClean)
 days_to_fit <- 1:n.days
 #install.packages("lubridate")
@@ -176,7 +176,7 @@ if(as.numeric(end.date-all.cut.date[length(all.cut.date)]<=7)){
 }
 #add addtional cut for NY data due to dramatic change
 if(i1==1){
-  all.cut.date<- c(as.Date("20-03-20"),all.cut.date)
+  all.cut.date<- c(as.Date("2020-03-20"),all.cut.date)
 }
 idx <- which(date_in_model%in%all.cut.date)
 days.to.fit <- 1:length(date_in_model)
@@ -209,9 +209,9 @@ Dh = 30
 Dq <- rep(0,n.stage)
 
 GenerateDq <- function(cut.date){
-  if(cut.date<="20-04-01"){
+  if(cut.date<="2020-04-01"){
     return(10)
-  }else if(cut.date<="20-04-15"){
+  }else if(cut.date<="2020-04-15"){
     return(6)
   } else{
     return(3)
