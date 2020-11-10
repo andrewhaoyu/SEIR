@@ -144,7 +144,7 @@ jan1_idx = min(jdx)
 stateDataClean = stateData[jan1_idx:nrow(stateData),]
 all.date <- stateDataClean$date
 #leave 10 days for prediction
-n.days <- nrow(stateDataClean)-10
+n.days <- nrow(stateDataClean)-15
 n.days.all <- nrow(stateDataClean)
 days_to_fit <- 1:n.days
 #install.packages("lubridate")

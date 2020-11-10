@@ -146,7 +146,7 @@ jan1_idx = min(jdx)
 stateDataClean = stateData[jan1_idx:nrow(stateData),]
 all.date <- stateDataClean$date
 #leave 10 days for prediction
-n.days <- nrow(stateDataClean)-10
+n.days <- nrow(stateDataClean)-15
 n.days.all <- nrow(stateDataClean)
 days_to_fit <- 1:n.days
 #install.packages("lubridate")
@@ -178,7 +178,7 @@ if(as.numeric(end.date-all.cut.date[length(all.cut.date)]<=7)){
 }
 #add addtional cut for NY data due to dramatic change
 if(i1==1){
-  all.cut.date<- c(as.Date("20-03-20"),all.cut.date)
+  all.cut.date<- c(as.Date("2020-03-20"),all.cut.date)
 }
 idx <- which(date_in_model%in%all.cut.date)
 days.to.fit <- 1:length(date_in_model)
