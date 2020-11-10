@@ -174,7 +174,7 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   
   library(ggplot2)
   if(statename[i1]%in%CDC$Statename){
-    data = data.frame(date= as.Date(as.character(all.date),format="%y-%m-%d"),Prevalance=100*prevalence,Prevalence_low = 100*prevalence_low,Prevalence_high= 100*prevalence_high)
+    data = data.frame(date= all.date,Prevalance=100*prevalence,Prevalence_low = 100*prevalence_low,Prevalence_high= 100*prevalence_high)
     
     CDC_filter <- CDC %>% filter(Statename==statename[i1]) %>% 
       mutate(date = as.Date(Infection_date),format="%y-%m-%d") %>% 
@@ -197,7 +197,7 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
     dev.off()
     
   }else{
-    data = data.frame(date= as.Date(as.character(all.date),format="%y-%m-%d"),Prevalance=100*prevalence,Prevalence_low = 100*prevalence_low,Prevalence_high= 100*prevalence_high)
+    data = data.frame(date= all.date,Prevalance=100*prevalence,Prevalence_low = 100*prevalence_low,Prevalence_high= 100*prevalence_high)
     
     CDC_filter <- CDC %>% filter(Statename==statename[i1]) %>% 
       mutate(date = as.Date(Infection_date),format="%y-%m-%d") %>% 
