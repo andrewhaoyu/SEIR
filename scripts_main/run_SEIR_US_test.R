@@ -211,9 +211,9 @@ Dh = 30
 Dq <- rep(0,n.stage)
 
 GenerateDq <- function(cut.date){
-  if(cut.date<="20-04-01"){
+  if(cut.date<="2020-04-01"){
     return(10)
-  }else if(cut.date<="20-04-15"){
+  }else if(cut.date<="2020-04-15"){
     return(6)
   } else{
     return(3)
