@@ -113,7 +113,7 @@ GeneratePlot=function(init_sets_list,
     xlab("Time-period")+
     ylab("Ascertainment (95%CI)")+
     theme_Publication()
-  png(file = paste0("ascertainment_",run_id,".png"),width = 10,height =8, res = 300, units = "in")
+  png(file = paste0("../output/ascertainment_",run_id,".png"),width = 10,height =8, res = 300, units = "in")
   print(p)
   dev.off()
   

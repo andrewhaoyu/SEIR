@@ -249,10 +249,10 @@ init_sets_list=get_init_sets_list(r0=r0,
 CDC <- read.csv("../data/CDC_antibody_test.csv")
 Collection_start = as.Date(CDC$Collection_start,format="%m/%d/%y")
 Collection_end = as.Date(CDC$Collection_end,format="%m/%d/%y")
-Infection_date = as.integer((Collection_end-Collection_start)/2)+Collection_start-21-4
+Infection_date = as.integer((Collection_end-Collection_start)/2)+Collection_start-21
 #IN results contain both RTPCR+antibody
-idx <- which(CDC$Statename=="IN")
-Infection_date[idx] <- "2020-04-27"
+#idx <- which(CDC$Statename=="IN")
+#Infection_date[idx] <- "2020-04-27"
 CDC$Infection_date = Infection_date
 library(invgamma)
 #update the outlier
@@ -265,7 +265,7 @@ init_sets_list$daily_new_case_all[idx]= 0
 
   i2 = 1
 GeneratePlot(init_sets_list, 
-             run_id = paste0("110920_",i1,"_",i2,"_",i3),
+             run_id = paste0("111020_",i1,"_",i2,"_",i3),
              panel_B_R_ylim=6,
              all.date = all.date)
 
