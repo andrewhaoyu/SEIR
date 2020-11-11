@@ -11,8 +11,8 @@ args = commandArgs(trailingOnly = T)
 #i4 represent prior
 #i5 represent reparametrization
 #i6 represent asympotomatic infection rate
-i1 = 1
-i2 = 1
+i1 = as.numeric(args[[i1]])
+i2 = as.numeric(args[[2]])
 i3 = 3
 i4 = 1
 i5 = 1
@@ -88,18 +88,24 @@ date_in_model <- as.Date(allData$date,format="%Y-%m-%d")
 idx <- which(date_in_model<="2020-10-31")
 allData <- allData[idx,]
 #
+statename = c("Florida","Ohio")
+countyname = c("Collier","Franklin")
 #plug in the population number
-N = 384902
+
+  idx <- which(allData$county==countyname[i1]&
+                 allData$state==statename[i1] )
+ 
+
 #
 
-idx <- which(allData$county=="Collier")
+
 
 
 stateData <- allData[idx,]
 #order the data by date
 stateData$date = as.Date(stateData$date,format="%Y-%m-%d")
 stateData = stateData[order(stateData$date),]
-
+population = stateData$population[1]
 
 
 #use JHU data to analyze
@@ -247,7 +253,7 @@ init_sets_list$daily_new_case[idx]= 0
 idx <- which(init_sets_list$daily_new_case_all<0)
 init_sets_list$daily_new_case_all[idx]= 0
 SEIRfitting(init_sets_list, randomize_startValue = T,
-            run_id = paste0("110920_",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
+            run_id = paste0("111020_county",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
             all.date = all.date,
             #n_burn_in=2800,
             #n_iterations=30000,
