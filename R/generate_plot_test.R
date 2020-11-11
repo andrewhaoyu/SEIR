@@ -24,9 +24,11 @@ GeneratePlot=function(init_sets_list,
   #library(coda)
   run_id_split <- strsplit(run_id,"_")
   date.input <- run_id_split[[1]][1]
-  pars_estimate_main=read.table(paste0("../output/pars_est_run_",date.input,"_",i1,"_",1,"_",i3,".txt"), header=T)
-  pars_estimate_main_rep1=read.table(paste0("../output/pars_est_run_",date.input,"_",i1,"_",2,"_",i3,".txt"), header=T)
-  pars_estimate_main_rep2=read.table(paste0("../output/pars_est_run_",date.input,"_",i1,"_",3,"_",i3,".txt"), header=T)
+  id1 = run_id_split[[1]][2]
+  id3 = run_id_split[[1]][4]
+  pars_estimate_main=read.table(paste0("../output/pars_est_run_",date.input,"_",id1,"_",1,"_",id3,".txt"), header=T)
+  pars_estimate_main_rep1=read.table(paste0("../output/pars_est_run_",date.input,"_",id1,"_",2,"_",id3,".txt"), header=T)
+  pars_estimate_main_rep2=read.table(paste0("../output/pars_est_run_",date.input,"_",id1,"_",3,"_",id3,".txt"), header=T)
   # mcmc_main=mcmc(data=pars_estimate_main)
   # mcmc_rep1=mcmc(data=pars_estimate_main_rep1)
   # mcmc_rep2=mcmc(data=pars_estimate_main_rep2)

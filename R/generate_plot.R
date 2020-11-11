@@ -22,11 +22,12 @@ GeneratePlot=function(init_sets_list,
   stage_intervals = init_sets_list$stage_intervals
   n_stage = n.stage
   #library(coda)
-  run_id_split <- strsplit(run_id,"_")
   date.input <- run_id_split[[1]][1]
-  pars_estimate_main=read.table(paste0("../output/pars_est_run_",date.input,"_",i1,"_",1,"_",i3,".txt"), header=T)
-  pars_estimate_main_rep1=read.table(paste0("../output/pars_est_run_",date.input,"_",i1,"_",2,"_",i3,".txt"), header=T)
-  pars_estimate_main_rep2=read.table(paste0("../output/pars_est_run_",date.input,"_",i1,"_",3,"_",i3,".txt"), header=T)
+  id1 = run_id_split[[1]][2]
+  id3 = run_id_split[[1]][4]
+  pars_estimate_main=read.table(paste0("../output/pars_est_run_",date.input,"_",id1,"_",1,"_",id3,".txt"), header=T)
+  pars_estimate_main_rep1=read.table(paste0("../output/pars_est_run_",date.input,"_",id1,"_",2,"_",id3,".txt"), header=T)
+  pars_estimate_main_rep2=read.table(paste0("../output/pars_est_run_",date.input,"_",id1,"_",3,"_",id3,".txt"), header=T)
   # mcmc_main=mcmc(data=pars_estimate_main)
   # mcmc_rep1=mcmc(data=pars_estimate_main_rep1)
   # mcmc_rep2=mcmc(data=pars_estimate_main_rep2)
@@ -81,6 +82,8 @@ GeneratePlot=function(init_sets_list,
   colnames(mcmc_pars_estimate_original) = c(paste0("b",1:n.stage),paste0("r",1:n.stage),"phi")
   par_str=rep("c",n_pars)
   
+
+  
   for (i_par in 1:n_pars) {
     par_str[i_par]=paste0(round(mean(mcmc_pars_estimate_original[,i_par]),2), " (",
                           round(quantile(mcmc_pars_estimate_original[,i_par],0.025),2)," - " , 
@@ -88,10 +91,29 @@ GeneratePlot=function(init_sets_list,
   }
   names(par_str) = colnames(mcmc_pars_estimate_original)
   print("summary string finished")
-  ascertainment_vec  = rep(0,n_stage)
+  ascertainment = rep(0,n_stage)
+  ascertainment_low = rep(0,n_stage)
+  ascertainment_high = rep(0,n_stage)
+  stage_date = all.date[1:n_stage]
   for(i in 1:n_stage){
-    ascertainment_vec[i] <- round(mean(mcmc_pars_estimate_original[,n_stage+i]),2)
+    ascertainment[i] <- round(mean(mcmc_pars_estimate_original[,n_stage+i]),2)
+    ascertainment_low[i] <- round(quantile(mcmc_pars_estimate_original[,n_stage+i],0.025),2)
+    ascertainment_high[i] <- round(quantile(mcmc_pars_estimate_original[,n_stage+i],0.975),2)
+    stage_date[i] = all.date[as.integer((stage_intervals[[i]][1]+stage_intervals[[i]][2])/2)]
   }
+  plot.data <- data.frame(stage_date,ascertainment,
+                          ascertainment_low,
+                          ascertainment_high)
+  
+  p = ggplot(plot.data,aes(x= stage_date,y =ascertainment_vec ))+
+    geom_line()+
+    geom_ribbon(aes(ymin=ascertainment_low,ymax=ascertainment_high),alpha = 0.2)+
+    xlab("Time-period")+
+    ylab("Ascertainment (95%CI)")+
+    theme_Publication()
+  png(file = paste0("ascertainment_",runid,".png"),width = 10,height =8, res = 300, units = "in")
+  print(p)
+  dev.off()
   
   n.days <- length(init_settings$daily_new_case_all)
   stages <- length(stage_intervals)

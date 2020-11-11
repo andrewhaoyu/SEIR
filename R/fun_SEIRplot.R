@@ -32,8 +32,12 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   init_settings$days_to_fit <- 1:n.days
   
   library(vioplot)
+  #library(RColorBrewer)
+  #getPalette = colorRampPalette(brewer.pal(12, "Paired"))
+  #all.color = rep(getPalette,10)
  my.color = c("#BC3C29FF","#0072B5FF", "#E18727FF", "#7876B1FF", "#FFDC91FF","#662506","#a6cee3","#fb9a99","#984ea3","#ffff33")
-  ##
+ all.color = rep(my.color,10) 
+ ##
   onset_obs_all <- as.numeric(init_settings$daily_new_case_all)
   ptime <- 1:length(onset_obs_all)
   mydate <- format(all.date,"%b %d")
@@ -89,7 +93,7 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   rt_low <- sprintf("%.2f", round(apply(estRt_mat, 2, function(x) quantile(x, 0.025)), 2))
   rt_up <- sprintf("%.2f", round(apply(estRt_mat, 2, function(x) quantile(x, 0.975)), 2))
   #
-  vioplot(estRt_mat,names = NA, ylim = c(0, panel_B_R_ylim), col = my.color[1:stages], ylab = "", xlab = "")
+  vioplot(estRt_mat,names = NA, ylim = c(0, panel_B_R_ylim), col = all.color[1:stages], ylab = "", xlab = "")
   #vioplot(estRt_mat[, 1], estRt_mat[, 2], estRt_mat[, 3], estRt_mat[, 4], estRt_mat[, 5], names = NA, ylim = c(0, panel_B_R_ylim), col = c("#BC3C29FF","#0072B5FF", "#E18727FF", "#7876B1FF", "#FFDC91FF"), ylab = "", xlab = "")
   mtext("Outbreak period (2020)", side = 1, line  = 3, cex = 1.01)
   mtext(expression("R"["0"]), side = 2, line = 3, cex = 1.01)
