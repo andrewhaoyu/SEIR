@@ -264,12 +264,12 @@ init_sets_list$daily_new_case[idx]= 0
 idx <- which(init_sets_list$daily_new_case_all<0)
 init_sets_list$daily_new_case_all[idx]= 0
 SEIRfitting(init_sets_list, randomize_startValue = T,
-            run_id = paste0("110920_",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
+            run_id = paste0("111020_",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
             all.date = all.date,
            #n_burn_in=2800,
             #n_iterations=30000,
-             n_burn_in=90000,
-             n_iterations=1000000,
+             n_burn_in=230000,
+             n_iterations=2500000,
             method = method)
 
 ## to evaluate convergence, we run another two rounds of this program

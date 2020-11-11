@@ -80,6 +80,7 @@ GeneratePlot=function(init_sets_list,
     t(apply(mcmc_pars_estimate,1,transform_delta_to_orginal))
   colnames(mcmc_pars_estimate_original) = c(paste0("b",1:n.stage),paste0("r",1:n.stage),"phi")
   par_str=rep("c",n_pars)
+  
   for (i_par in 1:n_pars) {
     par_str[i_par]=paste0(round(mean(mcmc_pars_estimate_original[,i_par]),2), " (",
                           round(quantile(mcmc_pars_estimate_original[,i_par],0.025),2)," - " , 
@@ -87,7 +88,30 @@ GeneratePlot=function(init_sets_list,
   }
   names(par_str) = colnames(mcmc_pars_estimate_original)
   print("summary string finished")
+  ascertainment_vec  = rep(0,n_stage)
+  for(i in 1:n_stage){
+    ascertainment_vec[i] <- round(mean(mcmc_pars_estimate_original[,n_stage+i]),2)
+  }
   
+  n.days <- length(init_settings$daily_new_case_all)
+  stages <- length(stage_intervals)
+  start.vec <- rep(0,n_stage)
+  end.vec <- rep(0,n_stage)
+  for(k in 1:stages){
+    start.vec[k] <- stage_intervals[[k]][1]
+    end.vec[k] <- stage_intervals[[k]][2]
+  }
+  #days cut = total days/stages
+  init_settings$days_to_fit <- 1:n.days
+  onset_obs_all <- as.numeric(init_settings$daily_new_case_all)
+  ptime <- 1:length(onset_obs_all)
+  mydate <- format(all.date,"%b %d")
+  stage.label <- rep("c",n_stage)
+  for(l in 1:n_stage){
+    stage.label[l] = paste0(format(all.date[start.vec[l]],"%b %d")," - ",format(all.date[end.vec[l]],"%d"))
+  }
+  
+  rt.time <- data.frame(stage.label,ascertainment_vec)
   
   
   estRt_mat <- apply(mcmc_pars_estimate, 1, function(x) estimate_R(pars = x, init_settings = init_sets_list))

@@ -147,6 +147,10 @@ SEIRfitting=function(init_sets_list,
     if (randomize_startValue) {  
       startValue=pars_sampler(n.stage = n.stage)
       best_logl = loglh_func(startValue)
+      #startValue = colMeans(mcmc_pars_estimate)
+      #startValue[11] = -2.8
+      #startValue[12] = 1.53
+      #pars = startValue
       for(l in 1:1000){
         temp = pars_sampler(n.stage = n.stage)
         temp_logl = loglh_func(temp)
