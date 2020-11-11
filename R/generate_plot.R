@@ -22,6 +22,7 @@ GeneratePlot=function(init_sets_list,
   stage_intervals = init_sets_list$stage_intervals
   n_stage = n.stage
   #library(coda)
+  run_id_split = strsplit(run_id,split="_")
   date.input <- run_id_split[[1]][1]
   id1 = run_id_split[[1]][2]
   id3 = run_id_split[[1]][4]
