@@ -11,7 +11,7 @@ args = commandArgs(trailingOnly = T)
 #i4 represent prior
 #i5 represent reparametrization
 #i6 represent asympotomatic infection rate
-i1 = as.numeric(args[[i1]])
+i1 = as.numeric(args[[1]])
 i2 = as.numeric(args[[2]])
 i3 = 3
 i4 = 1
