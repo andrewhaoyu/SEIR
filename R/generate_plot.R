@@ -107,7 +107,7 @@ GeneratePlot=function(init_sets_list,
                           ascertainment_high)
   
   
-  p = ggplot(plot.data,aes(x= stage_date,y =ascertainment_vec ))+
+  p = ggplot(plot.data,aes(x= stage_date,y =ascertainment ))+
     geom_line()+
     geom_ribbon(aes(ymin=ascertainment_low,ymax=ascertainment_high),alpha = 0.2)+
     xlab("Time-period")+
