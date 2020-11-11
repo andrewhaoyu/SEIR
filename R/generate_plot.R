@@ -12,7 +12,7 @@ GeneratePlot=function(init_sets_list,
                       run_id = runid,
                       panel_B_R_ylim=7,
                       all.date = all.date) {
-  init_sets_list = init_settings
+  init_settings = init_sets_list
   plot_combined_fig=T
   calc_clearance=T
   
