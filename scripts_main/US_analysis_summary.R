@@ -59,6 +59,7 @@ library(readr)
 #install.packages("cairoDevice")
 #library(cairoDevice)
 library(dplyr)
+library(ggplot2)
 ##
 source(paste0(code_root, "R/fun_SEIRpred.R"))
 source(paste0(code_root, "R/fun_SEIRsimu_update.R"))
