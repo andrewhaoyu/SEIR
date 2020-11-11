@@ -135,7 +135,7 @@ GeneratePlot=function(init_sets_list,
     stage.label[l] = paste0(format(all.date[start.vec[l]],"%b %d")," - ",format(all.date[end.vec[l]],"%d"))
   }
   
-  rt.time <- data.frame(stage.label,ascertainment_vec)
+  
   
   
   estRt_mat <- apply(mcmc_pars_estimate, 1, function(x) estimate_R(pars = x, init_settings = init_sets_list))
