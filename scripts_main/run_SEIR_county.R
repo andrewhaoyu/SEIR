@@ -105,7 +105,7 @@ stateData <- allData[idx,]
 #order the data by date
 stateData$date = as.Date(stateData$date,format="%Y-%m-%d")
 stateData = stateData[order(stateData$date),]
-population = stateData$population[1]
+N = stateData$population[1]
 
 
 #use JHU data to analyze
