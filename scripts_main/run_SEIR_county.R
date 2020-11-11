@@ -108,6 +108,7 @@ stateData = stateData[order(stateData$date),]
 N = stateData$population[1]
 
 
+
 #use JHU data to analyze
 #download data from https://raw.githubusercontent.com/lin-lab/COVID-data-cleaning/master/jhu_data/cleaned_data/JHU_COVID-19_State.csv
 # statename = c("New York","Massachusetts",
