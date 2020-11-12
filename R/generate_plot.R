@@ -162,11 +162,11 @@ GeneratePlot=function(init_sets_list,
   
   write.csv(summary_string, paste0("../output/summary_run_",run_id,".csv"))
   
-  cairo_pdf(paste0("../output/par_cor_run_",run_id,".pdf"),width=10,height=10)
-  correlationPlot_modified(mcmc_pars_estimate, scaleCorText = F)
-  dev.off()
-  print("plot correlation plot finished")
-  #png(paste0("../output/par_hist_run_",run_id,".png"))
+  # cairo_pdf(paste0("../output/par_cor_run_",run_id,".pdf"),width=10,height=10)
+  # correlationPlot_modified(mcmc_pars_estimate, scaleCorText = F)
+  # dev.off()
+  # print("plot correlation plot finished")
+  # #png(paste0("../output/par_hist_run_",run_id,".png"))
   #pdf(paste0("../output/par_hist_run_",run_id,".pdf"),width = 9, height = 10)
   # par(mfrow = c(4, ceiling(n.par/4)))
   # for(i in 1:n_pars) {
@@ -189,9 +189,9 @@ GeneratePlot=function(init_sets_list,
              stage_intervals=stage_intervals,all.date = all.date)
   }
   
-  par(mfrow = c(1, 1))
-  corrplot(cor(mcmc_pars_estimate))
-  pairs(mcmc_pars_estimate)
+  # par(mfrow = c(1, 1))
+  # corrplot(cor(mcmc_pars_estimate))
+  # pairs(mcmc_pars_estimate)
   
 }
 

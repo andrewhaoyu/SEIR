@@ -203,9 +203,9 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   }else{
     data = data.frame(date= all.date,Prevalance=100*prevalence,Prevalence_low = 100*prevalence_low,Prevalence_high= 100*prevalence_high)
     
-    CDC_filter <- CDC %>% filter(Statename==statename[i1]) %>% 
-      mutate(date = as.Date(Infection_date),format="%y-%m-%d") %>% 
-      select(Statename,Prevalance,Prevalance_low,Prevalance_high,date)
+    #CDC_filter <- CDC %>% filter(Statename==statename[i1]) %>% 
+     # mutate(date = as.Date(Infection_date),format="%y-%m-%d") %>% 
+      #select(Statename,Prevalance,Prevalance_low,Prevalance_high,date)
     p <- ggplot(data,aes(x=date))+geom_line(aes(y = Prevalance))+
       geom_ribbon(aes(ymin=Prevalence_low,ymax=Prevalence_high),alpha = 0.2)+
       #geom_point(data= CDC_filter,aes(x=date,y = Prevalance))+

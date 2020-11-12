@@ -95,12 +95,13 @@ date_in_model <- as.Date(allData$date,format="%Y-%m-%d")
 idx <- which(date_in_model<="2020-11-10")
 allData <- allData[idx,]
 #
-statename = c("Florida","Ohio")
+state = c("Florida","Ohio")
+statename = c("FL","OH")
 countyname = c("Collier","Franklin")
 #plug in the population number
 
 idx <- which(allData$county==countyname[i1]&
-               allData$state==statename[i1] )
+               allData$state==state[i1] )
 
 
 stateData <- allData[idx,]
@@ -250,7 +251,7 @@ Infection_date = as.integer((Collection_end-Collection_start)/2)+Collection_star
 #IN results contain both RTPCR+antibody
 #idx <- which(CDC$Statename=="IN")
 #Infection_date[idx] <- "2020-04-27"
-#CDC$Infection_date = Infection_date
+CDC$Infection_date = Infection_date
 library(invgamma)
 #update the outlier
 idx <- which(init_sets_list$daily_new_case<0)
