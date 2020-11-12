@@ -93,7 +93,7 @@ allData <- read.csv("../data/all-states-history.csv")
 #keep date to 08/31/2020
 library(lubridate)
 date_in_model <- as.Date(allData$date,format="%Y-%m-%d")
-idx <- which(date_in_model<="2020-10-31")
+idx <- which(date_in_model<="2020-11-11")
 allData <- allData[idx,]
 #population number (downloaded from https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html)
 stateName = c("New York","Massachusetts",
