@@ -43,6 +43,7 @@ i5 = 1
 # i1 = i1_vec[ind]
 # i2 = i2_vec[ind]
 #i3 = i3_vec[ind]
+leave_days = 11
 method_vec = c("poisson","nb")
 method = method_vec[2]
 code_root = "/data/zhangh24/SEIR/"
@@ -145,7 +146,7 @@ jan1_idx = min(jdx)
 stateDataClean = stateData[jan1_idx:nrow(stateData),]
 all.date <- stateDataClean$date
 #leave 10 days for prediction
-n.days <- nrow(stateDataClean)-15
+n.days <- nrow(stateDataClean)-leave_days
 n.days.all <- nrow(stateDataClean)
 days_to_fit <- 1:n.days
 #install.packages("lubridate")
