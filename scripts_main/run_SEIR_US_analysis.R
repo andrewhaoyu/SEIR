@@ -92,8 +92,11 @@ statename = c("NY",
 allData <- read.csv("../data/all-states-history.csv")
 #keep date to 08/31/2020
 library(lubridate)
+#leave off days for prediction
+leave_days = 11
+
 date_in_model <- as.Date(allData$date,format="%Y-%m-%d")
-idx <- which(date_in_model<="2020-10-31")
+idx <- which(date_in_model<="2020-11-11")
 allData <- allData[idx,]
 #population number (downloaded from https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html)
 stateName = c("New York","Massachusetts",
@@ -117,8 +120,27 @@ stateData <- allData[idx,]
 stateData$date = as.Date(stateData$date,format="%Y-%m-%d")
 stateData = stateData[order(stateData$date),]
 
+#clean the outlier data for MA and CT
+#MA added antibody tests results into the data
+#the data suddenly increased a lot
+#to avoid 
+if(i1 ==2){
+  idx <- which(stateData$date=="2020-06-01")
+  stateData$positiveIncrease[idx]  =  as.integer((stateData$positiveIncrease[idx-1]+stateData$positiveIncrease[idx+1])/2)
+}
+#CT data is usually 0 during weekend
+#it's due to no reporting during weekend
+#to aviod this, we dropped weekend CT data from the loglikelihood after 2020-07-04
+if(i1==5){
+  idx <- which(stateData$date>="2020-07-04"&
+                 (weekdays(stateData$date)=="Saturday"|
+                 weekdays(stateData$date)=="Sunday"))
+  subset.id = which(1:nrow(stateData))
+}
 
-
+cbind(weekdays(as.Date(stateData$date))
+  ,
+      stateData$positiveIncrease)
 #use JHU data to analyze
 #download data from https://raw.githubusercontent.com/lin-lab/COVID-data-cleaning/master/jhu_data/cleaned_data/JHU_COVID-19_State.csv
 # statename = c("New York","Massachusetts",
@@ -146,7 +168,7 @@ jan1_idx = min(jdx)
 stateDataClean = stateData[jan1_idx:nrow(stateData),]
 all.date <- stateDataClean$date
 #leave 10 days for prediction
-n.days <- nrow(stateDataClean)-15
+n.days <- nrow(stateDataClean)-leave_days
 n.days.all <- nrow(stateDataClean)
 days_to_fit <- 1:n.days
 #install.packages("lubridate")
@@ -226,7 +248,7 @@ for(i in 1:(n.stage-1)){
 Dq[length(Dq)] = 3
 
 
-r0_vec = c(0.05,0.10,0.15,0.20,0.23,0.30,0.35,0.40,0.5)
+r0_vec = c(0.05,0.075,0.10,0.125,0.15,0.20)
 r0 = r0_vec[i3]
 init_sets_list=get_init_sets_list(r0=r0,
                                   Di = Di,
