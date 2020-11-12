@@ -120,23 +120,6 @@ stateData <- allData[idx,]
 stateData$date = as.Date(stateData$date,format="%Y-%m-%d")
 stateData = stateData[order(stateData$date),]
 
-#clean the outlier data for MA and CT
-#MA added antibody tests results into the data
-#the data suddenly increased a lot
-#to avoid 
-if(i1 ==2){
-  idx <- which(stateData$date=="2020-06-01")
-  stateData$positiveIncrease[idx]  =  as.integer((stateData$positiveIncrease[idx-1]+stateData$positiveIncrease[idx+1])/2)
-}
-#CT data is usually 0 during weekend
-#it's due to no reporting during weekend
-#to aviod this, we dropped weekend CT data from the loglikelihood after 2020-07-04
-if(i1==5){
-  idx <- which(stateData$date>="2020-07-04"&
-                 (weekdays(stateData$date)=="Saturday"|
-                 weekdays(stateData$date)=="Sunday"))
-  subset.id = which(1:nrow(stateData))
-}
 
 cbind(weekdays(as.Date(stateData$date))
   ,
@@ -166,6 +149,24 @@ jdx <- which(stateData$positiveIncrease>50)
 jan1_idx = min(jdx)
 
 stateDataClean = stateData[jan1_idx:nrow(stateData),]
+
+#clean the outlier data for MA and CT
+#MA added antibody tests results into the data
+#the data suddenly increased a lot
+#to avoid 
+if(i1 ==2){
+  idx <- which(stateDataClean$date=="2020-06-01")
+  stateDataClean$positiveIncrease[idx]  =  as.integer((stateDataClean$positiveIncrease[idx-1]+stateDataClean$positiveIncrease[idx+1])/2)
+}
+#CT data is usually 0 during weekend
+#it's due to no reporting during weekend
+#to aviod this, we dropped weekend CT data from the loglikelihood after 2020-07-04
+if(i1==5){
+  idx <- which(stateDataClean$date>="2020-07-04"&
+                 (weekdays(stateDataClean$date)=="Saturday"|
+                    weekdays(stateDataClean$date)=="Sunday"))
+  subset.id = which(c(1:(nrow(stateDataClean)-leave_days))%in%idx==F)
+}
 all.date <- stateDataClean$date
 #leave 10 days for prediction
 n.days <- nrow(stateDataClean)-leave_days

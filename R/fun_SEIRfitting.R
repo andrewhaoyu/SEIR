@@ -117,11 +117,21 @@ Func_list = function(method){
       phi = pars[length(pars)]
       #p = phi/(phi+as.numeric(ypred))
       # meant to suppress warnings when ypred is negative
-      suppressWarnings(p <- dnbinom(x = as.numeric(onset_obs), 
-                                    #size = phi,
-                                    size = 1/phi,
-                                    mu = ypred,log=T))
-                         
+      if(i1!=5){
+        suppressWarnings(p <- dnbinom(x = as.numeric(onset_obs), 
+                                      #size = phi,
+                                      size = 1/phi,
+                                      mu = ypred,log=T))
+        
+      }else{
+        #special setting for CT due to the weekend effect
+        suppressWarnings(p <- dnbinom(x = as.numeric(onset_obs)[subset.id], 
+                                      #size = phi,
+                                      size = 1/phi,
+                                      mu = ypred[subset.id],log=T))
+        
+      }
+        
                          #dnbinom(x = as.numeric(onset_obs), 
                           #          size = phi,
                            #         mu = ypred,log=T))
