@@ -13,7 +13,7 @@ args = commandArgs(trailingOnly = T)
 #i6 represent asympotomatic infection rate
 i1 = as.numeric(args[[1]])
 i2 = as.numeric(args[[2]])
-i3 = 3
+i3 = as.numeric(args[[3]])
 i4 = 1
 i5 = 1
 #i6 = as.numeric(args[[3]])
@@ -82,10 +82,11 @@ source(paste0(code_root, "R/fun_Findzero.R"))
 #use covidtracing data to analyze
 #downloaded from https://covidtracking.com/data/download
 allData <- read.csv("../data/JHU_COVID-19_County.csv")
+leave_days = 10
 #keep date to 08/31/2020
 library(lubridate)
 date_in_model <- as.Date(allData$date,format="%Y-%m-%d")
-idx <- which(date_in_model<="2020-10-31")
+idx <- which(date_in_model<="2020-11-10")
 allData <- allData[idx,]
 #
 statename = c("Florida","Ohio")
@@ -136,7 +137,7 @@ jan1_idx = min(jdx)
 stateDataClean = stateData[jan1_idx:nrow(stateData),]
 all.date <- stateDataClean$date
 #leave 10 days for prediction
-n.days <- nrow(stateDataClean)-15
+n.days <- nrow(stateDataClean)-leave_days
 n.days.all <- nrow(stateDataClean)
 days_to_fit <- 1:n.days
 #install.packages("lubridate")
@@ -216,7 +217,7 @@ for(i in 1:(n.stage-1)){
 Dq[length(Dq)] = 3
 
 
-r0_vec = c(0.05,0.10,0.15,0.20,0.23,0.30,0.35,0.40,0.5)
+r0_vec = c(0.05,0.075,0.10,0.125,0.15,0.20)
 r0 = r0_vec[i3]
 init_sets_list=get_init_sets_list(r0=r0,
                                   Di = Di,
