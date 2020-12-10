@@ -18,7 +18,8 @@
 #################################################################################################
 SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
                      stage_intervals=stage_intervals,
-                     all.date = all.date) {
+                     all.date = all.date,
+                     mcmc_pars_estimate_original = mcmc_pars_estimate_original) {
   #total days to predict
   n.days <- length(init_settings$daily_new_case_all)
   stages <- length(stage_intervals)

@@ -186,7 +186,7 @@ GeneratePlot=function(init_sets_list,
  # print("plot tracj finished")
   if (plot_combined_fig) {
     SEIRplot(pars_estimate = mcmc_pars_estimate, file_name = run_id, init_settings = init_sets_list, panel_B_R_ylim = panel_B_R_ylim,
-             stage_intervals=stage_intervals,all.date = all.date)
+             stage_intervals=stage_intervals,all.date = all.date,mcmc_pars_estimate_original=mcmc_pars_estimate_original)
   }
   
   # par(mfrow = c(1, 1))
