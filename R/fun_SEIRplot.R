@@ -85,6 +85,7 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   #text(par()$usr[1] - (par()$usr[2] -par()$usr[1]) * 0.12, par()$usr[4] + (par()$usr[4] - par()$usr[3]) * 0.06, labels = "A", xpd = T, cex = 2)
   
   
+  
   ##########################################   Panel B  ##########################################################
   estRt_mat <- apply(pars_estimate, 1, function(x) estimate_R(pars = x, init_settings = init_settings))
   estRt_mat <- t(estRt_mat)
@@ -96,20 +97,20 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   vioplot(estRt_mat,names = NA, ylim = c(0, panel_B_R_ylim), col = all.color[1:stages], ylab = "", xlab = "")
   #vioplot(estRt_mat[, 1], estRt_mat[, 2], estRt_mat[, 3], estRt_mat[, 4], estRt_mat[, 5], names = NA, ylim = c(0, panel_B_R_ylim), col = c("#BC3C29FF","#0072B5FF", "#E18727FF", "#7876B1FF", "#FFDC91FF"), ylab = "", xlab = "")
   mtext("Outbreak period (2020)", side = 1, line  = 3, cex = 1.01)
-  mtext(expression("R"["0"]), side = 2, line = 3, cex = 1.01)
+  mtext(expression("R"["e"]), side = 2, line = 3, cex = 1.01)
   axis(1, at = 1:n.stage, tick = F, labels = stage.label)
   abline(h = 1, lwd = 2, lty = 3, col = "red")
   #
-  for(l in 1:stages){
-    if(min(estRt_mat[, l]>2)){
-      text(l, min(estRt_mat[, l]) - 0.3, labels = rt_mean[l])
-      text(l, min(estRt_mat[, l]) - 0.7, labels = paste("(", rt_low[l], "-", rt_up[l], ")", sep = ""))
-    }else{
-      text(l, max(estRt_mat[, l]) + 0.3, labels = rt_mean[l])
-      text(l, max(estRt_mat[, l]) + 0.7, labels = paste("(", rt_low[l], "-", rt_up[l], ")", sep = ""))
-      }
-    
-  }
+  # for(l in 1:stages){
+  #   if(min(estRt_mat[, l]>2)){
+  #     text(l, min(estRt_mat[, l]) - 0.3, labels = rt_mean[l])
+  #     #text(l, min(estRt_mat[, l]) - 0.7, labels = paste("(", rt_low[l], "-", rt_up[l], ")", sep = ""))
+  #   }else{
+  #     text(l, max(estRt_mat[, l]) + 0.3, labels = rt_mean[l])
+  #     #text(l, max(estRt_mat[, l]) + 0.7, labels = paste("(", rt_low[l], "-", rt_up[l], ")", sep = ""))
+  #     }
+  #   
+  # }
   # text(1, min(estRt_mat[, 1]) - 0.2, labels = rt_mean[1])
   # text(1, min(estRt_mat[, 1]) - 0.45, labels = paste("(", rt_low[1], "-", rt_up[1], ")", sep = ""))
   # text(2, min(estRt_mat[, 2]) - 0.2, labels = rt_mean[2])
@@ -172,6 +173,35 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   text(par()$usr[1] - (par()$usr[2] -par()$usr[1]) * 0.12, par()$usr[4] + (par()$usr[4] - par()$usr[3]) * 0.06, labels = "F", xpd = T, cex = 2)
   ##figure_F finished
   dev.off()
+  prameter_mean = colMeans(mcmc_pars_estimate_original)
+  ascertainment = prameter_mean[(n.stage+1):(2*n.stage)]
+  
+  est_daily_U = estP_mean
+  est_daily_A = estP_mean
+  for(l in 1:n.stage){
+    est_daily_A[stage_intervals[[l]][1]:stage_intervals[[l]][2]] = 
+      ascertainment[l]*estP_mean[stage_intervals[[l]][1]:stage_intervals[[l]][2]]/Dp
+    est_daily_U[stage_intervals[[l]][1]:stage_intervals[[l]][2]] =
+      (1-ascertainment[l])*estP_mean[stage_intervals[[l]][1]:stage_intervals[[l]][2]]/Dp
+  }
+  #for the additional prediction
+  est_daily_A[(stage_intervals[[l]][2]+1):length(est_daily_A)] = 
+    ascertainment[l]*estP_mean[(stage_intervals[[l]][2]+1):length(est_daily_A)]/Dp
+  est_daily_U[(stage_intervals[[l]][2]+1):length(est_daily_U)] = 
+    (1-ascertainment[l])*estP_mean[(stage_intervals[[l]][2]+1):length(est_daily_U)]/Dp
+  est_daily_UA = rbind(est_daily_A,est_daily_U)
+  png(paste0("../output/daily_UA_", file_name, ".png"), width = 10, height = 10,res=300,units="in")
+  barpos <- barplot(est_daily_UA, col = c("#BC3C29FF", "#FFDC91FF"), xlab = "", ylab = "", border = "NA")
+  mtext("Date (2020)", side = 1, line  = 3, cex = 1.01)
+  mtext("No. of daily infectious cases", side = 2, line = 3, cex = 1.01)
+  axis(1, at = barpos[ c(1,end.vec,length(all.date))], labels = mydate[ c(1,end.vec,length(all.date))])
+  legend("topleft", legend = c( "Unascertained (A)", "Ascertained (I)"), fill = c("#FFDC91FF","#BC3C29FF"), bty = "n")
+  text(par()$usr[1] - (par()$usr[2] -par()$usr[1]) * 0.12, par()$usr[4] + (par()$usr[4] - par()$usr[3]) * 0.06, labels = "F", xpd = T, cex = 2)
+  dev.off()
+  
+  
+  
+  
   prevalence <- rowMeans((N-estS_mat)/N)
   prevalence_low <- apply(estS_mat,1,function(x){quantile((N-x)/N,0.025)})
   prevalence_high <- apply(estS_mat,1,function(x){quantile((N-x)/N,0.975)})

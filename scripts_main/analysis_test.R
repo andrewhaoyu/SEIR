@@ -60,15 +60,17 @@ library(readr)
 #library(cairoDevice)
 library(dplyr)
 ##
-
-source(paste0(code_root, "R/fun_SEIRpred_test.R"))
-
-source(paste0(code_root, "R/fun_SEIRsimu_test.R"))
+source(paste0(code_root, "R/fun_SEIRpred.R"))
+source(paste0(code_root, "R/fun_SEIRsimu_update.R"))
 
 #source(paste0(code_root, "R/init_cond_update.R"))
-
-source(paste0(code_root, "R/fun_SEIRfitting_test.R"))  
-source(paste0(code_root, "R/init_cond_test.R"))
+if(i5 ==1){
+  source(paste0(code_root, "R/fun_SEIRfitting.R"))  
+  source(paste0(code_root, "R/init_cond_update.R"))
+}else if(i5 ==2){
+  source(paste0(code_root, "R/fun_SEIRfitting_new.R"))  
+  source(paste0(code_root, "R/init_cond_new.R"))
+}
 
 source(paste0(code_root, "R/fun_R0estimate.R"))
 source(paste0(code_root, "R/correlationPlot_modified.R"))
@@ -90,6 +92,9 @@ statename = c("NY",
 allData <- read.csv("../data/all-states-history.csv")
 #keep date to 08/31/2020
 library(lubridate)
+#leave off days for prediction
+leave_days = 10
+
 date_in_model <- as.Date(allData$date,format="%Y-%m-%d")
 idx <- which(date_in_model<="2020-08-31")
 allData <- allData[idx,]
@@ -116,7 +121,9 @@ stateData$date = as.Date(stateData$date,format="%Y-%m-%d")
 stateData = stateData[order(stateData$date),]
 
 
-
+cbind(weekdays(as.Date(stateData$date))
+      ,
+      stateData$positiveIncrease)
 #use JHU data to analyze
 #download data from https://raw.githubusercontent.com/lin-lab/COVID-data-cleaning/master/jhu_data/cleaned_data/JHU_COVID-19_State.csv
 # statename = c("New York","Massachusetts",
@@ -142,9 +149,27 @@ jdx <- which(stateData$positiveIncrease>50)
 jan1_idx = min(jdx)
 
 stateDataClean = stateData[jan1_idx:nrow(stateData),]
+ 
+#clean the outlier data for MA and CT
+#MA added antibody tests results into the data
+#the data suddenly increased a lot
+#to avoid 
+if(i1 ==2){
+  idx <- which(stateDataClean$date=="2020-06-01")
+  stateDataClean$positiveIncrease[idx]  =  as.integer((stateDataClean$positiveIncrease[idx-1]+stateDataClean$positiveIncrease[idx+1])/2)
+}
+#CT data is usually 0 during weekend
+#it's due to no reporting during weekend
+#to aviod this, we dropped weekend CT data from the loglikelihood after 2020-07-04
+if(i1==5){
+  idx <- which(stateDataClean$date>="2020-07-04"&
+                 (weekdays(stateDataClean$date)=="Saturday"|
+                    weekdays(stateDataClean$date)=="Sunday"))
+  subset.id = which(c(1:(nrow(stateDataClean)-leave_days))%in%idx==F)
+}
 all.date <- stateDataClean$date
 #leave 10 days for prediction
-n.days <- nrow(stateDataClean)-15
+n.days <- nrow(stateDataClean)-leave_days
 n.days.all <- nrow(stateDataClean)
 days_to_fit <- 1:n.days
 #install.packages("lubridate")
@@ -176,7 +201,7 @@ if(as.numeric(end.date-all.cut.date[length(all.cut.date)]<=7)){
 }
 #add addtional cut for NY data due to dramatic change
 if(i1==1){
-  all.cut.date<- c(as.Date("20-03-20"),all.cut.date)
+  all.cut.date<- c(as.Date("2020-03-20"),all.cut.date)
 }
 idx <- which(date_in_model%in%all.cut.date)
 days.to.fit <- 1:length(date_in_model)
@@ -192,28 +217,19 @@ for(l in 1:(n.stage)){
   }
   
 }
-
-idx <- which(stateDataClean$positiveIncrease<0)
-stateDataClean$positiveIncrease[idx] = 0
 flowN <- rep(0,n.stage)
 Di = 3.5
 Dp = 2.75
 De = 2.45
-test_increase <- stateDataClean$totalTestResultsIncrease
-  #stateDataClean$positiveIncrease/stateDataClean$totalTestResultsIncrease
-#idx <- which(test_increase>1|is.nan(test_increase))
-#test_increase[idx] = NA
 
-#leave one more stage for prediction
-test_stage <- rep(0,n.stage+1)
-for(l in 1:(n.stage)){
-  test_stage[l] <- mean(test_increase[stage_intervals[[l]][1]:stage_intervals[[l]][2]],na.rm = T)
-}
-test_stage[l+1] <- mean(test_increase[(stage_intervals[[l]][2]+1):n.days.all],na.rm = T)
-#test_stage = test_stage/10000
+
+
 alpha <- 0.55
 
 Dh = 30
+
+
+
 
 Dq <- rep(0,n.stage)
 
@@ -250,7 +266,7 @@ init_sets_list=get_init_sets_list(r0=r0,
                                   stage_intervals = stage_intervals,
                                   stateData=stateData,
                                   method = method)
-init_sets_list$test_stage = test_stage/10000
+
 # good initial conditions
 # c(1.284, 0.384, 0.174, 0.096, 0.161, -0.046, -0.379, 0.569)
 if(i4==1){
@@ -266,13 +282,17 @@ if(i4==1){
 
 library(invgamma)
 #update the outlier
+idx <- which(init_sets_list$daily_new_case<0)
+init_sets_list$daily_new_case[idx]= 0
+idx <- which(init_sets_list$daily_new_case_all<0)
+init_sets_list$daily_new_case_all[idx]= 0
 SEIRfitting(init_sets_list, randomize_startValue = T,
-            run_id = paste0("111020_test",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
+            run_id = paste0("102520_",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
             all.date = all.date,
             #n_burn_in=2800,
             #n_iterations=30000,
-             n_burn_in=90000,
-             n_iterations=1000000,
+            n_burn_in=300000,
+            n_iterations=3200000,
             method = method)
 
 ## to evaluate convergence, we run another two rounds of this program

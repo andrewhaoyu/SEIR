@@ -1,34 +1,38 @@
-init_sets_list;
-randomize_startValue=T;
-startValue=NA;
-output_ret=T;
-run_id = paste0(i1,"_",i2,"_",i3);
-skip_MCMC=F;
-panel_B_R_ylim=4;
-plot_combined_fig=T;
-calc_clearance=T;
-n_burn_in=20000;
-n_iterations=500000;
-all.date = all.date;
-method = method;
-pars = startValue
+mcmc_pars_estimate  = read.table(paste0("../output/pars_est_run_",run_id,".txt"), header=T)
+startValue = colMeans(mcmc_pars_estimate)
+print(startValue)
+loglh_func(startValue)
 
 
-library(data.table)
-s.t <- list(data.frame(a=rnorm(100),b=rnorm(100),chain=rep("chain1",100),x=c(1:100)),
-          data.frame(a=rnorm(100),b=rnorm(100),chain=rep("chain2",100),x=c(1:100)))
-s.t.data <- rbindlist(s.t)
-
-s.t.data.long <- melt(s.t.data,id.var=c("chain","x"))
-
-ggplot(s.t.data.long)+
-  geom_line(aes(x= x,y = value,color=chain))+
-  facet_wrap(~variable)+
-  theme_Publication()
+n.stage = 10
+delta = rep(0,n_stage-1)
+load("../output/r_vec_1.rdata")
+logit <- function(x){log(x/(1-x))}
+for(k in 1:(n.stage-1)){
+  delta[k] = logit(r_vec[k+1])-logit(r_vec[k])
+  
+}
 
 
-library(ggmcmc)
-data(radon)
-s.radon.short <- radon$s.radon.short
-S <- ggs(s.radon.short)
-ggs_traceplot(S)
+
+
+
+
+
+
+
+
+n.stage = 10
+c1 = 0.38585
+c0 = -0.52274
+startValue[n.stage+1] = -0.52274
+startValue[n.stage+2] = 0.38585
+loglh_func(startValue)
+
+save(r_vec,file = "../output/r_vec_1.rdata")
+mcmc_pars_estimate  = read.table(paste0("../output/pars_est_run_",run_id,".txt"), header=T)
+startValue = colMeans(mcmc_pars_estimate)
+c1 = startValue[n.stage+2]
+c0 = startValue[n.stage+1]
+r_vec = logit_inv(c0+c1*test_stage)
+save(r_vec,file = "../output/r_vec_2.rdata")
