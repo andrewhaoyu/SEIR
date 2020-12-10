@@ -191,7 +191,7 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   est_daily_U[(stage_intervals[[l]][2]+1):length(est_daily_U)] = 
     (1-ascertainment[l])*estP_mean[(stage_intervals[[l]][2]+1):length(est_daily_U)]/Dp
   est_daily_UA = rbind(est_daily_A,est_daily_U)
-  png(paste0("../output/daily_UA_", file_name, ".png"), width = 10, height = 10,res=300,units="in")
+  png(paste0("../output/daily_UA_", file_name, ".png"), width = 16, height = 10,res=300,units="in")
   barpos <- barplot(est_daily_UA, col = c("#BC3C29FF", "#FFDC91FF"), xlab = "", ylab = "", border = "NA")
   mtext("Date (2020)", side = 1, line  = 3, cex = 1.01)
   mtext("No. of daily infectious cases", side = 2, line = 3, cex = 1.01)
