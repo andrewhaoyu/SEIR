@@ -163,7 +163,8 @@ test_pos_init = mean(stateData$positiveIncrease[(jan1_idx-10):jan1_idx])/
 stateDataClean = stateData[jan1_idx:nrow(stateData),]
 all.date <- stateDataClean$date
 #leave 10 days for prediction
-n.days <- nrow(stateDataClean)-15
+leave_days = 11
+n.days <- nrow(stateDataClean)-leave_days
 n.days.all <- nrow(stateDataClean)
 days_to_fit <- 1:n.days
 #install.packages("lubridate")
