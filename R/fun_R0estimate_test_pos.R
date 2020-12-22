@@ -25,7 +25,7 @@ estimate_R <- function(pars, init_settings) {
   #r_vec=tmp_ret[[2]]
   c0 = pars[n_stage+1]
   c1 = pars[n_stage+2]
-  c2 = pars[n_stage+2]
+  c2 = pars[n_stage+3]
   logit_inv <- function(x){
     exp(x)/(1+exp(x))
   }

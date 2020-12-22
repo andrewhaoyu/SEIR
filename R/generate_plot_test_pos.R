@@ -57,7 +57,7 @@ GeneratePlot=function(init_sets_list,
   
   #get the b and r under orignal scale
   
-  
+  logit = function(x){exp(x)/(1+exp(x))}
   transform_delta_to_orginal=function(pars) {
     #n.stage <- (length(pars)-1)/2
     #b_vec <- pars[1:n.stage]
@@ -74,15 +74,24 @@ GeneratePlot=function(init_sets_list,
     # }
     result <- pars
     result[1:(n.stage)] = c(b_vec)
+    c0 = pars[n.stage+1]
+    c1 = pars[n.stage+2]
+    c2 = pars[n.stage+3]
+    test_stage = init_sets_list$test_stage
+    test_pos = init_sets_list$test_pos
+    ascertainment = logit(c0+c1*test_stage+c2*test_pos)
+    result = c(result,ascertainment)
     return(result)
   }
   
-  
   mcmc_pars_estimate_original = 
     t(apply(mcmc_pars_estimate,1,transform_delta_to_orginal))
-  colnames(mcmc_pars_estimate_original) = c(paste0("b",1:n.stage),"c0","c1","c2","phi")
-  par_str=rep("c",n_pars)
-  for (i_par in 1:n_pars) {
+  colnames(mcmc_pars_estimate_original) = c(paste0("b",1:n.stage),"c0","c1","c2","phi",paste0("r",1:(n.stage+1)))
+  par_str=rep("c",ncol(mcmc_pars_estimate_original))
+  
+  
+  
+  for (i_par in 1:ncol(mcmc_pars_estimate_original)) {
     par_str[i_par]=paste0(round(mean(mcmc_pars_estimate_original[,i_par]),2), " (",
                           round(quantile(mcmc_pars_estimate_original[,i_par],0.025),2)," - " , 
                           round(quantile(mcmc_pars_estimate_original[,i_par],0.975),2), ")")
@@ -91,6 +100,32 @@ GeneratePlot=function(init_sets_list,
   print("summary string finished")
   
   
+  
+  ascertainment = rep(0,n_stage)
+  ascertainment_low = rep(0,n_stage)
+  ascertainment_high = rep(0,n_stage)
+  stage_date = all.date[1:n_stage]
+  for(i in 1:n_stage){
+    ascertainment[i] <- round(mean(mcmc_pars_estimate_original[,n_stage+4+i]),2)
+    ascertainment_low[i] <- round(quantile(mcmc_pars_estimate_original[,n_stage+4+i],0.025),2)
+    ascertainment_high[i] <- round(quantile(mcmc_pars_estimate_original[,n_stage+4+i],0.975),2)
+    stage_date[i] = all.date[as.integer((stage_intervals[[i]][1]+stage_intervals[[i]][2])/2)]
+  }
+  plot.data <- data.frame(stage_date,ascertainment,
+                          ascertainment_low,
+                          ascertainment_high)
+  
+  
+  p = ggplot(plot.data,aes(x= stage_date,y =ascertainment ))+
+    geom_line()+
+    geom_ribbon(aes(ymin=ascertainment_low,ymax=ascertainment_high),alpha = 0.2)+
+    xlab("Time-period")+
+    ylab("Ascertainment (95%CI)")+
+    theme_Publication()
+  png(file = paste0("../output/ascertainment_",run_id,".png"),width = 10,height =8, res = 300, units = "in")
+  print(p)
+  dev.off()
+
   
   estRt_mat <- apply(mcmc_pars_estimate, 1, function(x) estimate_R(pars = x, init_settings = init_sets_list))
   
@@ -116,10 +151,10 @@ GeneratePlot=function(init_sets_list,
   
   write.csv(summary_string, paste0("../output/summary_run_",run_id,".csv"))
   
-  cairo_pdf(paste0("../output/par_cor_run_",run_id,".pdf"),width=10,height=10)
-  correlationPlot_modified(mcmc_pars_estimate, scaleCorText = F)
-  dev.off()
-  print("plot correlation plot finished")
+  # cairo_pdf(paste0("../output/par_cor_run_",run_id,".pdf"),width=10,height=10)
+  # correlationPlot_modified(mcmc_pars_estimate, scaleCorText = F)
+  # dev.off()
+  # print("plot correlation plot finished")
   #png(paste0("../output/par_hist_run_",run_id,".png"))
   #pdf(paste0("../output/par_hist_run_",run_id,".pdf"),width = 9, height = 10)
   # par(mfrow = c(4, ceiling(n.par/4)))

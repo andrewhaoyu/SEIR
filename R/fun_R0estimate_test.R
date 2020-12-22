@@ -18,18 +18,17 @@
 estimate_R <- function(pars, init_settings) {
   tmp_ret=init_settings$var_trans_fun(pars)
   test_stage = init_settings$test_stage
-  test_pos = init_sets_list$test_pos 
+  
   
   n_stage=length(stage_intervals)
   b_vec=tmp_ret[[1]]
   #r_vec=tmp_ret[[2]]
   c0 = pars[n_stage+1]
   c1 = pars[n_stage+2]
-  c2 = pars[n_stage+2]
   logit_inv <- function(x){
     exp(x)/(1+exp(x))
   }
-  r_vec = logit_inv(c0+c1*test_stage+c2*test_pos)
+  r_vec = logit_inv(c0+c1*test_stage)
   
   stage_intervals=init_settings$stage_intervals
   n_stage=length(stage_intervals)
