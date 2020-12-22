@@ -88,7 +88,7 @@ date_in_model <- as.Date(allData$date,format="%Y-%m-%d")
 idx <- which(date_in_model<="2020-12-20")
 allData <- allData[idx,]
 #
-statename = c("Georgia","Arizona","Florida","New Jersey","Illinois","California","Michigan","Louisiana","Arizona")
+stateName = statename = c("Georgia","Arizona","Florida","New Jersey","Illinois","California","Michigan","Louisiana","Arizona")
 countyname = c("Fulton","Pima","Collier","Essex","Cook","Los Angeles","Wayne","Orleans","Navajo")
 #plug in the population number
 
