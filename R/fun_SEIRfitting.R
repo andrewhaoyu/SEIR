@@ -125,10 +125,10 @@ Func_list = function(method){
         
       }else{
         #special setting for CT due to the weekend effect
-        suppressWarnings(p <- dnbinom(x = as.numeric(onset_obs)[subset.id], 
+        suppressWarnings(p <- dnbinom(x = as.numeric(onset_obs), 
                                       #size = phi,
                                       size = 1/phi,
-                                      mu = ypred[subset.id],log=T))
+                                      mu = ypred,log=T))
         
       }
         
