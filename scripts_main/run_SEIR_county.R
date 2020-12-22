@@ -97,6 +97,11 @@ countyname = c("Fulton","Pima","Collier","Essex","Cook","Los Angeles","Wayne","O
                  allData$state==statename[i1] )
 head(idx) 
   
+site = stateName
+for(k in 1:length(statename)){
+  site[k] = state.abb[which(state.name==statename[k])]
+}
+
 #
 
 

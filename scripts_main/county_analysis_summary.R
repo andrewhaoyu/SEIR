@@ -80,13 +80,6 @@ leave_days = 10
 
 #use covidtracing data to analyze
 #downloaded from https://covidtracking.com/data/download
-statename = c("NY",
-              "MA",
-              "FL",
-              "MI",
-              "CT",
-              "LA",
-              "MO","UT","IN","OH")
 #
 allData <- read.csv("../data/JHU_COVID-19_County.csv")
 #keep date to 08/31/2020

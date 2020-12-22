@@ -208,7 +208,7 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   prevalence_high <- apply(estS_mat,1,function(x){quantile((N-x)/N,0.975)})
   
   library(ggplot2)
-  if(statename[i1]%in%CDC$Site){
+  if(site[i1]%in%CDC$Site){
     data = data.frame(date= all.date,Prevalance=100*prevalence,Prevalence_low = 100*prevalence_low,Prevalence_high= 100*prevalence_high)
     
     CDC_filter <- CDC %>% 
