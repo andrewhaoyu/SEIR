@@ -93,8 +93,7 @@ countyname = c("Fulton","Pima","Collier","Essex","Cook","Los Angeles","Wayne","O
 #plug in the population number
 
 idx <- which(allData$county==countyname[i1]&
-               allData$state==state[i1] )
-
+               allData$state==statename[i1] )
 
 stateData <- allData[idx,]
 #order the data by date
