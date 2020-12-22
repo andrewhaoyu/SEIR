@@ -94,6 +94,10 @@ countyname = c("Fulton","Pima","Collier","Essex","Cook","Los Angeles","Wayne","O
 
 idx <- which(allData$county==countyname[i1]&
                allData$state==statename[i1] )
+site = stateName
+for(k in 1:length(statename)){
+  site[k] = state.abb[which(state.name==statename[k])]
+}
 
 stateData <- allData[idx,]
 #order the data by date
