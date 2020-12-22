@@ -149,7 +149,7 @@ stateData = stateData[order(stateData$date),]
 
 
 #find first date with positive cases more than 50
-jdx <- which(stateData$positiveIncrease>50)
+jdx <- which(stateData$positiveIncrease>100)
 #start analysis date
 jan1_idx = min(jdx)
 

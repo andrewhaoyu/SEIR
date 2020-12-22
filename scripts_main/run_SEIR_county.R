@@ -80,7 +80,7 @@ source(paste0(code_root, "R/fun_Findzero.R"))
 
 
 #use covidtracing data to analyze
-#downloaded from https://covidtracking.com/data/download
+#https://github.com/lin-lab/COVID-data-cleaning/tree/master/jhu_data/cleaned_data
 allData <- read.csv("../data/JHU_COVID-19_County.csv")
 leave_days = 10
 #keep date to 08/31/2020
