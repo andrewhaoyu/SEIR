@@ -61,14 +61,14 @@ library(readr)
 library(dplyr)
 ##
 
-source(paste0(code_root, "R/fun_SEIRpred_test.R"))
+source(paste0(code_root, "R/fun_SEIRpred_test_pos.R"))
 
-source(paste0(code_root, "R/fun_SEIRsimu_test.R"))
+source(paste0(code_root, "R/fun_SEIRsimu_test_pos.R"))
 
 #source(paste0(code_root, "R/init_cond_update.R"))
 
-source(paste0(code_root, "R/fun_SEIRfitting_test.R"))  
-source(paste0(code_root, "R/init_cond_test.R"))
+source(paste0(code_root, "R/fun_SEIRfitting_test_pos.R"))  
+source(paste0(code_root, "R/init_cond_test_pos.R"))
 
 source(paste0(code_root, "R/fun_R0estimate.R"))
 source(paste0(code_root, "R/correlationPlot_modified.R"))
