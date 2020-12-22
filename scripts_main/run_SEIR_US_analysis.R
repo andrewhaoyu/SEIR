@@ -88,7 +88,7 @@ statename = c("NY",
               "CT",
               "LA",
               "MO","UT","IN","OH")
-#
+#downloaded from https://covidtracking.com/data/download
 allData <- read.csv("../data/all-states-history.csv")
 #keep date to 08/31/2020
 library(lubridate)

@@ -12,12 +12,12 @@ args = commandArgs(trailingOnly = T)
 #i5 represent reparametrization
 #i6 represent asympotomatic infection rate
 i1 = as.numeric(args[[1]])
-i2 = as.numeric(args[[2]])
-i3 = as.numeric(args[[3]])
+#i2 = as.numeric(args[[2]])
+i3 = as.numeric(args[[2]])
 i4 = 1
 i5 = 1
 #i6 = as.numeric(args[[3]])
-set.seed(i1*1000+i2*100+i3)
+#set.seed(i1*1000+i2*100+i3)
 # ind = as.numeric(args[[1]])
 # #number of statess
 # #number of replicates
@@ -62,19 +62,19 @@ library(dplyr)
 ##
 
 source(paste0(code_root, "R/fun_SEIRpred_test_pos.R"))
-
 source(paste0(code_root, "R/fun_SEIRsimu_test_pos.R"))
 
 #source(paste0(code_root, "R/init_cond_update.R"))
 
-source(paste0(code_root, "R/fun_SEIRfitting_test_pos.R"))  
+source(paste0(code_root, "R/fun_SEIRfitting_test_pos.R"))    
 source(paste0(code_root, "R/init_cond_test_pos.R"))
 
-
-source(paste0(code_root, "R/fun_R0estimate.R"))
+source(paste0(code_root, "R/fun_R0estimate_test_pos.R"))
 source(paste0(code_root, "R/correlationPlot_modified.R"))
 source(paste0(code_root, "R/fun_SEIRplot.R"))
 source(paste0(code_root, "R/fun_Findzero.R"))
+source(paste0(code_root,"R/generate_plot_test_pos.R"))
+source(paste0(code_root,"R/theme_publication.R"))
 ##
 
 
@@ -86,14 +86,11 @@ statename = c("NY",
               "MI",
               "CT",
               "LA",
-              "MO","UT","IN","OH","NC")
+              "MO","UT","IN","OH")
 #
 allData <- read.csv("../data/all-states-history.csv")
 #keep date to 08/31/2020
 library(lubridate)
-#leave off days for prediction
-leave_days = 11
-
 date_in_model <- as.Date(allData$date,format="%Y-%m-%d")
 idx <- which(date_in_model<="2020-12-21")
 allData <- allData[idx,]
@@ -103,7 +100,12 @@ stateName = c("New York","Massachusetts",
               "Connecticut",
               "Louisiana",
               "Missouri",
-              "Utah","Indiana","Ohio","North Carolina")
+              "Utah","Indiana","Ohio")
+
+site = stateName
+for(k in 1:length(stateName)){
+  site[k] = state.abb[which(state.name==stateName[k])]
+}
 #
 #plug in the population number
 population <- read.csv("../data/state_population.csv")
@@ -140,18 +142,11 @@ stateData = stateData[order(stateData$date),]
 # idx <- which(allData$stateName==statename[i1])
 # stateData <- allData[idx,]
 
-
-
-
-
-
-
-
-
-#find first date with positive cases more than 50
+#find first date with positive cases more than 20
 jdx <- which(stateData$positiveIncrease>100)
 #start analysis date
 jan1_idx = min(jdx)
+
 
 #calculate initial testing positive rate
 #back 10 days
@@ -159,12 +154,10 @@ if(as.numeric(jan1_idx)>10){
   test_pos_init = mean(stateData$positiveIncrease[(jan1_idx-10):jan1_idx])/
     mean(stateData$totalTestResultsIncrease[(jan1_idx-10):jan1_idx])
 }else{
-    start.ind = min(which(stateData$positiveIncrease>10))
-    test_pos_init = mean(stateData$positiveIncrease[start.ind:jan1_idx])/
-      mean(stateData$totalTestResultsIncrease[start.ind:jan1_idx])
-  }
-
-
+  start.ind = min(which(stateData$positiveIncrease>10))
+  test_pos_init = mean(stateData$positiveIncrease[start.ind:jan1_idx])/
+    mean(stateData$totalTestResultsIncrease[start.ind:jan1_idx])
+}
 
 stateDataClean = stateData[jan1_idx:nrow(stateData),]
 all.date <- stateDataClean$date
@@ -205,7 +198,7 @@ if(i1==1){
   all.cut.date<- c(as.Date("20-03-20"),all.cut.date)
 }
 idx <- which(date_in_model%in%all.cut.date)
-
+days.to.fit <- 1:length(date_in_model)
 n.stage <- length(idx)+1
 stage_intervals <- list()
 for(l in 1:(n.stage)){
@@ -218,19 +211,11 @@ for(l in 1:(n.stage)){
   }
   
 }
-
-idx <- which(stateDataClean$positiveIncrease<0)
-stateDataClean$positiveIncrease[idx] = 0
 flowN <- rep(0,n.stage)
 Di = 3.5
 Dp = 2.75
 De = 2.45
 test_increase <- stateDataClean$totalTestResultsIncrease
-positive_increase <-  stateDataClean$positiveIncrease
-#stateDataClean$positiveIncrease/stateDataClean$totalTestResultsIncrease
-#idx <- which(test_increase>1|is.nan(test_increase))
-#test_increase[idx] = NA
-
 #leave one more stage for prediction
 test_stage <- rep(0,n.stage+1)
 
@@ -249,17 +234,21 @@ for(l in 2:(n.stage+1)){
 }
 
 
-#test_stage = test_stage/10000
+
+
 alpha <- 0.55
 
 Dh = 30
 
+
+
+
 Dq <- rep(0,n.stage)
 
 GenerateDq <- function(cut.date){
-  if(cut.date<="2020-04-01"){
+  if(cut.date<="20-04-01"){
     return(10)
-  }else if(cut.date<="2020-04-15"){
+  }else if(cut.date<="20-04-15"){
     return(6)
   } else{
     return(3)
@@ -270,8 +259,6 @@ for(i in 1:(n.stage-1)){
   Dq[i] <- GenerateDq(all.cut.date[i])
 }
 Dq[length(Dq)] = 3
-
-
 r0_vec = c(0.05,0.075,0.10,0.125,0.15,0.20)
 r0 = r0_vec[i3]
 init_sets_list=get_init_sets_list(r0=r0,
@@ -291,29 +278,57 @@ init_sets_list=get_init_sets_list(r0=r0,
                                   method = method)
 init_sets_list$test_stage = test_stage/10000
 init_sets_list$test_pos = test_pos_stage
+
 # good initial conditions
 # c(1.284, 0.384, 0.174, 0.096, 0.161, -0.046, -0.379, 0.569)
-if(i4==1){
-  beta_shape1 <- 1
-  beta_shape2 <- 1
-  
-}else if(i4==2){
-  beta_shape1 <- 7.3
-  beta_shape2 <- 24.6
-  
+beta_shape1 <- 1
+beta_shape2 <- 1
+
+#load CDC anti body test data
+CDC <- read.csv("../data/Nationwide_Commercial_Laboratory_Seroprevalence_Survey.csv") 
+n = nrow(CDC)
+date.str = CDC$CDC$Date.Range.of.Specimen.Collection
+Collection_start  = Collection_end = Infection_date = 
+  rep(as.Date("2020-01-01"),n)
+for(k in 1:n){
+  temp = strsplit(CDC$Date.Range.of.Specimen.Collection[k],"-")
+  temp2 = strsplit(temp[[1]][[2]],",")
+  Collection_start[k] = as.Date(paste0(temp[[1]][1],temp2[[1]][[2]]),format="%b %d %Y")
+  Collection_end[k] = as.Date(paste0(temp2[[1]][1],temp2[[1]][[2]]),format=" %b %d %Y")
+  Infection_date[k] = as.integer((Collection_end[k]-Collection_start[k])/2)+Collection_start[k]-21
 }
-
-
+CDC$Collection_start = Collection_start
+CDC$Collection_end = Collection_end
+CDC$Infection_date = Infection_date
+CDC = CDC %>% 
+  filter(Site ==site[i1]) %>% 
+  rename(Prevalance = Rate......Cumulative.Prevalence.,
+         Prevalance_low  = Lower.CI..Cumulative.Prevalence.,
+         Prevalance_high = Upper.CI..Cumulative.Prevalence.,
+         sample_size = n..Cumulative.Prevalence.) %>% 
+  select(Site,
+    Collection_start,
+         Collection_end,
+         Infection_date,
+         Prevalance,
+         Prevalance_low,
+         Prevalance_high,
+         sample_size)
+  
 library(invgamma)
 #update the outlier
-SEIRfitting(init_sets_list, randomize_startValue = T,
-            run_id = paste0("122120_test_pos",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
-            all.date = all.date,
-            #n_burn_in=2800,
-            #n_iterations=30000,
-            n_burn_in=90000,
-            n_iterations=1000000,
-            method = method)
+idx <- which(init_sets_list$daily_new_case<0)
+init_sets_list$daily_new_case[idx]= 0
+idx <- which(init_sets_list$daily_new_case_all<0)
+init_sets_list$daily_new_case_all[idx]= 0
+
+
+
+i2 = 1
+GeneratePlot(init_sets_list, 
+             run_id = paste0("122120_test_pos",i1,"_",i2,"_",i3),
+             panel_B_R_ylim=6,
+             all.date = all.date)
 
 ## to evaluate convergence, we run another two rounds of this program
 # SEIRfitting(init_sets_list, randomize_startValue = T, run_id = "main_analysis_rep1", output_ret = T, skip_MCMC=F)
