@@ -146,26 +146,26 @@ SEIRfitting=function(init_sets_list,
   if (!skip_MCMC) {
     bayesSEIR <- createBayesianSetup(loglh_func, prior = pars_prior)
     
-    if (randomize_startValue) {  
-      startValue=pars_sampler(n.stage = n.stage)
-      best_logl = loglh_func(startValue)
-      #startValue = colMeans(mcmc_pars_estimate)
-      #startValue[11] = -2.8
-      #startValue[12] = 1.53
-      #pars = startValue
-      for(l in 1:1000){
-        temp = pars_sampler(n.stage = n.stage)
-        temp_logl = loglh_func(temp)
-        if(best_logl<temp_logl){
-          startValue = temp
-        }
-      }
-      
-      print(loglh_func(startValue))
-      while (is.infinite(loglh_func(startValue))) {
-        startValue=pars_sampler(n.stage = n.stage)
-      }
-    }
+    # if (randomize_startValue) {  
+    #   startValue=pars_sampler(n.stage = n.stage)
+    #   best_logl = loglh_func(startValue)
+    #   #startValue = colMeans(mcmc_pars_estimate)
+    #   #startValue[11] = -2.8
+    #   #startValue[12] = 1.53
+    #   #pars = startValue
+    #   for(l in 1:1000){
+    #     temp = pars_sampler(n.stage = n.stage)
+    #     temp_logl = loglh_func(temp)
+    #     if(best_logl<temp_logl){
+    #       startValue = temp
+    #     }
+    #   }
+    #   
+    #   print(loglh_func(startValue))
+    #   while (is.infinite(loglh_func(startValue))) {
+    #     startValue=pars_sampler(n.stage = n.stage)
+    #   }
+    # }
     
     ## DRAM: Adaptive MCMC, prior optimization, delayed rejection
     # startValue = c(b12=1.2, b3=0.4, b4=0.2, b5=0.1, r12=0.5, delta3=-1, delta4=0, delta5=0)

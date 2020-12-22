@@ -86,7 +86,7 @@ statename = c("NY",
               "MI",
               "CT",
               "LA",
-              "MO","UT","IN","OH")
+              "MO","UT","IN","OH","NC")
 #
 allData <- read.csv("../data/all-states-history.csv")
 #keep date to 08/31/2020
@@ -103,7 +103,7 @@ stateName = c("New York","Massachusetts",
               "Connecticut",
               "Louisiana",
               "Missouri",
-              "Utah","Indiana","Ohio")
+              "Utah","Indiana","Ohio","North Carolina")
 #
 #plug in the population number
 population <- read.csv("../data/state_population.csv")
