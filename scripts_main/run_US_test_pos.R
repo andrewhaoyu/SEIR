@@ -155,7 +155,7 @@ jan1_idx = min(jdx)
 
 #calculate initial testing positive rate
 #back 10 days
-if(length(jan1_idx)>10){
+if(jan1_idx>10){
   test_pos_init = mean(stateData$positiveIncrease[(jan1_idx-10):jan1_idx])/
     mean(stateData$totalTestResultsIncrease[(jan1_idx-10):jan1_idx])
 }else{
