@@ -86,11 +86,11 @@ leave_days = 10
 #keep date to 08/31/2020
 library(lubridate)
 date_in_model <- as.Date(allData$date,format="%Y-%m-%d")
-idx <- which(date_in_model<="2020-11-10")
+idx <- which(date_in_model<="2020-12-20")
 allData <- allData[idx,]
 #
-statename = c("Florida","Ohio")
-countyname = c("Collier","Franklin")
+statename = c("Georgia","Arizona","Florida")
+countyname = c("Fulton","Pima","Collier")
 #plug in the population number
 
   idx <- which(allData$county==countyname[i1]&
@@ -217,7 +217,7 @@ for(i in 1:(n.stage-1)){
 Dq[length(Dq)] = 3
 
 
-r0_vec = c(0.05,0.075,0.10,0.125,0.15,0.20)
+r0_vec = c(0.05,0.10,0.15,0.20,0.23,0.30,0.35,0.40,0.5)
 r0 = r0_vec[i3]
 init_sets_list=get_init_sets_list(r0=r0,
                                   Di = Di,
@@ -255,7 +255,7 @@ init_sets_list$daily_new_case[idx]= 0
 idx <- which(init_sets_list$daily_new_case_all<0)
 init_sets_list$daily_new_case_all[idx]= 0
 SEIRfitting(init_sets_list, randomize_startValue = T,
-            run_id = paste0("111120_county",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
+            run_id = paste0("122120_county",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
             all.date = all.date,
             #n_burn_in=2800,
             #n_iterations=30000,
