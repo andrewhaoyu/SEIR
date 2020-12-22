@@ -92,12 +92,11 @@ allData <- read.csv("../data/JHU_COVID-19_County.csv")
 #keep date to 08/31/2020
 library(lubridate)
 date_in_model <- as.Date(allData$date,format="%Y-%m-%d")
-idx <- which(date_in_model<="2020-11-10")
+idx <- which(date_in_model<="2020-12-20")
 allData <- allData[idx,]
 #
-state = c("Florida","Ohio")
-statename = c("FL","OH")
-countyname = c("Collier","Franklin")
+statename = c("Georgia","Arizona","Florida","New Jersey","Illinois","California","Michigan","Louisiana","Arizona")
+countyname = c("Fulton","Pima","Collier","Essex","Cook","Los Angeles","Wayne","Orleans","Navajo")
 #plug in the population number
 
 idx <- which(allData$county==countyname[i1]&
@@ -244,14 +243,35 @@ beta_shape1 <- 1
 beta_shape2 <- 1
 
 #load CDC anti body test data
-CDC <- read.csv("../data/CDC_antibody_test.csv")
-Collection_start = as.Date(CDC$Collection_start,format="%m/%d/%y")
-Collection_end = as.Date(CDC$Collection_end,format="%m/%d/%y")
-Infection_date = as.integer((Collection_end-Collection_start)/2)+Collection_start-21-4
-#IN results contain both RTPCR+antibody
-#idx <- which(CDC$Statename=="IN")
-#Infection_date[idx] <- "2020-04-27"
+CDC <- read.csv("../data/Nationwide_Commercial_Laboratory_Seroprevalence_Survey.csv") 
+n = nrow(CDC)
+date.str = CDC$CDC$Date.Range.of.Specimen.Collection
+Collection_start  = Collection_end = Infection_date = 
+  rep(as.Date("2020-01-01"),n)
+for(k in 1:n){
+  temp = strsplit(CDC$Date.Range.of.Specimen.Collection[k],"-")
+  temp2 = strsplit(temp[[1]][[2]],",")
+  Collection_start[k] = as.Date(paste0(temp[[1]][1],temp2[[1]][[2]]),format="%b %d %Y")
+  Collection_end[k] = as.Date(paste0(temp2[[1]][1],temp2[[1]][[2]]),format=" %b %d %Y")
+  Infection_date[k] = as.integer((Collection_end[k]-Collection_start[k])/2)+Collection_start[k]-21
+}
+CDC$Collection_start = Collection_start
+CDC$Collection_end = Collection_end
 CDC$Infection_date = Infection_date
+CDC = CDC %>% 
+  filter(Site ==site[i1]) %>% 
+  rename(Prevalance = Rate......Cumulative.Prevalence.,
+         Prevalance_low  = Lower.CI..Cumulative.Prevalence.,
+         Prevalance_high = Upper.CI..Cumulative.Prevalence.,
+         sample_size = n..Cumulative.Prevalence.) %>% 
+  select(Site,
+         Collection_start,
+         Collection_end,
+         Infection_date,
+         Prevalance,
+         Prevalance_low,
+         Prevalance_high,
+         sample_size)
 library(invgamma)
 #update the outlier
 idx <- which(init_sets_list$daily_new_case<0)
@@ -263,7 +283,7 @@ init_sets_list$daily_new_case_all[idx]= 0
 
 i2 = 1
 GeneratePlot(init_sets_list, 
-             run_id = paste0("111020_county",i1,"_",i2,"_",i3),
+             run_id = paste0("122120_county",i1,"_",i2,"_",i3),
              panel_B_R_ylim=6,
              all.date = all.date)
 
