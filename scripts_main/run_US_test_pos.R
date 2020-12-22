@@ -140,10 +140,25 @@ stateData = stateData[order(stateData$date),]
 # idx <- which(allData$stateName==statename[i1])
 # stateData <- allData[idx,]
 
-#find first date with positive cases more than 20
+
+
+
+
+
+
+
+
+#find first date with positive cases more than 50
 jdx <- which(stateData$positiveIncrease>50)
 #start analysis date
 jan1_idx = min(jdx)
+
+#calculate initial testing positive rate
+#back 10 days
+test_pos_init = mean(stateData$positiveIncrease[(jan1_idx-10):jan1_idx])/
+  mean(stateData$totalTestResultsIncrease[(jan1_idx-10):jan1_idx])
+
+
 
 stateDataClean = stateData[jan1_idx:nrow(stateData),]
 all.date <- stateDataClean$date
@@ -204,16 +219,29 @@ Di = 3.5
 Dp = 2.75
 De = 2.45
 test_increase <- stateDataClean$totalTestResultsIncrease
+positive_increase <-  stateDataClean$positiveIncrease
 #stateDataClean$positiveIncrease/stateDataClean$totalTestResultsIncrease
 #idx <- which(test_increase>1|is.nan(test_increase))
 #test_increase[idx] = NA
 
 #leave one more stage for prediction
 test_stage <- rep(0,n.stage+1)
+
+
 for(l in 1:(n.stage)){
   test_stage[l] <- mean(test_increase[stage_intervals[[l]][1]:stage_intervals[[l]][2]],na.rm = T)
 }
 test_stage[l+1] <- mean(test_increase[(stage_intervals[[l]][2]+1):n.days.all],na.rm = T)
+
+#use last stage test positive rate
+test_pos_stage <- rep(0,n.stage+1)
+test_pos_stage[1] = test_pos_init
+for(l in 2:(n.stage+1)){
+  test_pos_stage[l] <- mean(stateDataClean$positiveIncrease[stage_intervals[[l-1]][1]:stage_intervals[[l-1]][2]],na.rm = T)/
+    mean(test_increase[stage_intervals[[l-1]][1]:stage_intervals[[l-1]][2]],na.rm = T)
+}
+
+
 #test_stage = test_stage/10000
 alpha <- 0.55
 
@@ -255,6 +283,7 @@ init_sets_list=get_init_sets_list(r0=r0,
                                   stateData=stateData,
                                   method = method)
 init_sets_list$test_stage = test_stage/10000
+init_sets_list$test_pos = test_pos_stage
 # good initial conditions
 # c(1.284, 0.384, 0.174, 0.096, 0.161, -0.046, -0.379, 0.569)
 if(i4==1){
@@ -271,7 +300,7 @@ if(i4==1){
 library(invgamma)
 #update the outlier
 SEIRfitting(init_sets_list, randomize_startValue = T,
-            run_id = paste0("111020_test",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
+            run_id = paste0("122120_test_pos",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
             all.date = all.date,
             #n_burn_in=2800,
             #n_iterations=30000,

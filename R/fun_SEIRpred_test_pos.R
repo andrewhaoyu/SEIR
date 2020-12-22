@@ -22,6 +22,7 @@ SEIRpred <- function(pars,
   
   stage_intervals=init_settings$stage_intervals
   test_stage = init_settings$test_stage
+  test_pos = init_settings$test_pos
   n_stage=length(stage_intervals)
   tmp_ret=init_settings$var_trans_fun(pars)
   b_vec=tmp_ret[[1]]

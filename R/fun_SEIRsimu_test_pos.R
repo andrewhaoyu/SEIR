@@ -19,6 +19,8 @@
 SEIRsimu <- function(pars, init_settings, num_periods = 5) {
   stage_intervals <- init_settings$stage_intervals
   n_stage <- length(stage_intervals)
+  test_stage = init_settings$test_stage
+  test_pos = init_settings$test_pos
   
   tmp_ret=init_settings$var_trans_fun(pars)
   b_vec=tmp_ret[[1]]
