@@ -95,7 +95,7 @@ library(lubridate)
 leave_days = 11
 
 date_in_model <- as.Date(allData$date,format="%Y-%m-%d")
-idx <- which(date_in_model<="2020-11-11")
+idx <- which(date_in_model<="2020-12-21")
 allData <- allData[idx,]
 #population number (downloaded from https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html)
 stateName = c("New York","Massachusetts",
