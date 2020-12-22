@@ -199,7 +199,7 @@ if(i1==1){
   all.cut.date<- c(as.Date("20-03-20"),all.cut.date)
 }
 idx <- which(date_in_model%in%all.cut.date)
-days.to.fit <- 1:length(date_in_model)
+
 n.stage <- length(idx)+1
 stage_intervals <- list()
 for(l in 1:(n.stage)){
