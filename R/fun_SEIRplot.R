@@ -220,14 +220,33 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
     
     CDC_match = left_join(CDC_filter,data_select,by="date")
     
+    
     least_square = sum(CDC_match$Prevalance-CDC_match$Prevalance_pred)^2/(nrow(CDC_match))
     p <- ggplot(data,aes(x=date))+geom_line(aes(y = Prevalance))+
-      geom_ribbon(aes(ymin=Prevalence_low,ymax=Prevalence_high),alpha = 0.2)+
+      #geom_ribbon(aes(ymin=Prevalence_low,ymax=Prevalence_high),alpha = 0.2)+
       geom_point(data= CDC_filter,aes(x=date,y = Prevalance))+
       geom_errorbar(data=CDC_filter,aes(ymin = Prevalance_low,ymax=Prevalance_high))+
       theme_Publication()+
       ggtitle(paste0("Prevalance estimate in ",paste0(statename[i1])," (least square = ",least_square))
-    png(paste0("../output/Prevalance_", file_name, ".png"), width = 10, height = 10,res=300,units="in")
+   
+    
+    # CDC_filter2 = CDC_filter[2,]
+    # CDC_filter = CDC_filter[1,]
+    # p <- ggplot(data,aes(x=date))+geom_line(aes(y = Prevalance))+
+    #   #geom_ribbon(aes(ymin=Prevalence_low,ymax=Prevalence_high),alpha = 0.2)+
+    #   geom_point(data= CDC_filter,aes(x=date,y = Prevalance))+
+    #   geom_errorbar(data=CDC_filter,aes(ymin = Prevalance_low,ymax=Prevalance_high))+
+    #   geom_point(data= CDC_filter2,aes(x=date,y = Prevalance),col="red")+
+    #   geom_errorbar(data=CDC_filter2,aes(ymin = Prevalance_low,ymax=Prevalance_high),col="red")+
+    #   theme_Publication()+
+    #   ggtitle(paste0("Prevalance estimate in ",paste0(statename[i1])))+
+    #   ylim(0,15)
+    mean(colSums(estI_mat)/(colSums(estE_mat)+colSums(estI_mat)))
+    quantile(colSums(estI_mat)/(colSums(estE_mat)+colSums(estI_mat)),0.025)
+    quantile(colSums(estI_mat)/(colSums(estE_mat)+colSums(estI_mat)),0.975)
+    print(p)    
+    
+    png(paste0("../output/temp_Prevalance_", file_name, ".png"), width = 10, height = 10,res=300,units="in")
     print(p)
     dev.off()
     
