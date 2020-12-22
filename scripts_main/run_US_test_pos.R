@@ -159,7 +159,7 @@ if(length(jan1_idx)>10){
   test_pos_init = mean(stateData$positiveIncrease[(jan1_idx-10):jan1_idx])/
     mean(stateData$totalTestResultsIncrease[(jan1_idx-10):jan1_idx])
 }else{
-    start.ind = min(which(stateData$positiveIncrease)>10)
+    start.ind = min(which(stateData$positiveIncrease>10))
     test_pos_init = mean(stateData$positiveIncrease[start.ind:jan1_idx])/
       mean(stateData$totalTestResultsIncrease[start.ind:jan1_idx])
   }
