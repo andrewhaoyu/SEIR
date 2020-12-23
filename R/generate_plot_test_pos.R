@@ -74,13 +74,16 @@ GeneratePlot=function(init_sets_list,
     # }
     result <- pars
     result[1:(n.stage)] = c(b_vec)
+    
     c0 = pars[n.stage+1]
     c1 = pars[n.stage+2]
     c2 = pars[n.stage+3]
+    c_vec = c(c0,c1,c2)
+    phi = pars[n.stage+4]
     test_stage = init_sets_list$test_stage
     test_pos = init_sets_list$test_pos
     ascertainment = logit(c0+c1*test_stage+c2*test_pos)
-    result = c(result,ascertainment)
+    result = c(b_vec,ascertainment,c_vec,phi)
     return(result)
   }
   
@@ -175,7 +178,7 @@ GeneratePlot=function(init_sets_list,
   # print("plot tracj finished")
   if (plot_combined_fig) {
     SEIRplot(pars_estimate = mcmc_pars_estimate, file_name = run_id, init_settings = init_sets_list, panel_B_R_ylim = panel_B_R_ylim,
-             stage_intervals=stage_intervals,all.date = all.date)
+             stage_intervals=stage_intervals,all.date = all.date,mcmc_pars_estimate_original=mcmc_pars_estimate_original)
   }
   
   par(mfrow = c(1, 1))
