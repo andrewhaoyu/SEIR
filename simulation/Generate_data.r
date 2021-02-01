@@ -1,4 +1,12 @@
 #Generate six stages analysis
+args = commandArgs(trailingOnly = T)
+i1 = as.numeric(args[[1]])
+
+setwd("/data/zhangh24/SEIR/simulation")
+source("fun_SEIRfitting.R")
+source("fun_SEIRpred.R")
+source("fun_SEIRsimu.R")
+set.seed(i1)
 n_stage = 6
 n.stage = n_stage
 initial.ascertainment = 0.20
@@ -41,5 +49,14 @@ beta_shape2 <- 1
 gamma_shape = 1
 gamma_rate = 1
 
+est_result = SEIRfitting(
+  n_burn_in=n_burn_in,
+  n_iterations=n_iterations,
+  all.date = all.date,
+  onset_obs,
+  init_states,
+  n_stage,
+  par_lower,
+  par_upper)
 
 
