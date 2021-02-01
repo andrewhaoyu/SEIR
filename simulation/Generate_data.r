@@ -47,8 +47,8 @@ SEIR_mat =SEIRsimu(stage_intervals,b_vec,r_vec,
 onset_obs = SEIR_mat[,"Onset_expect"]
 par_lower = c(0,rep(-10,n_stage-1),0,rep(-10,n_stage-1),0)
 par_upper = c(3,rep(10,n_stage-1),1,rep(10,n_stage-1),1000)
-n_iterations = 150000
-n_burn_in = 13600
+n_iterations = 800000
+n_burn_in = 72000
 delta_mean <- 0
 delta_sd <- 1
 #beta_shape1 <- 7.3
