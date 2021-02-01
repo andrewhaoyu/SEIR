@@ -89,7 +89,7 @@ GeneratePlot=function(init_sets_list,
   
   mcmc_pars_estimate_original = 
     t(apply(mcmc_pars_estimate,1,transform_delta_to_orginal))
-  colnames(mcmc_pars_estimate_original) = c(paste0("b",1:n.stage),"c0","c1","c2","phi",paste0("r",1:(n.stage+1)))
+  colnames(mcmc_pars_estimate_original) = c(paste0("b",1:n.stage),paste0("r",1:(n.stage+1)),"c0","c1","c2","phi")
   par_str=rep("c",ncol(mcmc_pars_estimate_original))
   
   
@@ -101,22 +101,24 @@ GeneratePlot=function(init_sets_list,
   }
   names(par_str) = colnames(mcmc_pars_estimate_original)
   print("summary string finished")
-  
-  
+  test_stage = init_sets_list$test_stage
+  test_pos = init_sets_list$test_pos
   
   ascertainment = rep(0,n_stage)
   ascertainment_low = rep(0,n_stage)
   ascertainment_high = rep(0,n_stage)
   stage_date = all.date[1:n_stage]
   for(i in 1:n_stage){
-    ascertainment[i] <- round(mean(mcmc_pars_estimate_original[,n_stage+4+i]),2)
-    ascertainment_low[i] <- round(quantile(mcmc_pars_estimate_original[,n_stage+4+i],0.025),2)
-    ascertainment_high[i] <- round(quantile(mcmc_pars_estimate_original[,n_stage+4+i],0.975),2)
+    ascertainment[i] <- round(mean(mcmc_pars_estimate_original[,n_stage+i]),2)
+    ascertainment_low[i] <- round(quantile(mcmc_pars_estimate_original[,n_stage+i],0.025),2)
+    ascertainment_high[i] <- round(quantile(mcmc_pars_estimate_original[,n_stage+i],0.975),2)
     stage_date[i] = all.date[as.integer((stage_intervals[[i]][1]+stage_intervals[[i]][2])/2)]
   }
   plot.data <- data.frame(stage_date,ascertainment,
                           ascertainment_low,
-                          ascertainment_high)
+                          ascertainment_high,
+                          test_pos = test_pos[1:(length(test_pos)-1)],
+                          test_stage = test_stage[1:(length(test_pos)-1)])
   
   
   p = ggplot(plot.data,aes(x= stage_date,y =ascertainment ))+
@@ -128,8 +130,26 @@ GeneratePlot=function(init_sets_list,
   png(file = paste0("../output/ascertainment_",run_id,".png"),width = 10,height =8, res = 300, units = "in")
   print(p)
   dev.off()
-
+logit_inv <- function(x){log(x/(1-x))}
   
+ p =  ggplot(plot.data,aes(x= test_pos,y =logit_inv(ascertainment)))+
+    geom_line()+
+    geom_ribbon(aes(ymin=logit_inv(ascertainment_low),ymax=logit_inv(ascertainment_high)),alpha = 0.2)+
+    xlab("Test positive rate")+
+    ylab("Logit inverse Ascertainment (95%CI)")+
+    theme_Publication()
+ png(file = paste0("../output/ascertainment_test_pos",run_id,".png"),width = 10,height =8, res = 300, units = "in")
+ print(p)
+ dev.off()
+ p =  ggplot(plot.data,aes(x= test_stage,y =logit_inv(ascertainment)))+
+   geom_line()+
+   geom_ribbon(aes(ymin=logit_inv(ascertainment_low),ymax=logit_inv(ascertainment_high)),alpha = 0.2)+
+   xlab("Number of tests")+
+   ylab("Logit inverse Ascertainment (95%CI)")+
+   theme_Publication()
+ png(file = paste0("../output/ascertainment_tests",run_id,".png"),width = 10,height =8, res = 300, units = "in")
+ print(p)
+ dev.off()
   estRt_mat <- apply(mcmc_pars_estimate, 1, function(x) estimate_R(pars = x, init_settings = init_sets_list))
   
   

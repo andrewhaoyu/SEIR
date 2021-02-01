@@ -180,7 +180,7 @@ SEIRfitting=function(init_sets_list,
   }
   Fun_list_result = Func_list(method)
   pars_density=Fun_list_result[[1]]
-  pars_sampler=Fun_list_result[[2]]
+  pars_sampler =Fun_list_result[[2]]
   loglh_func = Fun_list_result[[3]]
   pars_name=Fun_list_result[[4]]
   

@@ -180,15 +180,15 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   est_daily_U = estP_mean
   est_daily_A = estP_mean
   for(l in 1:n.stage){
-    est_daily_A[stage_intervals[[l]][1]:stage_intervals[[l]][2]] = 
+    est_daily_A[stage_intervals[[l]][1]:stage_intervals[[l]][2]] =
       ascertainment[l]*estP_mean[stage_intervals[[l]][1]:stage_intervals[[l]][2]]/Dp
     est_daily_U[stage_intervals[[l]][1]:stage_intervals[[l]][2]] =
       (1-ascertainment[l])*estP_mean[stage_intervals[[l]][1]:stage_intervals[[l]][2]]/Dp
   }
   #for the additional prediction
-  est_daily_A[(stage_intervals[[l]][2]+1):length(est_daily_A)] = 
+  est_daily_A[(stage_intervals[[l]][2]+1):length(est_daily_A)] =
     ascertainment[l]*estP_mean[(stage_intervals[[l]][2]+1):length(est_daily_A)]/Dp
-  est_daily_U[(stage_intervals[[l]][2]+1):length(est_daily_U)] = 
+  est_daily_U[(stage_intervals[[l]][2]+1):length(est_daily_U)] =
     (1-ascertainment[l])*estP_mean[(stage_intervals[[l]][2]+1):length(est_daily_U)]/Dp
   est_daily_UA = rbind(est_daily_A,est_daily_U)
   png(paste0("../output/daily_UA_", file_name, ".png"), width = 16, height = 10,res=300,units="in")
@@ -222,12 +222,28 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
     weight = as.numeric(CDC_match$sample_size)/sum(as.numeric(CDC_match$sample_size))
     
     least_square = sum(weight*(CDC_match$Prevalance-CDC_match$Prevalance_pred))^2/(nrow(CDC_match))
-    overall_ascertainment = paste0(mean(colSums(estI_mat)/(colSums(estE_mat)+colSums(estI_mat))),"(",
-                                   quantile(colSums(estI_mat)/(colSums(estE_mat)+colSums(estI_mat)),0.025),"-",
-                                   quantile(colSums(estI_mat)/(colSums(estE_mat)+colSums(estI_mat)),0.975))
+    overall_ascertainment = paste0(mean(colSums(estI_mat)/(colSums(estA_mat)+colSums(estI_mat))),"(",
+                                   quantile(colSums(estI_mat)/(colSums(estA_mat)+colSums(estI_mat)),0.025),"-",
+                                   quantile(colSums(estI_mat)/(colSums(estA_mat)+colSums(estI_mat)),0.975))
+    
+    ascertainment = rep("c",n_stage)
+    
+    for(l in 1:n.stage){
+      data.temp =
+        colSums(estI_mat[stage_intervals[[l]][1]:stage_intervals[[l]][2],])/
+        (colSums(estA_mat[stage_intervals[[l]][1]:stage_intervals[[l]][2],])+
+           colSums(estI_mat[stage_intervals[[l]][1]:stage_intervals[[l]][2],]))
+      ascertainment[l] = paste0(mean(data.temp),"(",quantile(data.temp,0.025),"-",
+                                quantile(data.temp,0.975),")")
+    }
+    
+    
+    
+    
+    
     
     p <- ggplot(data,aes(x=date))+geom_line(aes(y = Prevalance))+
-      #geom_ribbon(aes(ymin=Prevalence_low,ymax=Prevalence_high),alpha = 0.2)+
+      geom_ribbon(aes(ymin=Prevalence_low,ymax=Prevalence_high),alpha = 0.2)+
       geom_point(data= CDC_filter,aes(x=date,y = Prevalance))+
       geom_errorbar(data=CDC_filter,aes(ymin = Prevalance_low,ymax=Prevalance_high))+
       theme_Publication()+
