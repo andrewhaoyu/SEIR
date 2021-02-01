@@ -1,7 +1,15 @@
 #Generate six stages analysis
 args = commandArgs(trailingOnly = T)
 i1 = as.numeric(args[[1]])
-
+library(BayesianTools)
+#install.packages("vioplot")
+#library(vioplot)
+#install.packages("corrplot")
+library(corrplot)
+library(readr)
+#install.packages("cairoDevice")
+#library(cairoDevice)
+library(dplyr)
 setwd("/data/zhangh24/SEIR/simulation")
 source("fun_SEIRfitting.R")
 source("fun_SEIRpred.R")
