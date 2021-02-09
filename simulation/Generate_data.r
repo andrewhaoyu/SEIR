@@ -15,6 +15,7 @@ setwd("/data/zhangh24/SEIR/simulation")
 source("fun_SEIRfitting.R")
 source("fun_SEIRpred.R")
 source("fun_SEIRsimu.R")
+source("estimate_R.R")
 set.seed(i1)
 n_stage = 6
 n.stage = n_stage
@@ -65,8 +66,8 @@ var_trans_fun=function(pars) {
 onset_obs = SEIR_mat[,"Onset_expect"]
 par_lower = c(0,rep(-10,n_stage-1),0,rep(-10,n_stage-1),0)
 par_upper = c(3,rep(10,n_stage-1),1,rep(10,n_stage-1),1000)
-n_iterations = 100000
-n_burn_in = 9090
+n_iterations = 200000
+n_burn_in = 18000
 delta_mean <- 0
 delta_sd <- 1
 #beta_shape1 <- 7.3
