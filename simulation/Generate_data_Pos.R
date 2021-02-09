@@ -40,10 +40,10 @@ days_to_fit = c(1:total)
 init_states <- c(21470907,2295,3215,264,1056,0,0)
 names(init_states) <- c("S","E","P","I","A","H","R")
 SEIR_mat =SEIRsimu(stage_intervals,b_vec,r_vec,
-         Di,Dp,
-         De,Dq_vec,
-         alpha,Dh,N,flowN_vec,init_states,
-         days_to_fit)
+                   Di,Dp,
+                   De,Dq_vec,
+                   alpha,Dh,N,flowN_vec,init_states,
+                   days_to_fit)
 
 
 
