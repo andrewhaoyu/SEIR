@@ -184,7 +184,7 @@ SEIRfitting=function(
   est = colMeans(mcmc_pars_estimate_original)
   est_low = apply(mcmc_pars_estimate_original,2,function(x){quantile(x,0.025)})
   est_high = apply(mcmc_pars_estimate_original,2,function(x){quantile(x,0.975)})
-  Rt = colMeans(estRt_mat)
+  estRt = colMeans(estRt_mat)
   Rt_low = apply(estRt_mat,2,function(x){quantile(x,0.025)})
   Rt_high = apply(estRt_mat,2,function(x){quantile(x,0.975)})
   return(list(est,est_low,est_high,estRt,Rt_low,Rt_high))
