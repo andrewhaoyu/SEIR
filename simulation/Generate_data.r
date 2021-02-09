@@ -44,6 +44,24 @@ SEIR_mat =SEIRsimu(stage_intervals,b_vec,r_vec,
          alpha,Dh,N,flowN_vec,init_states,
          days_to_fit)
 
+
+
+
+
+transform_var_fun=function(pars) {
+  n.stage <- length(pars)/2
+  b_vec <- pars[1:n.stage]
+  r_vec <- pars[(n.stage+1):(2*n.stage)]
+  r1 = r_vec[1]
+  for(l in 2:n.stage){
+    rtemp = 1 / (1 + (1 - r_vec[l-1]) / (r_vec[l-1] * exp(r_vec[l])))
+    r_vec[l] = rtemp
+  }
+  
+  return(list(b_vec, r_vec))
+}
+
+
 onset_obs = SEIR_mat[,"Onset_expect"]
 par_lower = c(0,rep(-10,n_stage-1),0,rep(-10,n_stage-1),0)
 par_upper = c(3,rep(10,n_stage-1),1,rep(10,n_stage-1),1000)

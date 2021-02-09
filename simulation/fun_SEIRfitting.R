@@ -52,7 +52,9 @@ default_pars_sampler <- function(n.stage=n.stage) {
 }
 
 loglh_func <- function(pars){
-  
+  tmp_est = var_trans_fun(pars)
+  b_vec = tem_est[[1]]
+  r_vec = tmp_est[[2]]
   
   ypred <- SEIRpred(stage_intervals,b_vec,r_vec,
                     Di,Dp,
@@ -163,6 +165,17 @@ SEIRfitting=function(
     mcmc_pars_estimate_original = 
       t(apply(mcmc_pars_estimate,1,transform_delta_to_orginal))
     colnames(mcmc_pars_estimate_original) = c(paste0("b",1:n.stage),paste0("r",1:n.stage),"phi")
+    
+    
+    estRt_mat = apply(mcmc_pars_estimate_original,1,function(x){estimate_R(x,
+                           Di,
+                           Dp,
+                           Dq_vec,
+                           N,
+                           flowN_vec,
+                           n_stage)}) 
+    
+    
     est = colMeans(mcmc_pars_estimate_original)
     est_low = apply(mcmc_pars_estimate_original,2,function(x){quantile(x,0.025)})
     est_high = apply(mcmc_pars_estimate_original,2,function(x){quantile(x,0.975)})

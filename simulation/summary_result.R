@@ -17,6 +17,8 @@ for(i1 in 1:n.rep){
     (est_result[[3]][(n_stage+1):(2*n_stage)]>=r_vec)
   
 }
+colMeans(b_est)
+colMeans(r_est)
 colMeans(b_cover)
 colMeans(r_cover)
 colMeans(r_est)-r_vec
