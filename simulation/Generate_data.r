@@ -49,16 +49,20 @@ SEIR_mat =SEIRsimu(stage_intervals,b_vec,r_vec,
 
 
 
-var_trans_fun=function(pars) {
-  n.stage <- length(pars)/2
+var_trans_fun= function(pars) {
+  n.stage <- (length(pars)-1)/2
+  #b_vec <- pars[1:n.stage]
   b_vec <- pars[1:n.stage]
+  for(l in 2:n.stage){
+    b_temp = b_vec[l-1]*exp(b_vec[l])
+    b_vec[l] = b_temp
+  }
   r_vec <- pars[(n.stage+1):(2*n.stage)]
   r1 = r_vec[1]
   for(l in 2:n.stage){
     rtemp = 1 / (1 + (1 - r_vec[l-1]) / (r_vec[l-1] * exp(r_vec[l])))
     r_vec[l] = rtemp
   }
-  
   return(list(b_vec, r_vec))
 }
 
