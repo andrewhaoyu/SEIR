@@ -169,7 +169,7 @@ SEIRfitting=function(
   
   mcmc_pars_estimate_original = 
     t(apply(mcmc_pars_estimate,1,transform_delta_to_orginal))
-  colnames(mcmc_pars_estimate_original) = c(paste0("b",1:n.stage),paste0("r",1:n.stage),"phi")
+  colnames(mcmc_pars_estimate_original) = c(paste0("b",1:n.stage),paste0("r",1:n.stage))
   
   
   estRt_mat = apply(mcmc_pars_estimate_original,1,function(x){estimate_R(x,
