@@ -76,4 +76,4 @@ est_result = SEIRfitting(
   par_lower,
   par_upper)
 
-save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/seir_result_",i1,".rdata"))
+save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/seir_pos_result_",i1,".rdata"))
