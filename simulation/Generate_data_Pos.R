@@ -12,7 +12,7 @@ library(readr)
 library(dplyr)
 library(invgamma)
 setwd("/data/zhangh24/SEIR/simulation")
-source("fun_SEIRfitting.R")
+source("fun_SEIRfitting_Pos.R")
 source("fun_SEIRpred.R")
 source("fun_SEIRsimu.R")
 source("estimate_R.R")
@@ -53,8 +53,8 @@ SEIR_mat =SEIRsimu(stage_intervals,b_vec,r_vec,
 
 
 onset_obs = SEIR_mat[,"Onset_expect"]
-par_lower = c(0,rep(-10,n_stage-1),0,rep(-10,n_stage-1),0)
-par_upper = c(3,rep(10,n_stage-1),1,rep(10,n_stage-1),1000)
+par_lower = c(0,rep(-10,n_stage-1),0,rep(-10,n_stage-1))
+par_upper = c(3,rep(10,n_stage-1),1,rep(10,n_stage-1))
 n_iterations = 200000
 n_burn_in = 18000
 delta_mean <- 0

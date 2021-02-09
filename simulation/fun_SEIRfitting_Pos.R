@@ -24,7 +24,7 @@ default_pars_density <- function(pars) {
 }
 
 default_pars_sampler <- function(n.stage=n.stage) {
-  s_vec <- matrix(NA, 1, 2*n.stage+1)
+  s_vec <- matrix(NA, 1, 2*n.stage)
   
   
   ## b1
@@ -59,7 +59,7 @@ loglh_func <- function(pars){
   # meant to suppress warnings when ypred is negative
   
   suppressWarnings(p <- dpois(x = as.numeric(onset_obs), 
-                                lamba = ypred,
+                                lambda = ypred,
                                 log=T))
   
   
@@ -127,8 +127,8 @@ SEIRfitting=function(
   
   bayesSEIR <- createBayesianSetup(loglh_func, prior = pars_prior)
   
-  
-  
+  # startValue = pars_sampler(n.stage = n_stage)
+  # loglh_func(startValue)
   ## DRAM: Adaptive MCMC, prior optimization, delayed rejection
   # startValue = c(b12=1.2, b3=0.4, b4=0.2, b5=0.1, r12=0.5, delta3=-1, delta4=0, delta5=0)
   # startValue = c(b12 = 1.359, b3 = 0.537, b4 = 0.203, b5 = 0.196, r12 = 0.305, delta3 = -0.964, delta4 = -0.593, delta5 = -0.309)
