@@ -53,7 +53,7 @@ default_pars_sampler <- function(n.stage=n.stage) {
 
 loglh_func <- function(pars){
   tmp_est = var_trans_fun(pars)
-  b_vec = tem_est[[1]]
+  b_vec = tmp_est[[1]]
   r_vec = tmp_est[[2]]
   
   ypred <- SEIRpred(stage_intervals,b_vec,r_vec,
