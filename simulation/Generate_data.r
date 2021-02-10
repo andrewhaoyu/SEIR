@@ -39,20 +39,20 @@ flowN_vec = c(0,0,0,0,0,0)
 days_to_fit = c(1:total)
 init_states <- c(21470907,2295,3215,264,1056,0,0)
 names(init_states) <- c("S","E","P","I","A","H","R")
-SEIR_mat =SEIRsimu(stage_intervals,b_vec,r_vec,
+SEIR_mat= SEIRpred(stage_intervals,b_vec,r_vec,
          Di,Dp,
          De,Dq_vec,
          alpha,Dh,N,flowN_vec,init_states,
          days_to_fit)
+ 
 
 
 
-
-
-
-
-
-onset_obs = SEIR_mat[,"Onset_expect"]
+onset_expect = SEIR_mat[,"Onset_expect"]
+phi = 0.05
+onset_obs <- rnbinom(n = length(onset_expect),
+                     size = 1/phi,
+                     mu = onset_expect)
 par_lower = c(0,rep(-10,n_stage-1),0,rep(-10,n_stage-1),0)
 par_upper = c(3,rep(10,n_stage-1),1,rep(10,n_stage-1),1000)
 n_iterations = 300000
