@@ -195,7 +195,7 @@ SEIRfitting=function(
     est_low = apply(mcmc_pars_estimate_original,2,function(x){quantile(x,0.025)})
     est_high = apply(mcmc_pars_estimate_original,2,function(x){quantile(x,0.975)})
     
-    return(list(est,est_low,est_high,estRt_mat))
+    return(list(est,est_low,est_high,est,est_low,est_high))
     #par_str=rep("c",n_pars)
     
     

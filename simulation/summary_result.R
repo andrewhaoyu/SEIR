@@ -12,6 +12,7 @@ Rt_cover = matrix(0,n.rep,6)
 r_est = matrix(0,n.rep,6)
 r_cover = matrix(0,n.rep,6)
 pars = c(b_vec,r_vec)
+phi_est = rep(0,n.rep)
 
 Rt_true = estimate_R(pars,
                      Di,
@@ -27,6 +28,7 @@ for(i1 in 1:n.rep){
   b_est_low[i1,] = est_result[[2]][1:n_stage]
   b_est_high[i1,] = est_result[[3]][1:n_stage]
   r_est[i1,] = est_result[[1]][(n_stage+1):(2*n_stage)]
+  phi_est[i1] = est_result[[1]][length(est_result[[1]])]
   b_cover[i1,] = (est_result[[2]][1:n_stage]<=b_vec)*
     (est_result[[3]][1:n_stage]>=b_vec)
   r_cover[i1,] =  (est_result[[2]][(n_stage+1):(2*n_stage)]<=r_vec)*
@@ -45,7 +47,7 @@ round(colMeans(Rt_est)-Rt_true,3)
 colMeans(Rt_cover)
 round(Rt_true,2)
   
-  
+mean(phi_est)-phi
   
 
 

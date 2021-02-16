@@ -1,6 +1,11 @@
 #Generate six stages analysis
 args = commandArgs(trailingOnly = T)
+#i1 number of replicates
 i1 = as.numeric(args[[1]])
+#i2 phi
+i2 = as.numeric(args[[2]])
+#i3 ascertainment
+i3 = as.numeric(args[[3]])
 library(BayesianTools)
 #install.packages("vioplot")
 #library(vioplot)
@@ -28,7 +33,12 @@ for(i in 1:n_stage){
   total = total+15
 }
 b_vec = c(0.7,0.3,0.3,0.3,0.48,0.48)
-r_vec = c(0.05,0.07,0.09,0.10,0.11,0.12)
+phi_vec = c(0,0.2)
+ascertainment_mat = matrix(c(c(0.05,0.07,0.09,0.10,0.11,0.12),
+                             (c(0.05,0.07,0.09,0.10,0.11,0.12)+0.2)),ncol=2)
+phi = phi_vec[i2]
+r_vec = ascertainment_mat[,i3]
+
 Di = 3.5
 Dp = 2.75
 De = 2.45
@@ -49,14 +59,13 @@ SEIR_mat= SEIRpred(stage_intervals,b_vec,r_vec,
 
 
 onset_expect = SEIR_mat[,"Onset_expect"]
-phi = 0.05
 onset_obs <- rnbinom(n = length(onset_expect),
                      size = 1/phi,
                      mu = onset_expect)
 par_lower = c(0,rep(-10,n_stage-1),0,rep(-10,n_stage-1))
 par_upper = c(3,rep(10,n_stage-1),1,rep(10,n_stage-1))
-n_iterations = 200000
-n_burn_in = 18000
+n_iterations = 300000
+n_burn_in = 27000
 delta_mean <- 0
 delta_sd <- 1
 #beta_shape1 <- 7.3
@@ -76,4 +85,4 @@ est_result = SEIRfitting(
   par_lower,
   par_upper)
 
-save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/seir_pos_result_",i1,".rdata"))
+save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/seir_pos_result_",i1,"_",i2,"_",i3,".rdata"))
