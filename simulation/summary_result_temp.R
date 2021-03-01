@@ -1,7 +1,7 @@
-b_vec = c(0.7,0.3,0.3,0.3,0.48,0.48)
+b_vec = c(0.7,0.3)
 phi_vec = c(0,0.2)
-ascertainment_mat = matrix(c(c(0.05,0.07,0.09,0.10,0.11,0.12),
-                             (c(0.05,0.07,0.09,0.10,0.11,0.12)+0.2)),ncol=2)
+ascertainment_mat = matrix(c(c(0.05,0.07),
+                             (c(0.05,0.07)+0.2)),ncol=2)
 
 
 
@@ -10,34 +10,40 @@ n.rep =1000
 #2 ascertainment settings
 #2 overdispersion settings
 #2 methods
-total = n.rep*2*2*2
-n.stage= 6
+total = n.rep
+n.stage= 2
+est = matrix(0,total,n.stage*2+1)
+est_cover = matrix(0,total,n.stage*2+1)
 pars_est = matrix(0,total,n.stage*2+1)
 pars_est_cover = matrix(0,total,n.stage*2+1)
 i2_vec = rep(0,total)
 i3_vec = rep(0,total)
 method_vec = rep(0,total)
 temp = 1
-for(i2 in 1:2){
-  for(i3 in 1:2){
-    phi = phi_vec[i2]
-    r_vec = ascertainment_mat[,i3]
-    
-    pars = c(b_vec,r_vec,phi)
-    
-    for(i1 in 1:n.rep){
-      load(paste0("/data/zhangh24/SEIR/result/simulation/seir_result_",i1,"_",i2,"_",i3,".rdata"))
-      pars_est[temp,] = est_result[[1]]
-      est_low = est_result[[2]]
-      est_high = est_result[[3]]
-      pars_est_cover[temp,] = (pars>=est_low)*(pars<=est_high)
-      i2_vec[temp] = i2
-      i3_vec[temp] = i3
-      method_vec[temp] = "nb"
-      temp = temp+1
-      #load(paste0("/data/zhangh24/SEIR/result/simulation/seir_pos_result_",i1,"_",i2,"_",i3,".rdata"))
-    }
-  }
+i2 = 2
+i3 = 2
+
+phi = phi_vec[i2]
+r_vec = ascertainment_mat[,i3]
+
+pars = c(b_vec,r_vec,phi)
+
+for(i1 in 1:n.rep){
+  load(paste0("/data/zhangh24/SEIR/result/simulation/two_stage_",i1,"_",i2,"_",i3,".rdata"))
+  est[temp,] = est_result[[1]]
+  est_low = est_result[[2]]
+  est_high = est_result[[3]]
+  est_cover[temp,] = (pars>=est_low)*(pars<=est_high)
+  
+  pars_est[temp,] = est_result[[7]]
+  # pars_est_low = est_result[[8]]
+  # pars_est_high = est_result[[9]]
+  # pars_est_cover[temp,] = (pars>=pars_est_low)*(pars<=pars_est_high)
+  i2_vec[temp] = i2
+  i3_vec[temp] = i3
+  method_vec[temp] = "nb"
+  temp = temp+1
+  #load(paste0("/data/zhangh24/SEIR/result/simulation/seir_pos_result_",i1,"_",i2,"_",i3,".rdata"))
   
 }
 
@@ -107,3 +113,4 @@ colnames(bias_table) = var.names[1:(2*n.stage)]
 colnames(cover_table) = var.names[1:(2*n.stage)]
 write.csv(bias_table,file = "/data/zhangh24/SEIR/result/simulation/bias_table.csv")
 write.csv(cover_table,file = "/data/zhangh24/SEIR/result/simulation/cover_table.csv")
+
