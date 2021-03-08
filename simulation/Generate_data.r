@@ -78,7 +78,7 @@ par_upper = c(3,rep(10,n_stage-1),1,rep(10,n_stage-1),1000)
 n_iterations = 100000
 n_burn_in = 9090
 delta_mean <- 0
-delta_sd <- 10
+delta_sd <- 0.5
 #beta_shape1 <- 7.3
 #beta_shape2 <- 24.6
 beta_shape1 <- 1
