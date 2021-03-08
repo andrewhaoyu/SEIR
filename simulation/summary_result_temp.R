@@ -22,7 +22,7 @@ i2_vec = rep(0,total)
 method_vec = rep(0,total)
 temp = 1
 i2 = 1
-
+i3 = 2
 
 phi = 0.2
 r_vec = ascertainment_mat[,i3]
@@ -31,7 +31,7 @@ pars = c(b_vec,r_vec,phi)
 for(i2 in 1:2){
   temp = 1
   for(i1 in 1:n.rep){
-    load(paste0("/data/zhangh24/SEIR/result/simulation/two_stage_",i1,"_",i2,".rdata"))
+    load(paste0("/data/zhangh24/SEIR/result/simulation/two_stage_",i1,"_",i2,"_",i3," .rdata"))
     est[temp,] = est_result[[1]]
     est_low_mat[temp,] = est_result[[2]]
     est_high_mat[temp,] = est_result[[3]]
@@ -58,7 +58,7 @@ for(i2 in 1:2){
                       est_low,
                       est_high)
   rownames(result) = c("b1","b2","r1","r2","phi")
-  save(result,file = paste0("/data/zhangh24/SEIR/result/simulation/sum_two_stage_",i2,".rdata"))
+  save(result,file = paste0("/data/zhangh24/SEIR/result/simulation/sum_two_stage_",i2,"_",i3,".rdata"))
 }
 
 
