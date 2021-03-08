@@ -4,6 +4,9 @@ args = commandArgs(trailingOnly = T)
 i1 = as.numeric(args[[1]])
 #days in each stage
 i2 = as.numeric(args[[2]])
+#days in each stage
+i3 = as.numeric(args[[3]])
+
 library(BayesianTools)
 #install.packages("vioplot")
 #library(vioplot)
@@ -84,6 +87,17 @@ beta_shape1 <- 1
 beta_shape2 <- 1
 gamma_shape = 1
 gamma_rate = 1
+
+if(i3 ==2){
+  delta_mean <- 0
+  delta_sd <- 0.5
+  #beta_shape1 <- 7.3
+  #beta_shape2 <- 24.6
+  beta_shape1 <- 1
+  beta_shape2 <- 1
+  gamma_shape = 3
+  gamma_rate = 1
+}
 
 logit = function(x){
   log(x/(1-x))
