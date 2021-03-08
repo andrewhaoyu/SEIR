@@ -2,10 +2,8 @@
 args = commandArgs(trailingOnly = T)
 #i1 replicates
 i1 = as.numeric(args[[1]])
-#i2 phi
+#days in each stage
 i2 = as.numeric(args[[2]])
-#i3 ascertainment
-i3 = as.numeric(args[[3]])
 library(BayesianTools)
 #install.packages("vioplot")
 #library(vioplot)
@@ -32,21 +30,22 @@ initial.ascertainment = 0.20
 N = 21477737
 stage_intervals = list()
 total= 0
-days_in_each_stage = 30
+days_in_each_stage_vec = c(15,30)
+days_in_each_stage = days_in_each_stage_vec[i2]
 for(i in 1:n_stage){
   stage_intervals[[i]] <- c(start = total+1,end = total+days_in_each_stage)
   total = total+days_in_each_stage
 }
 #b_vec = c(0.7,0.3,0.3,0.3,0.48,0.48)
 b_vec = c(0.7,0.3)
-phi_vec = c(0,0.2)
-ascertainment_mat = matrix(c(c(0.05,0.07),
-                             (c(0.05,0.07)+0.2)),ncol=2)
+#phi_vec = c(0,0.2)
+# ascertainment_mat = matrix(c(c(0.05,0.07),
+#                              (c(0.05,0.07)+0.2)),ncol=2)
 
 # ascertainment_mat = matrix(c(c(0.05,0.07,0.09,0.10,0.11,0.12),
 #                              (c(0.05,0.07,0.09,0.10,0.11,0.12)+0.2)),ncol=2)
-phi = phi_vec[i2]
-r_vec = ascertainment_mat[,i3]
+phi = 0.2
+r_vec = c(0.25,0.32)
 
 Di = 3.5
 Dp = 2.75
@@ -78,13 +77,30 @@ par_upper = c(3,rep(10,n_stage-1),1,rep(10,n_stage-1),1000)
 n_iterations = 100000
 n_burn_in = 9090
 delta_mean <- 0
-delta_sd <- 0.5
+delta_sd <- 1
 #beta_shape1 <- 7.3
 #beta_shape2 <- 24.6
 beta_shape1 <- 1
 beta_shape2 <- 1
 gamma_shape = 1
 gamma_rate = 1
+
+logit = function(x){
+  log(x/(1-x))
+}
+
+transformed_b = b_vec
+transformed_r = r_vec
+for(l in 2:length(b_vec)){
+  transformed_b[l] = log(b_vec[l])-log(b_vec[l-1])
+  transformed_r[l] = logit(r_vec[l])-logit(r_vec[l-1])
+}
+
+true_pars = c(transformed_b,transformed_r,phi)
+
+
+
+
 
 est_result = SEIRfitting(
   n_burn_in=n_burn_in,
@@ -97,4 +113,4 @@ est_result = SEIRfitting(
   par_upper)
 
 #save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/seir_result_",i1,"_",i2,"_",i3,".rdata"))
-save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/two_stage_",i1,"_",i2,"_",i3,".rdata"))
+save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/two_stage_",i1,"_",i2,".rdata"))
