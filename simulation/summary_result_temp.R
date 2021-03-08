@@ -46,7 +46,8 @@ for(i1 in 1:n.rep){
   #load(paste0("/data/zhangh24/SEIR/result/simulation/seir_pos_result_",i1,"_",i2,"_",i3,".rdata"))
   
 }
-
+colMeans(est)
+colMeans(est_cover)
 var.names = names(est_result[[1]])
 
 for(i2 in 1:2){
