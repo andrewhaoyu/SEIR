@@ -32,10 +32,10 @@ initial.ascertainment = 0.20
 N = 21477737
 stage_intervals = list()
 total= 0
-days_in_each_stage = 60
+days_in_each_stage = 30
 for(i in 1:n_stage){
-  stage_intervals[[i]] <- c(start = total+1,end = total+60)
-  total = total+60
+  stage_intervals[[i]] <- c(start = total+1,end = total+days_in_each_stage)
+  total = total+days_in_each_stage
 }
 #b_vec = c(0.7,0.3,0.3,0.3,0.48,0.48)
 b_vec = c(0.7,0.3)
