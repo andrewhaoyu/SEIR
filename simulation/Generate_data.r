@@ -4,8 +4,10 @@ args = commandArgs(trailingOnly = T)
 i1 = as.numeric(args[[1]])
 #days in each stage
 i2 = as.numeric(args[[2]])
-#days in each stage
+#prior distribution
 i3 = as.numeric(args[[3]])
+#isolation time
+i4 = as.numeric(args[[4]])
 
 library(BayesianTools)
 #install.packages("vioplot")
@@ -54,7 +56,11 @@ Di = 3.5
 Dp = 2.75
 De = 2.45
 #Dq_vec = c(10,6,3,3,3,3)
+
 Dq_vec = c(10,6)
+if(i4 ==2){
+  Dq_vec = c(5,3)
+}
 alpha = 0.55
 Dh = 30
 flowN_vec = c(0,0)
@@ -127,4 +133,4 @@ est_result = SEIRfitting(
   par_upper)
 
 #save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/seir_result_",i1,"_",i2,"_",i3,".rdata"))
-save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/two_stage_",i1,"_",i2,"_",i3,".rdata"))
+save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/two_stage_",i1,"_",i2,"_",i3,"_",i4,".rdata"))

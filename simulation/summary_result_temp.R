@@ -31,7 +31,7 @@ pars = c(b_vec,r_vec,phi)
 for(i2 in 1:2){
   temp = 1
   for(i1 in 1:n.rep){
-    load(paste0("/data/zhangh24/SEIR/result/simulation/two_stage_",i1,"_",i2,"_",i3," .rdata"))
+    load(paste0("/data/zhangh24/SEIR/result/simulation/two_stage_",i1,"_",i2,"_",i3,".rdata"))
     est[temp,] = est_result[[1]]
     est_low_mat[temp,] = est_result[[2]]
     est_high_mat[temp,] = est_result[[3]]
