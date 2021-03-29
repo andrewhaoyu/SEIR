@@ -16,7 +16,11 @@
 #' @param r                       ascertainment rate 
 #' @param num_periods             number of periods to simulate
 #################################################################################################
-SEIRsimu <- function(pars, init_settings, num_periods = 5) {
+SEIRsimu <- function(pars, stage_intervals,
+                     Di,Dp,
+                     De,Dq_vec,
+                     alpha,Dh,N,flowN_vec,init_states,
+                     days_to_fit, num_periods) {
   transform_delta_to_orginal=function(pars) {
     n.stage <- (length(pars)-1)/2
     #b_vec <- pars[1:n.stage]
@@ -36,23 +40,13 @@ SEIRsimu <- function(pars, init_settings, num_periods = 5) {
     return(result)
   }
   
-  stage_intervals <- init_settings$stage_intervals
+  
   n_stage <- length(stage_intervals)
   
   tmp_ret=transform_delta_to_orginal(pars)
   b_vec=tmp_ret[1:n_stage]
   r_vec=tmp_ret[(n_stage+1):(2*n_stage)]
   ##
-  Di <- init_settings$Di
-  Dp <- init_settings$Dp
-  De <- init_settings$De
-  Dq_vec <- init_settings$Dq
-  alpha <- init_settings$alpha
-  Dh <- init_settings$Dh
-  N <- init_settings$N
-  flowN_vec <- init_settings$flowN
-  init_states <- init_settings$init_states
-  days_to_fit <- init_settings$days_to_fit
   
   ## ODE function based on stochastic SEIR model
   update_func <- function(stage_pars, states_old) {

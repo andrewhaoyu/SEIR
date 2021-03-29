@@ -183,8 +183,22 @@ SEIRfitting=function(
   colnames(mcmc_pars_estimate_original) = c(paste0("b",1:n.stage),paste0("r",1:n.stage),"phi")
   
   
-  estSEAIP_mat <- apply(pars_estimate, 1, function(x) SEIRsimu(pars = x, init_settings = init_settings, num_periods = n.stage)[, c("S","E","I", "A", "P","Onset_expect")])
-  
+  estSEAIP_mat <- apply(mcmc_pars_estimate, 1, function(x) SEIRsimu(pars = x, stage_intervals,
+                                                                    Di,Dp,
+                                                                    De,Dq_vec,
+                                                                    alpha,Dh,N,flowN_vec,init_states,
+                                                                    days_to_fit,num_periods = n.stage)[, c("S","E","I", "A", "P","Onset_expect")])
+  ptime <- 1:length(onset_obs)
+  estS_mat <- estSEAIP_mat[ptime,]
+  estE_mat <- estSEAIP_mat[ptime + length(ptime),]
+  estI_mat <- estSEAIP_mat[ptime + length(ptime)*2, ]
+  estA_mat <- estSEAIP_mat[ptime + length(ptime)*3, ]
+  estP_mat <- estSEAIP_mat[ptime + length(ptime) * 4, ]
+  estN_mat <- estSEAIP_mat[ptime + length(ptime) * 5, ]
+  # prevalence <- rowMeans((N-estS_mat)/N)
+  # prevalence_low <- apply(estS_mat,1,function(x){quantile((N-x)/N,0.025)})
+  # prevalence_high <- apply(estS_mat,1,function(x){quantile((N-x)/N,0.975)})
+  # 
   
   estRt_mat = apply(mcmc_pars_estimate_original,1,function(x){estimate_R(x,
                                                                          Di,
@@ -200,15 +214,20 @@ SEIRfitting=function(
   est_high = apply(mcmc_pars_estimate_original,2,function(x){quantile(x,0.975)})
   
   
-  estRt = colMeans(estRt_mat)
-  Rt_low = apply(estRt_mat,2,function(x){quantile(x,0.025)})
-  Rt_high = apply(estRt_mat,2,function(x){quantile(x,0.975)})
+  estRt = rowMeans(estRt_mat)
+  Rt_low = apply(estRt_mat,1,function(x){quantile(x,0.025)})
+  Rt_high = apply(estRt_mat,1,function(x){quantile(x,0.975)})
   
-  pars_est = colMeans(mcmc_pars_estimate)
-  pars_low = apply(mcmc_pars_estimate,2,function(x){quantile(x,0.025)})
-  pars_high = apply(mcmc_pars_estimate,2,function(x){quantile(x,0.975)})
-  return(list(est,est_low,est_high,estRt,Rt_low,Rt_high,
-              pars_est,pars_low,pars_high))
+  # pars_est = colMeans(mcmc_pars_estimate)
+  # pars_low = apply(mcmc_pars_estimate,2,function(x){quantile(x,0.025)})
+  # pars_high = apply(mcmc_pars_estimate,2,function(x){quantile(x,0.975)})
+  return(list(est,est_low,est_high,
+              estRt,
+              Rt_low,
+              Rt_high,
+              prevalence,
+              prevalence_low,
+              prevalence_high))
   
   
   #par_str=rep("c",n_pars)

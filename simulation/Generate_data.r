@@ -3,11 +3,15 @@ args = commandArgs(trailingOnly = T)
 #i1 replicates
 i1 = as.numeric(args[[1]])
 #days in each stage
-i2 = as.numeric(args[[2]])
+#i2 = as.numeric(args[[2]])
 #prior distribution
-i3 = as.numeric(args[[3]])
+#i3 = as.numeric(args[[3]])
 #isolation time
-i4 = as.numeric(args[[4]])
+#i4 = as.numeric(args[[4]])
+
+i2 = 2
+i3 = 2
+i4 = 1
 
 library(BayesianTools)
 #install.packages("vioplot")
@@ -131,6 +135,8 @@ est_result = SEIRfitting(
   n_stage,
   par_lower,
   par_upper)
+
+
 
 #save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/seir_result_",i1,"_",i2,"_",i3,".rdata"))
 save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/two_stage_",i1,"_",i2,"_",i3,"_",i4,".rdata"))
