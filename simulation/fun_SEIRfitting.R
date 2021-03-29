@@ -195,10 +195,10 @@ SEIRfitting=function(
   estA_mat <- estSEAIP_mat[ptime + length(ptime)*3, ]
   estP_mat <- estSEAIP_mat[ptime + length(ptime) * 4, ]
   estN_mat <- estSEAIP_mat[ptime + length(ptime) * 5, ]
-  # prevalence <- rowMeans((N-estS_mat)/N)
-  # prevalence_low <- apply(estS_mat,1,function(x){quantile((N-x)/N,0.025)})
-  # prevalence_high <- apply(estS_mat,1,function(x){quantile((N-x)/N,0.975)})
-  # 
+  prevalence <- rowMeans((N-estS_mat)/N)
+  prevalence_low <- apply(estS_mat,1,function(x){quantile((N-x)/N,0.025)})
+  prevalence_high <- apply(estS_mat,1,function(x){quantile((N-x)/N,0.975)})
+
   
   estRt_mat = apply(mcmc_pars_estimate_original,1,function(x){estimate_R(x,
                                                                          Di,
