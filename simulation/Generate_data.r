@@ -22,7 +22,7 @@ library(invgamma)
 setwd("/data/zhangh24/SEIR/simulation")
 source("fun_SEIRfitting.R")
 source("fun_SEIRpred.R")
-source("fun_SEIRsimu.R")
+source("fun_SEIRsimu_update.R")
 source("estimate_R.R")
 logit <- function(x){
   log(x/(1-x))

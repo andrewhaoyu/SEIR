@@ -183,6 +183,9 @@ SEIRfitting=function(
   colnames(mcmc_pars_estimate_original) = c(paste0("b",1:n.stage),paste0("r",1:n.stage),"phi")
   
   
+  estSEAIP_mat <- apply(pars_estimate, 1, function(x) SEIRsimu(pars = x, init_settings = init_settings, num_periods = n.stage)[, c("S","E","I", "A", "P","Onset_expect")])
+  
+  
   estRt_mat = apply(mcmc_pars_estimate_original,1,function(x){estimate_R(x,
                                                                          Di,
                                                                          Dp,
