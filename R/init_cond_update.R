@@ -114,11 +114,11 @@ generate_init_condi <- function(r0,
 get_init_sets_list = generate_init_condi
 
 delta_mean <- 0
-delta_sd <- 1
+delta_sd <- 0.5
 #beta_shape1 <- 7.3
 #beta_shape2 <- 24.6
 beta_shape1 <- 1
 beta_shape2 <- 1
-gamma_shape = 1
+gamma_shape = 3
 gamma_rate = 1
 

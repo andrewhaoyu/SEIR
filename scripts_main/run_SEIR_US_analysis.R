@@ -15,7 +15,7 @@ i1 = as.numeric(args[[1]])
 i2 = 1
 i3 = as.numeric(args[[2]])
 i4 = 1
-i5 = 1
+i5 = 2
 #i6 = as.numeric(args[[3]])
 set.seed(i1*1000+i2*100+i3)
 # ind = as.numeric(args[[1]])
@@ -64,13 +64,13 @@ source(paste0(code_root, "R/fun_SEIRpred.R"))
 source(paste0(code_root, "R/fun_SEIRsimu_update.R"))
 
 #source(paste0(code_root, "R/init_cond_update.R"))
-if(i5 ==1){
+#if(i5 ==1){
   source(paste0(code_root, "R/fun_SEIRfitting.R"))  
   source(paste0(code_root, "R/init_cond_update.R"))
-}else if(i5 ==2){
-  source(paste0(code_root, "R/fun_SEIRfitting_new.R"))  
-  source(paste0(code_root, "R/init_cond_new.R"))
-}
+# }else if(i5 ==2){
+#   source(paste0(code_root, "R/fun_SEIRfitting_new.R"))  
+#   source(paste0(code_root, "R/init_cond_new.R"))
+# }
 
 source(paste0(code_root, "R/fun_R0estimate.R"))
 source(paste0(code_root, "R/correlationPlot_modified.R"))
