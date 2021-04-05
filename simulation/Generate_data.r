@@ -39,7 +39,7 @@ initial.ascertainment = 0.20
 N = 21477737
 stage_intervals = list()
 total= 0
-days_in_each_stage_vec = c(15,30)
+days_in_each_stage_vec = c(45,60)
 days_in_each_stage = days_in_each_stage_vec[i2]
 for(i in 1:n_stage){
   stage_intervals[[i]] <- c(start = total+1,end = total+days_in_each_stage)
@@ -141,4 +141,4 @@ est_result = SEIRfitting(
 est_result$true_prevalence = true_prevalence
 
 #save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/seir_result_",i1,"_",i2,"_",i3,".rdata"))
-save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/two_stage_",i1,"_",i2,"_",i3,"_",i4,".rdata"))
+save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/040521_two_stage_",i1,"_",i2,"_",i3,"_",i4,".rdata"))
