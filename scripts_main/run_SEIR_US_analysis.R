@@ -295,6 +295,14 @@ idx <- which(init_sets_list$daily_new_case<0)
 init_sets_list$daily_new_case[idx]= 0
 idx <- which(init_sets_list$daily_new_case_all<0)
 init_sets_list$daily_new_case_all[idx]= 0
+delta_mean <- 0
+delta_sd <- 0.5
+#beta_shape1 <- 7.3
+#beta_shape2 <- 24.6
+beta_shape1 <- 1
+beta_shape2 <- 1
+gamma_shape = 3
+gamma_rate = 1
 SEIRfitting(init_sets_list, randomize_startValue = T,
             run_id = paste0("040521_",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
             all.date = all.date,
