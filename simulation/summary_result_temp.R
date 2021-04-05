@@ -16,53 +16,87 @@ est = matrix(0,total,n.stage*2+1)
 est_cover_mat = matrix(0,total,n.stage*2+1)
 est_low_mat = matrix(0,total,n.stage*2+1)
 est_high_mat = matrix(0,total,n.stage*2+1)
-pars_est = matrix(0,total,n.stage*2+1)
-pars_est_cover = matrix(0,total,n.stage*2+1)
+
+Rtest = matrix(0,total,n.stage)
+Rtest_cover_mat = matrix(0,total,n.stage)
+Rtest_low_mat = matrix(0,total,n.stage)
+Rtest_high_mat = matrix(0,total,n.stage)
+
+n.days = 60
+prevest_mat = matrix(0,total,n.days)
+prevest_low_mat = matrix(0,total,n.days)
+prevest_high_mat = matrix(0,total,n.days)
+prevest_cover_mat = matrix(0,total,n.days)
+
 i2_vec = rep(0,total)
 method_vec = rep(0,total)
 temp = 1
-i2 = 1
+
 
 
 phi = 0.2
-r_vec = ascertainment_mat[,i3]
+r_vec = ascertainment_mat[,2]
 
 pars = c(b_vec,r_vec,phi)
-i4 = 2
-for(i3 in 1:2){
-  for(i2 in 1:2){
+i2 = 2
+i3 = 2
+i4 = 1
+
+
+Rt_true = estimate_R(pars,
+           Di,
+           Dp,
+           Dq_vec,
+           N,
+           flowN_vec,
+           n_stage)
+# for(i3 in 1:2){
+#   for(i2 in 1:2){
   temp = 1
   for(i1 in 1:n.rep){
     load(paste0("/data/zhangh24/SEIR/result/simulation/two_stage_",i1,"_",i2,"_",i3,"_",i4,".rdata"))
     est[temp,] = est_result[[1]]
-    est_low_mat[temp,] = est_result[[2]]
-    est_high_mat[temp,] = est_result[[3]]
+    #est_low_mat[temp,] = est_result[[2]]
+    #est_high_mat[temp,] = est_result[[3]]
     est_low = est_result[[2]]
     est_high = est_result[[3]]
     est_cover_mat[temp,] = (pars>=est_low)*(pars<=est_high)
     
-    pars_est[temp,] = est_result[[7]]
-    # pars_est_low = est_result[[8]]
-    # pars_est_high = est_result[[9]]
-    # pars_est_cover[temp,] = (pars>=pars_est_low)*(pars<=pars_est_high)
-    i2_vec[temp] = i2
-    method_vec[temp] = "nb"
-    temp = temp+1
-    #load(paste0("/data/zhangh24/SEIR/result/simulation/seir_pos_result_",i1,"_",i2,"_",i3,".rdata"))
+    Rtest[temp,] = est_result[[4]]
+    #Rtest_low_mat[temp,] = est_result[[5]]
+    #Rtest_high_mat[temp,] = est_result[[6]]
     
+    Rtest_low = est_result[[5]]
+    Rtest_high = est_result[[6]]
+    Rtest_cover_mat[temp,] = (Rt_true>=Rtest_low)*(Rt_true<=Rtest_high)
+    
+    prevest_mat[temp,] = est_result[[7]]
+    prevest_low_mat[temp,] = est_result[[8]]
+    prevest_high_mat[temp,] = est_result[[9]]
+    prevest_low = est_result[[8]]
+    prevest_high = est_result[[9]]
+    prevest_cover_mat[temp,] = (true_prevalence>=prevest_low)*(true_prevalence<=prevest_high)
+    temp = temp+1
   }
   est_mean = colMeans(est)
   est_cover = colMeans(est_cover_mat)
-  est_low = colMeans(est_low_mat)
-  est_high = colMeans(est_high_mat)  
-  result = data.frame(est_mean,
-                      est_cover,
-                      est_low,
-                      est_high)
-  rownames(result) = c("b1","b2","r1","r2","phi")
-  save(result,file = paste0("/data/zhangh24/SEIR/result/simulation/sum_two_stage_",i2,"_",i3,"_",i4,".rdata"))
-}
-}
+  Rt_mean = colMeans(Rtest)
+  Rt_cover = colMeans(Rtest_cover_mat)
+  prevest_mean = colMeans(prevest_mat)
+  prevest_cover = colMeans(prevest_cover_mat)
+  true_prevalence = true_prevalence
+  Rtresult = data.frame(Rt_mean,
+                      Rt_cover
+                      )
+  prevresult = data.frame(prevest_mean,
+                          prevest_cover,
+                          true_prevalence)
+  
+  result = list(Rtresult,
+                prevresult )
+  save(result,file = paste0("/data/zhangh24/SEIR/result/simulation/Rt_two_stage_",i2,"_",i3,"_",i4,".rdata"))
+# }
+# }
 
 
 #added different queue parameters

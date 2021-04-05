@@ -12,7 +12,7 @@ args = commandArgs(trailingOnly = T)
 #i5 represent reparametrization
 #i6 represent asympotomatic infection rate
 i1 = as.numeric(args[[1]])
-i2 = as.numeric(args[[2]])
+i2 = 1
 i3 = as.numeric(args[[3]])
 i4 = 1
 i5 = 1
@@ -81,13 +81,16 @@ source(paste0(code_root, "R/fun_Findzero.R"))
 
 #use covidtracing data to analyze
 #downloaded from https://covidtracking.com/data/download
-statename = c("NY",
-              "MA",
-              "FL",
-              "MI",
-              "CT",
-              "LA",
-              "MO","UT","IN","OH")
+statename = c("FL",
+              "MA")
+
+# statename = c("NY",
+#               "MA",
+#               "FL",
+#               "MI",
+#               "CT",
+#               "LA",
+#               "MO","UT","IN","OH")
 #downloaded from https://covidtracking.com/data/download
 allData <- read.csv("../data/all-states-history.csv")
 #keep date to 08/31/2020
@@ -96,15 +99,18 @@ library(lubridate)
 leave_days = 11
 
 date_in_model <- as.Date(allData$date,format="%Y-%m-%d")
-idx <- which(date_in_model<="2020-11-11")
+idx <- which(date_in_model<="2021-1-11")
 allData <- allData[idx,]
 #population number (downloaded from https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html)
-stateName = c("New York","Massachusetts",
-              "Florida","Michigan",
-              "Connecticut",
-              "Louisiana",
-              "Missouri",
-              "Utah","Indiana","Ohio")
+stateName = c("Florida",
+              "Massachusetts")
+
+# stateName = c("New York","Massachusetts",
+#               "Florida","Michigan",
+#               "Connecticut",
+#               "Louisiana",
+#               "Missouri",
+#               "Utah","Indiana","Ohio")
 #
 #plug in the population number
 population <- read.csv("../data/state_population.csv")
@@ -154,19 +160,19 @@ stateDataClean = stateData[jan1_idx:nrow(stateData),]
 #MA added antibody tests results into the data
 #the data suddenly increased a lot
 #to avoid 
-if(i1 ==2){
-  idx <- which(stateDataClean$date=="2020-06-01")
-  stateDataClean$positiveIncrease[idx]  =  as.integer((stateDataClean$positiveIncrease[idx-1]+stateDataClean$positiveIncrease[idx+1])/2)
-}
-#CT data is usually 0 during weekend
-#it's due to no reporting during weekend
-#to aviod this, we dropped weekend CT data from the loglikelihood after 2020-07-04
-if(i1==5){
-  idx <- which(stateDataClean$date>="2020-07-04"&
-                 (weekdays(stateDataClean$date)=="Saturday"|
-                    weekdays(stateDataClean$date)=="Sunday"))
-  subset.id = which(c(1:(nrow(stateDataClean)-leave_days))%in%idx==F)
-}
+# if(i1 ==2){
+#   idx <- which(stateDataClean$date=="2020-06-01")
+#   stateDataClean$positiveIncrease[idx]  =  as.integer((stateDataClean$positiveIncrease[idx-1]+stateDataClean$positiveIncrease[idx+1])/2)
+# }
+# #CT data is usually 0 during weekend
+# #it's due to no reporting during weekend
+# #to aviod this, we dropped weekend CT data from the loglikelihood after 2020-07-04
+# if(i1==5){
+#   idx <- which(stateDataClean$date>="2020-07-04"&
+#                  (weekdays(stateDataClean$date)=="Saturday"|
+#                     weekdays(stateDataClean$date)=="Sunday"))
+#   subset.id = which(c(1:(nrow(stateDataClean)-leave_days))%in%idx==F)
+# }
 all.date <- stateDataClean$date
 #leave 10 days for prediction
 n.days <- nrow(stateDataClean)-leave_days
@@ -177,9 +183,12 @@ days_to_fit <- 1:n.days
 date_in_model <- stateDataClean$date
 start.date <- date_in_model[1]
 end.date <- date_in_model[n.days]
-all.cut.date <- c(floor_date(seq(start.date,end.date,by="month"),unit="month")+14,
-ceiling_date(seq(start.date, end.date, by = 'month'), unit = "month")-1)
+# all.cut.date <- c(floor_date(seq(start.date,end.date,by="month"),unit="month")+14,
+# ceiling_date(seq(start.date, end.date, by = 'month'), unit = "month")-1)
+# all.cut.date <- all.cut.date[order(all.cut.date)]
+all.cut.date <- c(ceiling_date(seq(start.date, end.date, by = 'month'), unit = "month")-1)
 all.cut.date <- all.cut.date[order(all.cut.date)]
+
 #remove the first cut date smaller than the start date
 if(as.numeric(all.cut.date[1]<=start.date)){
   all.cut.date <- all.cut.date[-1]
@@ -200,9 +209,9 @@ if(as.numeric(end.date-all.cut.date[length(all.cut.date)]<=7)){
   all.cut.date <- all.cut.date[-length(all.cut.date)]
 }
 #add addtional cut for NY data due to dramatic change
-if(i1==1){
-  all.cut.date<- c(as.Date("2020-03-20"),all.cut.date)
-}
+# if(i1==1){
+#   all.cut.date<- c(as.Date("2020-03-20"),all.cut.date)
+# }
 idx <- which(date_in_model%in%all.cut.date)
 days.to.fit <- 1:length(date_in_model)
 n.stage <- length(idx)+1
@@ -236,7 +245,7 @@ Dq <- rep(0,n.stage)
 GenerateDq <- function(cut.date){
   if(cut.date<="2020-04-01"){
     return(10)
-  }else if(cut.date<="2020-04-15"){
+  }else if(cut.date<="2020-04-30"){
     return(6)
   } else{
     return(3)
@@ -269,15 +278,15 @@ init_sets_list=get_init_sets_list(r0=r0,
 
 # good initial conditions
 # c(1.284, 0.384, 0.174, 0.096, 0.161, -0.046, -0.379, 0.569)
-if(i4==1){
+#if(i4==1){
   beta_shape1 <- 1
   beta_shape2 <- 1
   
-}else if(i4==2){
-  beta_shape1 <- 7.3
-  beta_shape2 <- 24.6
-  
-}
+# }else if(i4==2){
+#   beta_shape1 <- 7.3
+#   beta_shape2 <- 24.6
+#   
+# }
 
 
 library(invgamma)
@@ -287,12 +296,12 @@ init_sets_list$daily_new_case[idx]= 0
 idx <- which(init_sets_list$daily_new_case_all<0)
 init_sets_list$daily_new_case_all[idx]= 0
 SEIRfitting(init_sets_list, randomize_startValue = T,
-            run_id = paste0("111120_",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
+            run_id = paste0("040521_",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
             all.date = all.date,
            #n_burn_in=2800,
             #n_iterations=30000,
-             n_burn_in=300000,
-             n_iterations=3200000,
+            # n_burn_in=300000,
+             #n_iterations=3200000,
             method = method)
 
 ## to evaluate convergence, we run another two rounds of this program

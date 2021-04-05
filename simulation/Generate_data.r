@@ -81,6 +81,8 @@ SEIR_mat= SEIRpred(stage_intervals,b_vec,r_vec,
 
 
 onset_expect = SEIR_mat[,"Onset_expect"]
+S_mat = SEIR_mat[,"S"]
+true_prevalence <- (N-S_mat)/N
 
 onset_obs <- rnbinom(n = length(onset_expect),
                      size = 1/phi,
@@ -136,7 +138,7 @@ est_result = SEIRfitting(
   par_lower,
   par_upper)
 
-
+est_result$true_prevalence = true_prevalence
 
 #save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/seir_result_",i1,"_",i2,"_",i3,".rdata"))
 save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/two_stage_",i1,"_",i2,"_",i3,"_",i4,".rdata"))
