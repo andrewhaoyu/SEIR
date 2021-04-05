@@ -15,7 +15,7 @@ i1 = as.numeric(args[[1]])
 i2 = 1
 i3 = as.numeric(args[[2]])
 i4 = 1
-i5 = 2
+i5 = 1
 #i6 = as.numeric(args[[3]])
 set.seed(i1*1000+i2*100+i3)
 # ind = as.numeric(args[[1]])
