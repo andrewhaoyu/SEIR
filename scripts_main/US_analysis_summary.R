@@ -12,12 +12,12 @@ args = commandArgs(trailingOnly = T)
 #i5 represent reparametrization
 #i6 represent asympotomatic infection rate
 i1 = as.numeric(args[[1]])
-#i2 = as.numeric(args[[2]])
+i2 = 1
 i3 = as.numeric(args[[2]])
 i4 = 1
 i5 = 1
 #i6 = as.numeric(args[[3]])
-#set.seed(i1*1000+i2*100+i3)
+set.seed(i1*1000+i2*100+i3)
 # ind = as.numeric(args[[1]])
 # #number of statess
 # #number of replicates
@@ -43,7 +43,6 @@ i5 = 1
 # i1 = i1_vec[ind]
 # i2 = i2_vec[ind]
 #i3 = i3_vec[ind]
-leave_days = 11
 method_vec = c("poisson","nb")
 method = method_vec[2]
 code_root = "/data/zhangh24/SEIR/"
@@ -60,15 +59,18 @@ library(readr)
 #install.packages("cairoDevice")
 #library(cairoDevice)
 library(dplyr)
-library(ggplot2)
 ##
 source(paste0(code_root, "R/fun_SEIRpred.R"))
 source(paste0(code_root, "R/fun_SEIRsimu_update.R"))
 
 #source(paste0(code_root, "R/init_cond_update.R"))
-
-  source(paste0(code_root, "R/fun_SEIRfitting.R"))  
-  source(paste0(code_root, "R/init_cond_update.R"))
+#if(i5 ==1){
+source(paste0(code_root, "R/fun_SEIRfitting.R"))  
+source(paste0(code_root, "R/init_cond_update.R"))
+# }else if(i5 ==2){
+#   source(paste0(code_root, "R/fun_SEIRfitting_new.R"))  
+#   source(paste0(code_root, "R/init_cond_new.R"))
+# }
 
 source(paste0(code_root, "R/fun_R0estimate.R"))
 source(paste0(code_root, "R/correlationPlot_modified.R"))
@@ -76,32 +78,42 @@ source(paste0(code_root, "R/fun_SEIRplot.R"))
 source(paste0(code_root, "R/fun_Findzero.R"))
 source(paste0(code_root,"R/generate_plot.R"))
 source(paste0(code_root,"R/theme_publication.R"))
+
 ##
 
 
 #use covidtracing data to analyze
 #downloaded from https://covidtracking.com/data/download
-statename = c("NY",
-              "MA",
-              "FL",
-              "MI",
-              "CT",
-              "LA",
-              "MO","UT","IN","OH")
-#
+statename = c("FL",
+              "MA")
+
+# statename = c("NY",
+#               "MA",
+#               "FL",
+#               "MI",
+#               "CT",
+#               "LA",
+#               "MO","UT","IN","OH")
+#downloaded from https://covidtracking.com/data/download
 allData <- read.csv("../data/all-states-history.csv")
 #keep date to 08/31/2020
 library(lubridate)
+#leave off days for prediction
+leave_days = 11
+
 date_in_model <- as.Date(allData$date,format="%Y-%m-%d")
-idx <- which(date_in_model<="2020-11-11")
+idx <- which(date_in_model<="2021-1-11")
 allData <- allData[idx,]
 #population number (downloaded from https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html)
-stateName = c("New York","Massachusetts",
-              "Florida","Michigan",
-              "Connecticut",
-              "Louisiana",
-              "Missouri",
-              "Utah","Indiana","Ohio")
+stateName = c("Florida",
+              "Massachusetts")
+
+# stateName = c("New York","Massachusetts",
+#               "Florida","Michigan",
+#               "Connecticut",
+#               "Louisiana",
+#               "Missouri",
+#               "Utah","Indiana","Ohio")
 #
 #plug in the population number
 population <- read.csv("../data/state_population.csv")
@@ -118,7 +130,9 @@ stateData$date = as.Date(stateData$date,format="%Y-%m-%d")
 stateData = stateData[order(stateData$date),]
 
 
-
+cbind(weekdays(as.Date(stateData$date))
+      ,
+      stateData$positiveIncrease)
 #use JHU data to analyze
 #download data from https://raw.githubusercontent.com/lin-lab/COVID-data-cleaning/master/jhu_data/cleaned_data/JHU_COVID-19_State.csv
 # statename = c("New York","Massachusetts",
@@ -144,6 +158,24 @@ jdx <- which(stateData$positiveIncrease>50)
 jan1_idx = min(jdx)
 
 stateDataClean = stateData[jan1_idx:nrow(stateData),]
+
+#clean the outlier data for MA and CT
+#MA added antibody tests results into the data
+#the data suddenly increased a lot
+#to avoid 
+# if(i1 ==2){
+#   idx <- which(stateDataClean$date=="2020-06-01")
+#   stateDataClean$positiveIncrease[idx]  =  as.integer((stateDataClean$positiveIncrease[idx-1]+stateDataClean$positiveIncrease[idx+1])/2)
+# }
+# #CT data is usually 0 during weekend
+# #it's due to no reporting during weekend
+# #to aviod this, we dropped weekend CT data from the loglikelihood after 2020-07-04
+# if(i1==5){
+#   idx <- which(stateDataClean$date>="2020-07-04"&
+#                  (weekdays(stateDataClean$date)=="Saturday"|
+#                     weekdays(stateDataClean$date)=="Sunday"))
+#   subset.id = which(c(1:(nrow(stateDataClean)-leave_days))%in%idx==F)
+# }
 all.date <- stateDataClean$date
 #leave 10 days for prediction
 n.days <- nrow(stateDataClean)-leave_days
@@ -154,9 +186,12 @@ days_to_fit <- 1:n.days
 date_in_model <- stateDataClean$date
 start.date <- date_in_model[1]
 end.date <- date_in_model[n.days]
-all.cut.date <- c(floor_date(seq(start.date,end.date,by="month"),unit="month")+14,
-                  ceiling_date(seq(start.date, end.date, by = 'month'), unit = "month")-1)
+# all.cut.date <- c(floor_date(seq(start.date,end.date,by="month"),unit="month")+14,
+# ceiling_date(seq(start.date, end.date, by = 'month'), unit = "month")-1)
+# all.cut.date <- all.cut.date[order(all.cut.date)]
+all.cut.date <- c(ceiling_date(seq(start.date, end.date, by = 'month'), unit = "month")-1)
 all.cut.date <- all.cut.date[order(all.cut.date)]
+
 #remove the first cut date smaller than the start date
 if(as.numeric(all.cut.date[1]<=start.date)){
   all.cut.date <- all.cut.date[-1]
@@ -177,9 +212,9 @@ if(as.numeric(end.date-all.cut.date[length(all.cut.date)]<=7)){
   all.cut.date <- all.cut.date[-length(all.cut.date)]
 }
 #add addtional cut for NY data due to dramatic change
-if(i1==1){
-  all.cut.date<- c(as.Date("2020-03-20"),all.cut.date)
-}
+# if(i1==1){
+#   all.cut.date<- c(as.Date("2020-03-20"),all.cut.date)
+# }
 idx <- which(date_in_model%in%all.cut.date)
 days.to.fit <- 1:length(date_in_model)
 n.stage <- length(idx)+1
@@ -213,7 +248,7 @@ Dq <- rep(0,n.stage)
 GenerateDq <- function(cut.date){
   if(cut.date<="2020-04-01"){
     return(10)
-  }else if(cut.date<="2020-04-15"){
+  }else if(cut.date<="2020-04-30"){
     return(6)
   } else{
     return(3)
@@ -224,7 +259,9 @@ for(i in 1:(n.stage-1)){
   Dq[i] <- GenerateDq(all.cut.date[i])
 }
 Dq[length(Dq)] = 3
-r0_vec = c(0.05,0.10,0.15,0.20,0.23,0.30,0.35,0.40,0.5)
+
+
+r0_vec = c(0.05,0.075,0.10,0.125,0.15,0.20)
 r0 = r0_vec[i3]
 init_sets_list=get_init_sets_list(r0=r0,
                                   Di = Di,
@@ -264,10 +301,10 @@ idx <- which(init_sets_list$daily_new_case_all<0)
 init_sets_list$daily_new_case_all[idx]= 0
 
 
-
+library(ggplot2)
   i2 = 1
 GeneratePlot(init_sets_list, 
-             run_id = paste0("111020_",i1,"_",i2,"_",i3),
+             run_id = paste0("040521_",i1,"_",i2,"_",i3),
              panel_B_R_ylim=6,
              all.date = all.date)
 

@@ -23,31 +23,31 @@ GeneratePlot=function(init_sets_list,
   n_stage = n.stage
   #library(coda)
   run_id_split = strsplit(run_id,split="_")
-  date.input <- run_id_split[[1]][1]
-  id1 = run_id_split[[1]][2]
-  id3 = run_id_split[[1]][4]
-  pars_estimate_main=read.table(paste0("../output/pars_est_run_",date.input,"_",id1,"_",1,"_",id3,".txt"), header=T)
-  pars_estimate_main_rep1=read.table(paste0("../output/pars_est_run_",date.input,"_",id1,"_",2,"_",id3,".txt"), header=T)
-  pars_estimate_main_rep2=read.table(paste0("../output/pars_est_run_",date.input,"_",id1,"_",3,"_",id3,".txt"), header=T)
+  #date.input <- run_id_split[[1]][1]
+  # id1 = run_id_split[[1]][2]
+  # id3 = run_id_split[[1]][4]
+  # pars_estimate_main=read.table(paste0("../output/pars_est_run_",date.input,"_",id1,"_",1,"_",id3,".txt"), header=T)
+  # pars_estimate_main_rep1=read.table(paste0("../output/pars_est_run_",date.input,"_",id1,"_",2,"_",id3,".txt"), header=T)
+  # pars_estimate_main_rep2=read.table(paste0("../output/pars_est_run_",date.input,"_",id1,"_",3,"_",id3,".txt"), header=T)
   # mcmc_main=mcmc(data=pars_estimate_main)
   # mcmc_rep1=mcmc(data=pars_estimate_main_rep1)
   # mcmc_rep2=mcmc(data=pars_estimate_main_rep2)
   # mcmc_3traj=mcmc.list(mcmc_main,mcmc_rep1,mcmc_rep2)
   # mcmc_3traj=mcmc.list(mcmc_main,mcmc_rep1,mcmc_rep2)
   # gelman.diag(mcmc_3traj)
-  p_vec <- c(1:nrow(pars_estimate_main))
-  plot_par_3traj = function(par_name, plotmath_name) {
-    # red-like: #BC3C29, blue-like: #0072B5, orange-like: #E18727
-    plot(p_vec, pars_estimate_main[p_vec, par_name], type="l", col="#0072B5", main=plotmath_name, xlab="", ylab="")
-    points(p_vec, pars_estimate_main_rep1[p_vec, par_name], type="l", col="#BC3C29")
-    points(p_vec, pars_estimate_main_rep2[p_vec, par_name], type="l", col="#E18727")
-  }
-  png(paste0("../output/mcmc_convergence",run_id,".png"), width=15, height=10,res = 300, units = "in")
-  par(mfrow=c(3, ceiling(ncol(pars_estimate_main)/3)))
-  for(k in 1:ncol(pars_estimate_main)){
-    plot_par_3traj(colnames(pars_estimate_main)[k], colnames(pars_estimate_main)[k])
-  }
-  dev.off()
+  # p_vec <- c(1:nrow(pars_estimate_main))
+  # plot_par_3traj = function(par_name, plotmath_name) {
+  #   # red-like: #BC3C29, blue-like: #0072B5, orange-like: #E18727
+  #   plot(p_vec, pars_estimate_main[p_vec, par_name], type="l", col="#0072B5", main=plotmath_name, xlab="", ylab="")
+  #   points(p_vec, pars_estimate_main_rep1[p_vec, par_name], type="l", col="#BC3C29")
+  #   points(p_vec, pars_estimate_main_rep2[p_vec, par_name], type="l", col="#E18727")
+  # }
+  # png(paste0("../output/mcmc_convergence",run_id,".png"), width=15, height=10,res = 300, units = "in")
+  # par(mfrow=c(3, ceiling(ncol(pars_estimate_main)/3)))
+  # for(k in 1:ncol(pars_estimate_main)){
+  #   plot_par_3traj(colnames(pars_estimate_main)[k], colnames(pars_estimate_main)[k])
+  # }
+  # dev.off()
   mcmc_pars_estimate  = read.table(paste0("../output/pars_est_run_",run_id,".txt"), header=T)
   pars_name = colnames(mcmc_pars_estimate)
   n.par = ncol(mcmc_pars_estimate)

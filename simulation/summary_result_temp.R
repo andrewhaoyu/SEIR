@@ -22,7 +22,7 @@ Rtest_cover_mat = matrix(0,total,n.stage)
 Rtest_low_mat = matrix(0,total,n.stage)
 Rtest_high_mat = matrix(0,total,n.stage)
 
-n.days = 60
+n.days = 120
 prevest_mat = matrix(0,total,n.days)
 prevest_low_mat = matrix(0,total,n.days)
 prevest_high_mat = matrix(0,total,n.days)
@@ -54,7 +54,7 @@ Rt_true = estimate_R(pars,
 #   for(i2 in 1:2){
   temp = 1
   for(i1 in 1:n.rep){
-    load(paste0("/data/zhangh24/SEIR/result/simulation/two_stage_",i1,"_",i2,"_",i3,"_",i4,".rdata"))
+    load(paste0("/data/zhangh24/SEIR/result/simulation/040521_two_stage_",i1,"_",i2,"_",i3,"_",i4,".rdata"))
     est[temp,] = est_result[[1]]
     #est_low_mat[temp,] = est_result[[2]]
     #est_high_mat[temp,] = est_result[[3]]
@@ -70,12 +70,12 @@ Rt_true = estimate_R(pars,
     Rtest_high = est_result[[6]]
     Rtest_cover_mat[temp,] = (Rt_true>=Rtest_low)*(Rt_true<=Rtest_high)
     
-    prevest_mat[temp,] = est_result[[7]]
-    prevest_low_mat[temp,] = est_result[[8]]
-    prevest_high_mat[temp,] = est_result[[9]]
-    prevest_low = est_result[[8]]
-    prevest_high = est_result[[9]]
-    prevest_cover_mat[temp,] = (true_prevalence>=prevest_low)*(true_prevalence<=prevest_high)
+    # prevest_mat[temp,] = est_result[[7]]
+    # prevest_low_mat[temp,] = est_result[[8]]
+    # prevest_high_mat[temp,] = est_result[[9]]
+    # prevest_low = est_result[[8]]
+    # prevest_high = est_result[[9]]
+    # prevest_cover_mat[temp,] = (true_prevalence>=prevest_low)*(true_prevalence<=prevest_high)
     temp = temp+1
   }
   est_mean = colMeans(est)
