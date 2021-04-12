@@ -208,9 +208,11 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   prevalence_high <- apply(estS_mat,1,function(x){quantile((N-x)/N,0.975)})
   
   library(ggplot2)
-  if(site[i1]%in%CDC$Site){
+  #if(site[i1]%in%CDC$Site){
     data = data.frame(date= all.date,Prevalance=100*prevalence,Prevalence_low = 100*prevalence_low,Prevalence_high= 100*prevalence_high)
-    
+    CDC = CDC %>% filter(
+      Statename==statename[i1]
+    )
     CDC_filter <- CDC %>% 
       rename(date = Infection_date)
     idx <- which(data$date%in%CDC_filter$date)
@@ -267,23 +269,23 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
     print(p)
     dev.off()
     
-  }else{
-    data = data.frame(date= all.date,Prevalance=100*prevalence,Prevalence_low = 100*prevalence_low,Prevalence_high= 100*prevalence_high)
-    
-    #CDC_filter <- CDC %>% filter(Statename==statename[i1]) %>% 
-     # mutate(date = as.Date(Infection_date),format="%y-%m-%d") %>% 
-      #select(Statename,Prevalance,Prevalance_low,Prevalance_high,date)
-    p <- ggplot(data,aes(x=date))+geom_line(aes(y = Prevalance))+
-      geom_ribbon(aes(ymin=Prevalence_low,ymax=Prevalence_high),alpha = 0.2)+
-      #geom_point(data= CDC_filter,aes(x=date,y = Prevalance))+
-      #geom_errorbar(data=CDC_filter,aes(ymin = Prevalance_low,ymax=Prevalance_high))+
-      theme_Publication()+
-      ylim(0,100)+
-      ggtitle(paste0("Prevalance estimate in ",paste0(statename[i1])))
-    png(paste0("../output/Prevalance_", file_name, ".png"), width = 10, height = 10,res=300,units="in")
-    print(p)
-    dev.off()
-    
-  }
+  # }else{
+  #   data = data.frame(date= all.date,Prevalance=100*prevalence,Prevalence_low = 100*prevalence_low,Prevalence_high= 100*prevalence_high)
+  #   
+  #   #CDC_filter <- CDC %>% filter(Statename==statename[i1]) %>% 
+  #    # mutate(date = as.Date(Infection_date),format="%y-%m-%d") %>% 
+  #     #select(Statename,Prevalance,Prevalance_low,Prevalance_high,date)
+  #   p <- ggplot(data,aes(x=date))+geom_line(aes(y = Prevalance))+
+  #     geom_ribbon(aes(ymin=Prevalence_low,ymax=Prevalence_high),alpha = 0.2)+
+  #     #geom_point(data= CDC_filter,aes(x=date,y = Prevalance))+
+  #     #geom_errorbar(data=CDC_filter,aes(ymin = Prevalance_low,ymax=Prevalance_high))+
+  #     theme_Publication()+
+  #     ylim(0,100)+
+  #     ggtitle(paste0("Prevalance estimate in ",paste0(statename[i1])))
+  #   png(paste0("../output/Prevalance_", file_name, ".png"), width = 10, height = 10,res=300,units="in")
+  #   print(p)
+  #   dev.off()
+  #   
+  # }
   
 }
