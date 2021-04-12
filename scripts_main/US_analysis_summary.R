@@ -303,6 +303,7 @@ init_sets_list$daily_new_case_all[idx]= 0
 
 library(ggplot2)
   i2 = 1
+  n_stage = n.stage
 GeneratePlot(init_sets_list, 
              run_id = paste0("040521_",i1,"_",i2,"_",i3),
              panel_B_R_ylim=6,
