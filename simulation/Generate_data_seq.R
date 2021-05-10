@@ -73,11 +73,11 @@ days_to_fit = c(1:total)
 init_states <- c(21470907,2295,3215,264,1056,0,0)
 names(init_states) <- c("S","E","P","I","A","H","R")
 SEIR_mat= SEIRpred(stage_intervals,b_vec,r_vec,
-         Di,Dp,
-         De,Dq_vec,
-         alpha,Dh,N,flowN_vec,init_states,
-         days_to_fit)
- 
+                   Di,Dp,
+                   De,Dq_vec,
+                   alpha,Dh,N,flowN_vec,init_states,
+                   days_to_fit)
+
 
 
 
@@ -125,30 +125,14 @@ for(l in 2:length(b_vec)){
 
 true_pars = c(transformed_b,transformed_r,phi)
 
-loglh_func(true_pars)
-tmp_est = var_trans_fun(pars)
-b_vec = tmp_est[[1]]
-r_vec = tmp_est[[2]]
+onset_obs
 
-ypred <- SEIRpred(stage_intervals,b_vec,r_vec,
-                  Di,Dp,
-                  De,Dq_vec,
-                  alpha,Dh,N,flowN_vec,init_states,
-                  days_to_fit)
-onset_obs <- onset_obs
-ypred <- ypred[, "Onset_expect"]
-phi = pars[length(pars)]
-#p = phi/(phi+as.numeric(ypred))
-# meant to suppress warnings when ypred is negative
-
-suppressWarnings(p <- dnbinom(x = as.numeric(onset_obs), 
-                              #size = phi,
-                              size = 1/phi,
-                              mu = ypred,log=T))
-
-
-
-
+#stage 1-2 analysis
+par_lower = c(0,-10,0,-10,0)
+par_upper = c(3,10,1,10,1000)
+onset_obs_all = onset_obs
+onset_obs = onset_obs_all[1:(length(onset_obs_all)/2)]
+n_stage =2
 
 est_result = SEIRfitting(
   n_burn_in=n_burn_in,

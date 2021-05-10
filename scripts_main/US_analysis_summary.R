@@ -80,7 +80,7 @@ source(paste0(code_root,"R/generate_plot.R"))
 source(paste0(code_root,"R/theme_publication.R"))
 
 ##
-
+quantile(mcmc_pars_estimate_original[,"r10"],probs = c(0.025,0.975))
 
 #use covidtracing data to analyze
 #downloaded from https://covidtracking.com/data/download

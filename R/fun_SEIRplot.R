@@ -53,6 +53,8 @@ SEIRplot <- function(pars_estimate, file_name, init_settings, panel_B_R_ylim=4,
   
   l <- stages
   estSEAIP_mat <- apply(pars_estimate, 1, function(x) SEIRsimu(pars = x, init_settings = init_settings, num_periods = n.stage)[, c("S","E","I", "A", "P","Onset_expect")])
+  
+  #estSEAIP_mat <- SEIRsimu(pars = pars_estimate, init_settings = init_settings, num_periods = n.stage)
    
   estS_mat <- estSEAIP_mat[ptime,]
   estE_mat <- estSEAIP_mat[ptime + length(ptime),]
