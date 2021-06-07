@@ -162,4 +162,4 @@ est_result = SEIRfitting(
 est_result$true_prevalence = true_prevalence
 
 #save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/seir_result_",i1,"_",i2,"_",i3,".rdata"))
-save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/fourstage_two_stage_",i1,"_",i2,"_",i3,"_",i4,".rdata"))
+save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/sixstage_two_stage_",i1,"_",i2,"_",i3,"_",i4,".rdata"))
