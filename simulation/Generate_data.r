@@ -123,7 +123,7 @@ for(l in 2:length(b_vec)){
   transformed_r[l] = logit(r_vec[l])-logit(r_vec[l-1])
 }
 
-# true_pars = c(transformed_b,transformed_r,phi)
+true_pars = c(transformed_b,transformed_r,phi)
 # 
 # loglh_func(true_pars)
 # tmp_est = var_trans_fun(pars)
