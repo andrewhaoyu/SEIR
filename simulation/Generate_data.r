@@ -33,7 +33,7 @@ logit <- function(x){
 }
 
 set.seed(i1)
-n_stage = 4
+n_stage = 6
 n.stage = n_stage
 initial.ascertainment = 0.20
 N = 21477737
@@ -45,7 +45,7 @@ for(i in 1:n_stage){
   stage_intervals[[i]] <- c(start = total+1,end = total+days_in_each_stage)
   total = total+days_in_each_stage
 }
-b_vec = c(0.7,0.3,0.3,0.3)
+b_vec = c(0.81,0.22,0.19,0.28,0.31,0.48)
 #b_vec = c(0.7,0.3,0.3,0.3,0.48,0.48)
 #b_vec = c(0.7,0.3)
 #phi_vec = c(0,0.2)
@@ -55,14 +55,14 @@ b_vec = c(0.7,0.3,0.3,0.3)
 # ascertainment_mat = matrix(c(c(0.05,0.07,0.09,0.10,0.11,0.12),
 #                              (c(0.05,0.07,0.09,0.10,0.11,0.12)+0.2)),ncol=2)
 phi = 0.2
-r_vec = c(0.25,0.27,0.29,0.30)
+r_vec = c(0.23,0.24,0.38,0.57,0.69,0.75)
 
 Di = 3.5
 Dp = 2.75
 De = 2.45
 #Dq_vec = c(10,6,3,3,3,3)
 
-Dq_vec = c(10,6,3,3)
+Dq_vec = c(10,6,3,3,3,3)
 if(i4 ==2){
   Dq_vec = c(5,3)
 }
@@ -123,30 +123,30 @@ for(l in 2:length(b_vec)){
   transformed_r[l] = logit(r_vec[l])-logit(r_vec[l-1])
 }
 
-true_pars = c(transformed_b,transformed_r,phi)
-
-loglh_func(true_pars)
-tmp_est = var_trans_fun(pars)
-b_vec = tmp_est[[1]]
-r_vec = tmp_est[[2]]
-
-ypred <- SEIRpred(stage_intervals,b_vec,r_vec,
-                  Di,Dp,
-                  De,Dq_vec,
-                  alpha,Dh,N,flowN_vec,init_states,
-                  days_to_fit)
-onset_obs <- onset_obs
-ypred <- ypred[, "Onset_expect"]
-phi = pars[length(pars)]
-#p = phi/(phi+as.numeric(ypred))
-# meant to suppress warnings when ypred is negative
-
-suppressWarnings(p <- dnbinom(x = as.numeric(onset_obs), 
-                              #size = phi,
-                              size = 1/phi,
-                              mu = ypred,log=T))
-
-
+# true_pars = c(transformed_b,transformed_r,phi)
+# 
+# loglh_func(true_pars)
+# tmp_est = var_trans_fun(pars)
+# b_vec = tmp_est[[1]]
+# r_vec = tmp_est[[2]]
+# 
+# ypred <- SEIRpred(stage_intervals,b_vec,r_vec,
+#                   Di,Dp,
+#                   De,Dq_vec,
+#                   alpha,Dh,N,flowN_vec,init_states,
+#                   days_to_fit)
+# onset_obs <- onset_obs
+# ypred <- ypred[, "Onset_expect"]
+# phi = pars[length(pars)]
+# #p = phi/(phi+as.numeric(ypred))
+# # meant to suppress warnings when ypred is negative
+# 
+# suppressWarnings(p <- dnbinom(x = as.numeric(onset_obs), 
+#                               #size = phi,
+#                               size = 1/phi,
+#                               mu = ypred,log=T))
+# 
+# 
 
 
 

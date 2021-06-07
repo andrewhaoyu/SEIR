@@ -33,7 +33,7 @@ logit <- function(x){
 }
 
 set.seed(i1)
-n_stage = 4
+n_stage = 2
 n.stage = n_stage
 initial.ascertainment = 0.20
 N = 21477737
@@ -69,7 +69,7 @@ if(i4 ==2){
 alpha = 0.55
 Dh = 30
 flowN_vec = rep(0,n.stage)
-days_to_fit = c(1:total)
+days_to_fit = 1:total
 init_states <- c(21470907,2295,3215,264,1056,0,0)
 names(init_states) <- c("S","E","P","I","A","H","R")
 SEIR_mat= SEIRpred(stage_intervals,b_vec,r_vec,
@@ -125,14 +125,26 @@ for(l in 2:length(b_vec)){
 
 true_pars = c(transformed_b,transformed_r,phi)
 
-onset_obs
+# onset_obs
+# 
+# # #stage 1-2 analysis
+# par_lower = c(0,-10,0,-10,0)
+# par_upper = c(3,10,1,10,1000)
+# onset_obs_all = onset_obs
+# onset_obs = onset_obs_all[1:(length(onset_obs_all)/2)]
+# n_stage =2
+# Dq_vec_all = Dq_vec
+# Dq_vec = Dq_vec_all[1:2]
+# flowN_vec_all = flowN_vec
+# flowN_vec = flowN_vec_all[1:2]
 
-#stage 1-2 analysis
-par_lower = c(0,-10,0,-10,0)
-par_upper = c(3,10,1,10,1000)
-onset_obs_all = onset_obs
-onset_obs = onset_obs_all[1:(length(onset_obs_all)/2)]
-n_stage =2
+Rt = estimate_R(pars = c(b_vec,r_vec),
+                Di = Di,
+                Dp = Dp,
+                Dq_vec = Dq_vec,
+                N = N,
+                flowN_vec = flowN_vec,
+                n_stage = n_stage)
 
 est_result = SEIRfitting(
   n_burn_in=n_burn_in,
@@ -144,6 +156,6 @@ est_result = SEIRfitting(
   par_upper)
 
 est_result$true_prevalence = true_prevalence
-
+est_result$true_Rt = Rt
 #save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/seir_result_",i1,"_",i2,"_",i3,".rdata"))
-save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/fourstage_two_stage_",i1,"_",i2,"_",i3,"_",i4,".rdata"))
+save(est_result,file = paste0("/data/zhangh24/SEIR/result/simulation/sixstage_two_stage_",i1,"_",i2,"_",i3,"_",i4,".rdata"))
