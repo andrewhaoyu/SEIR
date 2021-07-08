@@ -104,6 +104,27 @@ var_trans_fun= function(pars) {
   return(list(b_vec, r_vec))
 }
 
+
+trans_ori_to_delta= function(pars) {
+  n.stage <- (length(pars)-1)/2
+  #b_vec <- pars[1:n.stage]
+  delta_b_vec <- pars[1:n.stage]
+  for(l in 2:n.stage){
+    delta_b_temp = log(b_vec[l])-log(b_vec[l-1])
+    delta_b_vec[l] = delta_b_temp
+  }
+  delta_r_vec <- pars[(n.stage+1):(2*n.stage)]
+  logit = function(x){log(x/(1-x))}
+  r1 = r_vec[1]
+  for(l in 2:n.stage){
+    deltartemp = logit(r_vec[l])-logit(r_vec[l-1])
+    delta_r_vec[l] = deltartemp
+  }
+  phi = pars[length(pars)]
+  return(c(delta_b_vec, delta_r_vec,phi))
+}
+
+
 SEIRfitting=function(
   n_burn_in=n_burn_in,
   n_iterations=n_iterations,
@@ -144,19 +165,25 @@ SEIRfitting=function(
   # mh_settings = list(startValue = startValue,
   #                    adapt = T, DRlevels = 2, iterations = n_iterations, thin = 10,
   #                    message = T)
-  mh_settings = list(
-    #startValue = startValue,
-    iterations = n_iterations,
-    startValues = true_pars,
-    thin = 10,
-    message = T
-  )
+  startValue = trans_ori_to_delta(c(b_vec,r_vec,phi))
+  # mh_settings = list(
+  #   startValue = matrix(startValue,1,length(startValue)),
+  #   iterations = n_iterations,
+  #   startValues = true_pars,
+  #   thin = 10,
+  #   message = T
+  # )
+  mh_settings = list(startValue = startValue,
+                     adapt = T, DRlevels = 2, iterations = n_iterations, thin = 10,
+                     message = T)
   #mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "Metropolis", settings = mh_settings)
   mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "DEzs", settings = mh_settings)
   #plot(mh_out)
   #plot(mh_out)
   mcmc_pars_estimate <- getSample(mh_out)
   mcmc_pars_estimate <- mcmc_pars_estimate[(n_burn_in+2):nrow(mcmc_pars_estimate),]
+  loglh_func(colMeans(mcmc_pars_estimate))
+  colMeans(mcmc_pars_estimate_original)
   transform_delta_to_orginal=function(pars) {
     #n.stage <- (length(pars)-1)/2
     #b_vec <- pars[1:n.stage]
