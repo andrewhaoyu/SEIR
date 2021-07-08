@@ -209,21 +209,21 @@ SEIRfitting=function(
   colnames(mcmc_pars_estimate_original) = c(paste0("b",1:n.stage),paste0("r",1:n.stage),"phi")
   
   
-  estSEAIP_mat <- apply(mcmc_pars_estimate, 1, function(x) SEIRsimu(pars = x, stage_intervals,
-                                                                    Di,Dp,
-                                                                    De,Dq_vec,
-                                                                    alpha,Dh,N,flowN_vec,init_states,
-                                                                    days_to_fit,num_periods = n.stage)[, c("S","E","I", "A", "P","Onset_expect")])
-  ptime <- 1:length(onset_obs)
-  estS_mat <- estSEAIP_mat[ptime,]
-  estE_mat <- estSEAIP_mat[ptime + length(ptime),]
-  estI_mat <- estSEAIP_mat[ptime + length(ptime)*2, ]
-  estA_mat <- estSEAIP_mat[ptime + length(ptime)*3, ]
-  estP_mat <- estSEAIP_mat[ptime + length(ptime) * 4, ]
-  estN_mat <- estSEAIP_mat[ptime + length(ptime) * 5, ]
-  prevalence <- rowMeans((N-estS_mat)/N)
-  prevalence_low <- apply(estS_mat,1,function(x){quantile((N-x)/N,0.025)})
-  prevalence_high <- apply(estS_mat,1,function(x){quantile((N-x)/N,0.975)})
+  # estSEAIP_mat <- apply(mcmc_pars_estimate, 1, function(x) SEIRsimu(pars = x, stage_intervals,
+  #                                                                   Di,Dp,
+  #                                                                   De,Dq_vec,
+  #                                                                   alpha,Dh,N,flowN_vec,init_states,
+  #                                                                   days_to_fit,num_periods = n.stage)[, c("S","E","I", "A", "P","Onset_expect")])
+  # ptime <- 1:length(onset_obs)
+  # estS_mat <- estSEAIP_mat[ptime,]
+  # estE_mat <- estSEAIP_mat[ptime + length(ptime),]
+  # estI_mat <- estSEAIP_mat[ptime + length(ptime)*2, ]
+  # estA_mat <- estSEAIP_mat[ptime + length(ptime)*3, ]
+  # estP_mat <- estSEAIP_mat[ptime + length(ptime) * 4, ]
+  # estN_mat <- estSEAIP_mat[ptime + length(ptime) * 5, ]
+  # prevalence <- rowMeans((N-estS_mat)/N)
+  # prevalence_low <- apply(estS_mat,1,function(x){quantile((N-x)/N,0.025)})
+  # prevalence_high <- apply(estS_mat,1,function(x){quantile((N-x)/N,0.975)})
 
   
   estRt_mat = apply(mcmc_pars_estimate_original,1,function(x){estimate_R(x,
@@ -250,10 +250,10 @@ SEIRfitting=function(
   return(list(est,est_low,est_high,
               estRt,
               Rt_low,
-              Rt_high,
-              prevalence,
-              prevalence_low,
-              prevalence_high))
+              Rt_high))
+              # prevalence,
+              # prevalence_low,
+              # prevalence_high))
   
   
   #par_str=rep("c",n_pars)
