@@ -165,19 +165,19 @@ SEIRfitting=function(
   # mh_settings = list(startValue = startValue,
   #                    adapt = T, DRlevels = 2, iterations = n_iterations, thin = 10,
   #                    message = T)
-  startValue = trans_ori_to_delta(c(b_vec,r_vec,phi))
-  # mh_settings = list(
-  #   startValue = matrix(startValue,1,length(startValue)),
-  #   iterations = n_iterations,
-  #   startValues = true_pars,
-  #   thin = 10,
-  #   message = T
-  # )
-  mh_settings = list(startValue = startValue,
-                     adapt = T, DRlevels = 2, iterations = n_iterations, thin = 10,
-                     message = T)
-  mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "Metropolis", settings = mh_settings)
-  #mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "DEzs", settings = mh_settings)
+  #startValue = trans_ori_to_delta(c(b_vec,r_vec,phi))
+  mh_settings = list(
+    #startValue = matrix(startValue,1,length(startValue)),
+    iterations = n_iterations,
+    startValues = true_pars,
+    thin = 10,
+    message = T
+  )
+  # mh_settings = list(startValue = startValue,
+  #                    adapt = T, DRlevels = 2, iterations = n_iterations, thin = 10,
+  #                    message = T)
+  #mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "Metropolis", settings = mh_settings)
+  mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "DEzs", settings = mh_settings)
   #plot(mh_out)
   #plot(mh_out)
   mcmc_pars_estimate <- getSample(mh_out)

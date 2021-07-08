@@ -10,7 +10,7 @@ i1 = as.numeric(args[[1]])
 #i4 = as.numeric(args[[4]])
 
 i2 = 2
-i3 = 2
+i3 = 1
 i4 = 1
 
 library(BayesianTools)
