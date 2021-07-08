@@ -176,14 +176,14 @@ SEIRfitting=function(
   mh_settings = list(startValue = startValue,
                      adapt = T, DRlevels = 2, iterations = n_iterations, thin = 10,
                      message = T)
-  #mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "Metropolis", settings = mh_settings)
-  mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "DEzs", settings = mh_settings)
+  mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "Metropolis", settings = mh_settings)
+  #mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "DEzs", settings = mh_settings)
   #plot(mh_out)
   #plot(mh_out)
   mcmc_pars_estimate <- getSample(mh_out)
   mcmc_pars_estimate <- mcmc_pars_estimate[(n_burn_in+2):nrow(mcmc_pars_estimate),]
-  loglh_func(colMeans(mcmc_pars_estimate))
-  colMeans(mcmc_pars_estimate_original)
+  # loglh_func(colMeans(mcmc_pars_estimate))
+  # colMeans(mcmc_pars_estimate_original)
   transform_delta_to_orginal=function(pars) {
     #n.stage <- (length(pars)-1)/2
     #b_vec <- pars[1:n.stage]
