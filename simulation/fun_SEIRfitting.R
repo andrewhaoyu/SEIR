@@ -180,10 +180,14 @@ SEIRfitting=function(
   mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "DEzs", settings = mh_settings)
   #plot(mh_out)
   #plot(mh_out)
+  #plot(mh_out)
+  
   mcmc_pars_estimate <- getSample(mh_out)
   mcmc_pars_estimate <- mcmc_pars_estimate[(n_burn_in+2):nrow(mcmc_pars_estimate),]
-  # loglh_func(colMeans(mcmc_pars_estimate))
+ 
+   loglh_func(colMeans(mcmc_pars_estimate))
   # colMeans(mcmc_pars_estimate_original)
+   loglh_func(trans_ori_to_delta(c(b_vec,r_vec,phi)))
   transform_delta_to_orginal=function(pars) {
     #n.stage <- (length(pars)-1)/2
     #b_vec <- pars[1:n.stage]
@@ -250,7 +254,8 @@ SEIRfitting=function(
   return(list(est,est_low,est_high,
               estRt,
               Rt_low,
-              Rt_high))
+              Rt_high,
+              diagnosis = gelmanDiagnostics(mh_out)))
               # prevalence,
               # prevalence_low,
               # prevalence_high))
