@@ -80,7 +80,7 @@ source(paste0(code_root,"R/generate_plot.R"))
 source(paste0(code_root,"R/theme_publication.R"))
 
 ##
-quantile(mcmc_pars_estimate_original[,"r10"],probs = c(0.025,0.975))
+#quantile(mcmc_pars_estimate_original[,"r10"],probs = c(0.025,0.975))
 
 #use covidtracing data to analyze
 #downloaded from https://covidtracking.com/data/download
@@ -305,7 +305,7 @@ library(ggplot2)
   i2 = 1
   n_stage = n.stage
 GeneratePlot(init_sets_list, 
-             run_id = paste0("040521_",i1,"_",i2,"_",i3),
+             run_id = paste0("080221_",i1,"_",i2,"_",i3),
              panel_B_R_ylim=6,
              all.date = all.date)
 

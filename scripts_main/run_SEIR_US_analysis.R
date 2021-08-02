@@ -309,13 +309,17 @@ gamma_rate = 1
 init_sets_list$init_states = c(18875899,34200,35931,10451,21189,78039,2422035)
 names(init_sets_list$init_states) = c("S","E","P","I","A","H","R")
 
+
+
+
+
 SEIRfitting(init_sets_list, randomize_startValue = T,
             run_id = paste0("080221_",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
             all.date = all.date,
            # n_burn_in=2800,
            # n_iterations=30000,
-            n_burn_in=20000,
-            n_iterations=500000,
+            n_burn_in=50000,
+            n_iterations=1000000,
             method = method)
 #run_id = paste0("040521_",i1,"_",i2,"_",i3)
 #quantile(mcmc_pars_estimate_original[,"r2"],probs = c(0.025,0.975))
