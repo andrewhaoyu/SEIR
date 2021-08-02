@@ -210,22 +210,22 @@ SEIRfitting=function(init_sets_list,
   if (!skip_MCMC) {
     bayesSEIR <- createBayesianSetup(loglh_func, prior = pars_prior)
   
-    if (randomize_startValue) {  
-      startValue=pars_sampler(n.stage = n.stage)
-      best_logl = loglh_func(startValue)
-      for(l in 1:1000){
-        temp = pars_sampler(n.stage = n.stage)
-        temp_logl = loglh_func(temp)
-        if(best_logl<temp_logl){
-          startValue = temp
-        }
-      }
-      
-      print(loglh_func(startValue))
-      while (is.infinite(loglh_func(startValue))) {
-        startValue=pars_sampler(n.stage = n.stage)
-      }
-    }
+    # if (randomize_startValue) {  
+    #   startValue=pars_sampler(n.stage = n.stage)
+    #   best_logl = loglh_func(startValue)
+    #   for(l in 1:1000){
+    #     temp = pars_sampler(n.stage = n.stage)
+    #     temp_logl = loglh_func(temp)
+    #     if(best_logl<temp_logl){
+    #       startValue = temp
+    #     }
+    #   }
+    #   
+    #   print(loglh_func(startValue))
+    #   while (is.infinite(loglh_func(startValue))) {
+    #     startValue=pars_sampler(n.stage = n.stage)
+    #   }
+    # }
     
     ## DRAM: Adaptive MCMC, prior optimization, delayed rejection
     # startValue = c(b12=1.2, b3=0.4, b4=0.2, b5=0.1, r12=0.5, delta3=-1, delta4=0, delta5=0)
@@ -241,9 +241,11 @@ SEIRfitting=function(init_sets_list,
                        message = T)
     #mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "Metropolis", settings = mh_settings)
     mh_out <- runMCMC(bayesianSetup = bayesSEIR, sampler = "DEzs", settings = mh_settings)
+    
     #plot(mh_out)
     #plot(mh_out)
     mcmc_pars_estimate <- getSample(mh_out)
+    diagnosis = gelmanDiagnostics(mh_out)
     mcmc_pars_estimate <- mcmc_pars_estimate[(n_burn_in+2):nrow(mcmc_pars_estimate),]
                                     #start = n_burn_in+2) 
     #mcmc_pars_estimate <- getSample(mh_out,                
@@ -258,6 +260,7 @@ SEIRfitting=function(init_sets_list,
         save(mh_out,file = paste0("../output/mcmc_out",run_id,".rdata"))  
       }
       write.table(mcmc_pars_estimate, paste0("../output/pars_est_run_",run_id,".txt"), quote = F, row.names = F, sep = "\t")
+      
     }
   } else {
     mcmc_pars_estimate = read.table(paste0("../output/pars_est_run_",run_id,".txt"), header = T)

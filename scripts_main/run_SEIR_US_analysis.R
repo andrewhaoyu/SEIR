@@ -101,7 +101,7 @@ leave_days = 11
 date_in_model <- as.Date(allData$date,format="%Y-%m-%d")
 # idx <- which(date_in_model<="2021-1-11"&
 #                date_in_model>="2020-11-01")
-allData <- allData[idx,]
+#allData <- allData[idx,]
 #population number (downloaded from https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html)
 stateName = c("Florida",
               "Massachusetts")
@@ -310,14 +310,14 @@ init_sets_list$init_states = c(18875899,34200,35931,10451,21189,78039,2422035)
 names(init_sets_list$init_states) = c("S","E","P","I","A","H","R")
 
 SEIRfitting(init_sets_list, randomize_startValue = T,
-            run_id = paste0("041921_",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
+            run_id = paste0("080221_",i1,"_",i2,"_",i3), output_ret = T, skip_MCMC=F,
             all.date = all.date,
            # n_burn_in=2800,
            # n_iterations=30000,
-            n_burn_in=9090,
-            n_iterations=100000,
+            n_burn_in=20000,
+            n_iterations=400000,
             method = method)
-run_id = paste0("040521_",i1,"_",i2,"_",i3)
+#run_id = paste0("040521_",i1,"_",i2,"_",i3)
 #quantile(mcmc_pars_estimate_original[,"r2"],probs = c(0.025,0.975))
 ## to evaluate convergence, we run another two rounds of this program
 # SEIRfitting(init_sets_list, randomize_startValue = T, run_id = "main_analysis_rep1", output_ret = T, skip_MCMC=F)

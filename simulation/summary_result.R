@@ -18,7 +18,7 @@ flowN_vec = rep(0,n.stage)
 days_to_fit = c(1:total)
 N = 21477737
 i2 = 2
-i3 = 2
+i3 = 1
 i4 = 1
 Rt = estimate_R(pars = c(b_vec,r_vec),
                 Di = Di,
@@ -37,7 +37,7 @@ true_Rt = Rt
 
 
 
-n.rep =1000
+n.rep =2000
 #2 ascertainment settings
 #2 overdispersion settings
 #2 methods
@@ -50,31 +50,37 @@ Rt_cover = matrix(0,total,n.stage)
 pre_est = matrix(0,total,n_stage*30)
 pre_cover = matrix(0,total,n_stage*30)
 temp = 1
+files = dir(path = "/data/zhangh24/SEIR/result/simulation",pattern = "sixstage_two_stage_",full.names = T)
     for(i1 in 1:n.rep){
-      load(paste0(paste0("/data/zhangh24/SEIR/result/simulation/sixstage_two_stage_",i1,"_",i2,"_",i3,"_",i4,".rdata")))
-      true_prevalence = est_result[[10]]
-      pars_est[temp,] = est_result[[1]]
-      est_low = est_result[[2]]
-      est_high = est_result[[3]]
-      pars_est_cover[temp,] = (pars>=est_low)*(pars<=est_high)
+      file = paste0("/data/zhangh24/SEIR/result/simulation/sixstage_two_stage_",i1,"_",i2,"_",i3,"_",i4,".rdata")
+      if(file %in% files){
+        load(file)
+        if(est_result$diagnosis[2]<1.1){
+          #true_prevalence = est_result[[10]]
+          pars_est[temp,] = est_result[[1]]
+          est_low = est_result[[2]]
+          est_high = est_result[[3]]
+          pars_est_cover[temp,] = (pars>=est_low)*(pars<=est_high)
+          
+          Rt_est[temp,] = est_result[[4]]
+          Rt_low = est_result[[5]]
+          Rt_high = est_result[[6]]
+          Rt_cover[temp,] = (true_Rt>=Rt_low)*(true_Rt<=Rt_high)
+          
+          temp = temp+1
+        }
+        
+        
+        
+      }
       
-      Rt_est[temp,] = est_result[[4]]
-      Rt_low = est_result[[5]]
-      Rt_high = est_result[[6]]
-      Rt_cover[temp,] = (true_Rt>=Rt_low)*(true_Rt<=Rt_high)
-      
-      
-      pre_est[temp,] = est_result[[7]]
-      pre_low = est_result[[8]]
-      pre_high = est_result[[9]]
-      pre_cover[temp,] = (true_prevalence>=pre_low)*(true_prevalence<=pre_high)
-      
-      
-      temp = temp+1
       #load(paste0("/data/zhangh24/SEIR/result/simulation/seir_pos_result_",i1,"_",i2,"_",i3,".rdata"))
     }
  
-
+pars_est = pars_est[1:(temp-1),]
+pars_est_cover = pars_est_cover[1:(temp-1),]
+Rt_est = Rt_est[1:(temp-1),]
+Rt_cover = Rt_cover[1:(temp-1),]
 #bias plot
 bias_est = colMeans(pars_est)-pars
 
