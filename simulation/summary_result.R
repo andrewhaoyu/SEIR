@@ -15,7 +15,7 @@ Dq_vec = c(10,6,3,3,3,3)
 alpha = 0.55
 Dh = 30
 flowN_vec = rep(0,n.stage)
-days_to_fit = c(1:total)
+#days_to_fit = c(1:total)
 N = 21477737
 i2 = 2
 i3 = 1
@@ -96,7 +96,7 @@ p = ggplot(data.plot)+
   xlab(NULL)+
   ylab("Bias")+
   ggtitle("Bias of b")+
-  coord_cartesian(ylim=c(-0.3,0.3))+
+  coord_cartesian(ylim=c(-0.1,0.1))+
   #geom_hline(yintercept = 0.95, col="red",linetype ="dashed")+
   scale_fill_Publication()
 
@@ -116,6 +116,7 @@ p = ggplot(data.plot)+
   xlab(NULL)+
   ylab("Bias")+
   ggtitle("Bias of r")+
+  coord_cartesian(ylim=c(-0.1,0.1))+
   #coord_cartesian(ylim=c(0.90,1))+
   #geom_hline(yintercept = 0.95, col="red",linetype ="dashed")+
   scale_fill_Publication()
@@ -185,7 +186,7 @@ p = ggplot(data.plot)+
   xlab(NULL)+
   ylab("Bias")+
   ggtitle("Bias of Rt")+
-  #coord_cartesian(ylim=c(0.90,1))+
+  coord_cartesian(ylim=c(-0.1,0.1))+
   #geom_hline(yintercept = 0.95, col="red",linetype ="dashed")+
   scale_fill_Publication()
 

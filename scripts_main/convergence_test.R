@@ -10,6 +10,7 @@ i1_vec = rep(0,1000)
 i3_vec = rep(0,1000)
 df = rep(0,1000)
 temp = 1
+library(BayesianTools)
 for(i1 in 1:2){
   for(i3 in 1:10){
     run_id = paste0("080221_",i1,"_",i2,"_",i3)

@@ -257,7 +257,7 @@ for(i in 1:(n.stage-1)){
   Dq[i] <- GenerateDq(all.cut.date[i])
 }
 Dq[length(Dq)] = 3
-
+library(dplyr)
 
 r0_vec = c(0.05,0.075,0.10,0.125,0.15,0.20,0.225,0.25,0.275,0.30)+0.15
 r0 = r0_vec[i3]
